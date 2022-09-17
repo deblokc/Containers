@@ -11,7 +11,7 @@ namespace ft {
 		typename typedef Iter::iterator_category	iterator_category;
 	};
 
-	template<class t> struct iterator_traits<T*> {
+	template<class T> struct iterator_traits<T*> {
 		typename typedef std::ptrdiff_t						difference_type;
 		typename typedef T									value_type;
 		typename typedef T*									pointer;

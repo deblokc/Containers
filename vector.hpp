@@ -1,6 +1,6 @@
 #ifndef VECTOR_HPP
 # define VECTOR_HPP
-
+# include "iterator.hpp"
 #ifndef
 
 namespace ft {
@@ -14,5 +14,6 @@ namespace ft {
 			typename typedef Allocator::const_reference	const_reference;
 			typename typedef Allocator::pointer			pointer;
 			typename typedef Allocator::const_pointer	const_pointer;
+			typename typedef Iterator<T>				iterator;
 	};
 }
