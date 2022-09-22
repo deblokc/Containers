@@ -1,7 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   stack.hpp                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/09/22 16:11:39 by tnaton            #+#    #+#             */
+/*   Updated: 2022/09/22 17:32:19 by tnaton           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef STACK_HPP
 # define STACK_HPP
-
-#endif
+# include <vector>
 
 namespace ft {
 	template <class T, class Container = std::vector<T> > class stack {
@@ -31,3 +42,4 @@ namespace ft {
 			container_type c;
 	};
 }
+#endif
