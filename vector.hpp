@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/22 16:11:43 by tnaton            #+#    #+#             */
-/*   Updated: 2022/09/22 20:50:20 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/09/23 12:43:46 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 # include <iostream>
 
 namespace ft {
-	template <class T, class Allocator = std::allocator<T> > class Vector {
+	template <class T, class Allocator = std::allocator<T> > class vector {
 		public:
 			typedef T									value_type;
 			typedef Allocator							allocator_type;
@@ -28,14 +28,26 @@ namespace ft {
 			typedef typename Allocator::pointer			pointer;
 			typedef typename Allocator::const_pointer	const_pointer;
 			typedef typename ft::Iterator<T>			iterator;
-			Vector(){std::cout << "created a vector" << std::endl;};
-//			explicit Vector(const Allocator& alloc){};
-//			explicit Vector(size_type count, const T& value = T(), const Allocator& alloc = Allocator()){_lst = new value_type[count]; for (size_type i = 0; i < count; i++){_lst[i] = value;}};
-//			explicit Vector(size_type count){_lst = new value_type[count]; for (size_type i = 0; i < count; i++){_lst[i] = Allocator::construct();}};
-//			template <class InputIt> Vector(InputIt first, InputIt last, const Allocator& alloc = Allocator()){};
-//			Vector(const Vector& other){this->_lst = other._lst;};
+
+		public:
+			explicit vector(const allocator_type& alloc = allocator_type()){
+				_alloc = alloc;
+				_lst = NULL;
+				_start = NULL;
+				_end = NULL;
+				_cap_end = NULL;
+				std::cout << "vector default/alloc constructor" << std::endl;
+			};
+//			explicit vector(size_type count, const T& value = T(), const Allocator& alloc = Allocator()){_lst = new value_type[count]; for (size_type i = 0; i < count; i++){_lst[i] = value;}};
+//			explicit vector(size_type count){_lst = new value_type[count]; for (size_type i = 0; i < count; i++){_lst[i] = Allocator::construct();}};
+//			template <class InputIt> vector(InputIt first, InputIt last, const Allocator& alloc = Allocator()){};
+			vector(const vector& other){this->_lst = other._lst;std::cout << "vector copy constructor" << std::endl;};
 		private:
-			pointer _lst;
+			pointer			_lst;
+			pointer			_start;
+			pointer			_end;
+			pointer			_cap_end;
+			allocator_type	_alloc;
 	};
 }
 
