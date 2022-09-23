@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/22 16:11:29 by tnaton            #+#    #+#             */
-/*   Updated: 2022/09/22 17:46:24 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/09/23 20:30:41 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,9 +30,9 @@ namespace ft {
 
 			Iterator &operator=(const Iterator & other){if (this != &other){this->_ptr = other._ptr;}return *this;};
 			Iterator &operator++(void){this->_ptr++;return *this;};
-			Iterator &operator++(int){Iterator tmp(*this);this->_ptr++;return tmp;};
+			Iterator operator++(int){Iterator tmp(*this);this->_ptr++;return tmp;};
 			Iterator &operator--(void){this->_ptr--;return *this;};
-			Iterator &operator--(int){Iterator tmp(*this);this->_ptr--;return tmp;};
+			Iterator operator--(int){Iterator tmp(*this);this->_ptr--;return tmp;};
 
 			value_type &operator*(void){return *(this->_ptr);};
 			value_type *operator->(void){return this->_ptr;};
