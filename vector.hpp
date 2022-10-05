@@ -17,6 +17,13 @@
 # include <iostream>
 
 namespace ft {
+
+	template<bool, class T = void>
+	struct	enable_if {};
+
+	template<class T>
+	struct	enable_if<true, T> { typedef T type; };
+
 	template <class T, class Allocator = std::allocator<T> > class vector {
 		// definition des types
 		public:
@@ -115,7 +122,8 @@ namespace ft {
 			};
 
 			template< class InputIt >
-			void assign(InputIt first, InputIt last){
+			void assign(InputIt first, InputIt last,
+			typename ft::enable_if<InputIt::input_iter, InputIt>::type = NULL) {
 				if (_capacity)
 					_alloc.deallocate(_start, _capacity);
 				InputIt tmp = first;

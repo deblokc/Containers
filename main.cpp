@@ -9,9 +9,6 @@
 /*   Updated: 2022/09/23 20:23:40 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "iterator.hpp"
-#include "iterator_traits.hpp"
-#include "stack.hpp"
 #include "vector.hpp"
 
 int main () {
