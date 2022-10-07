@@ -20,10 +20,10 @@ OBJ = $(SRC:.cpp=.o)
 
 CXX = c++
 
-CPPFLAGS = -Wall -Wextra -Werror -g -std=c++98
+CXXFLAGS = -Wall -Wextra -Werror -Wpedantic -g -std=c++98
 
 $(NAME): $(OBJ)
-	$(CXX) $(CPPFLAGS) $(OBJ) -o $@
+	$(CXX) $(CXXFLAGS) $(OBJ) -o $@
 
 $(OBJ): $(INC)
 

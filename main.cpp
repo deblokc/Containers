@@ -10,18 +10,25 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "vector.hpp"
+#include <string>
+#include <vector>
 
 int main () {
-	int list[] = {'0', '1', '2', '3'};
-	ft::vector<int> def;
-	ft::vector<int> copy(def);
-	ft::vector<char> xval(10, 'c');
-	ft::vector<int> x(2);
-	ft::vector<int> iter(*list, *list + 3);
 
-	iter[0] = 'A';
-	std::cout << iter[0] << std::endl;
-	def.assign(10, 20);
-	copy.assign(def.begin(), def.end());
-	return 0;
+    {
+		ft::vector<char> v;
+
+        v.assign(0, 'c');
+        v.assign(64, 'A');
+        v.assign(32, '5');
+        v.assign(49, '8');
+        v.assign(77, '2');
+    }
+
+    {
+		ft::vector<std::string> v;
+
+        v.assign(0, "");
+        v.assign(64, "vector-string");
+    }
 }
