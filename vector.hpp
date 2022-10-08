@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/22 16:11:43 by tnaton            #+#    #+#             */
-/*   Updated: 2022/09/23 20:31:26 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/10/08 18:03:19 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,24 +124,32 @@ namespace ft {
 			template< class InputIt >
 			void assign(InputIt first, InputIt last,
 			typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type* = NULL) {
-				this->clear();
-				if (_start)
-					_alloc.deallocate(_start, _capacity);
-				_capacity = 0;
-				InputIt tmp = first;
-				while (tmp != last){
-					tmp++;
-					_capacity++;
+				if (InputIt::iterator_category == ft::random_access_iterator_tag()) {
+					this->clear();
+					if (_start)
+						_alloc.deallocate(_start, _capacity);
+					_capacity = 0;
+					InputIt tmp = first;
+					while (tmp != last){
+						tmp++;
+						_capacity++;
+					}
+					_start = _alloc.allocate(_capacity);
+					_end = _start;
+					while (first != last) {
+						_alloc.construct(_end, *first);
+						first++;
+						_end++;
+					}
+					_size = _capacity;
+					_cap_end = _start + _capacity;
+				} else if (InputIt::iterator_category == ft::input_iterator_tag()) {
+					this->clear();
+					while (first != last) {
+						this->push_back(*first);
+						first++;
+					}
 				}
-				_start = _alloc.allocate(_capacity);
-				_end = _start;
-				while (first != last) {
-					_alloc.construct(_end, *first);
-					first++;
-					_end++;
-				}
-				_size = _capacity;
-				_cap_end = _start + _capacity;
 			}
 
 			void assign(size_type count, const value_type & value) {
@@ -158,6 +166,16 @@ namespace ft {
 					_end++;
 				}
 				_cap_end = _start + _capacity;
+			}
+
+			void push_back(const T& value) { 
+				if (_size == _capacity) {
+
+				} else {
+					_alloc.construct(_end, value);
+					_end++;
+					_size++;
+				}
 			}
 
 			iterator begin(void) {
