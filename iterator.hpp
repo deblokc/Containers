@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/22 16:11:29 by tnaton            #+#    #+#             */
-/*   Updated: 2022/10/08 16:35:45 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/10/08 20:25:03 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 # include "iterator_traits.hpp"
 
 namespace ft {
-	template <class T, class Category = ft::random_access_iterator_tag, class Distance = std::ptrdiff_t, class Pointer = T*, class Reference = T&> class Iterator {
+	template <class T, class Category = std::random_access_iterator_tag, class Distance = std::ptrdiff_t, class Pointer = T*, class Reference = T&> class Iterator {
 		public:
 			typedef Category	iterator_category;
 			typedef T			value_type;

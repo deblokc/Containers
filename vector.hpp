@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/22 16:11:43 by tnaton            #+#    #+#             */
-/*   Updated: 2022/10/08 18:03:19 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/10/08 20:58:11 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,32 +124,39 @@ namespace ft {
 			template< class InputIt >
 			void assign(InputIt first, InputIt last,
 			typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type* = NULL) {
-				if (InputIt::iterator_category == ft::random_access_iterator_tag()) {
-					this->clear();
-					if (_start)
-						_alloc.deallocate(_start, _capacity);
-					_capacity = 0;
-					InputIt tmp = first;
-					while (tmp != last){
-						tmp++;
-						_capacity++;
-					}
-					_start = _alloc.allocate(_capacity);
-					_end = _start;
-					while (first != last) {
-						_alloc.construct(_end, *first);
-						first++;
-						_end++;
-					}
-					_size = _capacity;
-					_cap_end = _start + _capacity;
-				} else if (InputIt::iterator_category == ft::input_iterator_tag()) {
+				typedef typename iterator_traits<InputIt>::iterator_category	category;
+				_assign(first, last, category());
+			}
+
+			template<class InputIt>
+			void _assign(InputIt first, InputIt last, std::random_access_iterator_tag) {
+				this->clear();
+				if (_start)
+					_alloc.deallocate(_start, _capacity);
+				_capacity = 0;
+				InputIt tmp = first;
+				while (tmp != last){
+					tmp++;
+					_capacity++;
+				}
+				_start = _alloc.allocate(_capacity);
+				_end = _start;
+				while (first != last) {
+					_alloc.construct(_end, *first);
+					first++;
+					_end++;
+				}
+				_size = _capacity;
+				_cap_end = _start + _capacity;
+			}
+
+			template<class InputIt>
+			void _assign(InputIt first, InputIt last, std::input_iterator_tag) {
 					this->clear();
 					while (first != last) {
 						this->push_back(*first);
 						first++;
 					}
-				}
 			}
 
 			void assign(size_type count, const value_type & value) {
@@ -170,7 +177,22 @@ namespace ft {
 
 			void push_back(const T& value) { 
 				if (_size == _capacity) {
+					pointer new_start = _alloc.allocate(_capacity * 2);
+					pointer new_end = new_start;
+					pointer tmp = _start;
+					value_type exsize = _size;
 
+					_size = 0;
+					for (int i = 0; i < exsize; i++) {
+						_alloc.construct(new_end, *tmp);
+						new_start++;
+						tmp++;
+						_size++;
+					}
+					//_alloc.deallocate(_start, _capacity);
+					_capacity *= 2;
+					_start = new_start;
+					_end = new_end + 1;
 				} else {
 					_alloc.construct(_end, value);
 					_end++;
@@ -232,20 +254,17 @@ namespace ft {
 			// definition des surcharges d'operateurs
 		public:
 				value_type & operator[](size_type i) const {
-				pointer tmp = _start;
-				while (i--)
-					tmp++;
-				return (*tmp);
-			}
+					pointer tmp = _start;
+					while (i--)
+						tmp++;
+					return (*tmp);
+				}
 
 				vector & operator=(const vector & other) {
 					if (this == &other)
 						return (*this);
 					_alloc = other._alloc;
-					_start = other._start;
-					_end = other._end;
-					_cap_end = other._end;
-					_capacity = other._capacity;
+					this->assign(other._start, other._end);
 					return (*this);
 				}
 
