@@ -6,7 +6,7 @@
 #    By: tnaton <marvin@42.fr>                      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/09/22 19:13:09 by tnaton            #+#    #+#              #
-#    Updated: 2022/09/23 20:36:41 by tnaton           ###   ########.fr        #
+#    Updated: 2022/10/08 15:24:10 by tnaton           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -34,5 +34,10 @@ fclean: clean
 	rm -rf $(NAME)
 
 re: fclean all
+
+git:
+	git add .
+	git commit -m $(msg)
+	git push
 
 .SECONDARY : $(OBJ)
