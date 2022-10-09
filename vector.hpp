@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/22 16:11:43 by tnaton            #+#    #+#             */
-/*   Updated: 2022/10/08 20:58:11 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/10/09 13:55:50 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -175,8 +175,15 @@ namespace ft {
 				_cap_end = _start + _capacity;
 			}
 
-			void push_back(const T& value) { 
-				if (_size == _capacity) {
+			void push_back(const T& value) {
+				if (!_capacity) {
+					_capacity = 1;
+					_start = _alloc.allocate(_capacity);
+					_end = _start;
+					_alloc.construct(_end, value);
+					_end++;
+					_size = 1;
+				} else if (_size == _capacity) {
 					pointer new_start = _alloc.allocate(_capacity * 2);
 					pointer new_end = new_start;
 					pointer tmp = _start;
@@ -185,11 +192,14 @@ namespace ft {
 					_size = 0;
 					for (int i = 0; i < exsize; i++) {
 						_alloc.construct(new_end, *tmp);
-						new_start++;
+						new_end++;
 						tmp++;
 						_size++;
 					}
-					//_alloc.deallocate(_start, _capacity);
+					this->clear();
+					_alloc.construct(new_end, value);
+					_size++;
+					_alloc.deallocate(_start, _capacity);
 					_capacity *= 2;
 					_start = new_start;
 					_end = new_end + 1;
