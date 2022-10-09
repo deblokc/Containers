@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/22 19:09:37 by tnaton            #+#    #+#             */
-/*   Updated: 2022/10/09 13:29:44 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/10/09 19:29:23 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "vector.hpp"
@@ -22,23 +22,56 @@ void print(T& vector) {
 	std::cout << std::endl;
 }
 
+template<class T>
+void printeq(T& v1, T& v2) {
+	if (v1 == v2)
+		std::cout << "Equal" << std::endl;
+	else
+		std::cout << "Not Equal" << std::endl;
+}
+
 int main () {
-	ft::vector<double> test;
+	{
+		ft::vector<int> b(37, 1);
 
-	for (int i = 0; i < 32; i++) {
-		test.push_back(i);
+		b.erase(b.begin() + 1, b.begin() + 2);
+
+		b.erase(b.begin(), b.end());
+
+		print(b);
 	}
-	std::cout << "Pushed " << test.size() << " elements in test" << std::endl;
+	/*
+	{
+		ft::vector<double> test;
+		ft::vector<double> test2;
 
-	print(test);
+		printeq(test, test2);
+	}
+	{
+		ft::vector<int> test(5, 42);
+		ft::vector<int> test2;
 
-	test.push_back(42);
+		printeq(test, test2);
+	}*/
+/*
+	{
+		ft::vector<double> test;
+		
+		for (int i = 0; i < 32; i++) {
+			test.push_back(i);
+		}
+		std::cout << "Pushed " << test.size() << " elements in test" << std::endl;
 
-	std::cout << "Added 42" << std::endl;
+		print(test);
 
-	print(test);
+		test.push_back(42);
 
-	test.assign(test.begin(), test.begin() + 21);
+		std::cout << "Added 42" << std::endl;
 
-	print(test);
+		print(test);
+
+		test.assign(test.begin(), test.begin() + 21);
+
+		print(test);
+	}*/
 }
