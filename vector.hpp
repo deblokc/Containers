@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/22 16:11:43 by tnaton            #+#    #+#             */
-/*   Updated: 2022/10/09 20:00:27 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/10/22 21:00:20 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -194,7 +194,7 @@ namespace ft {
 
 			iterator erase(iterator pos) {
 				if (pos + 1 != end()) {
-					std::copy(pos + 1, end(), pos);
+					_copy(pos + 1, end(), pos);
 				}
 				--_end;
 				_alloc.destroy(_end);
@@ -203,18 +203,92 @@ namespace ft {
 			}
 
 			iterator erase(iterator first, iterator last) {
-				std::cout << "First : " << &(*first) << " | Last : " << &(*last) << std::endl;
 				if (first != last) {
-					T* tmp = &(*first);
 					if (last != end()) {
-						std::copy(last, end(), first);
+						_copy(last, end(), first);
 					}
-					pointer new_end = tmp + (end() - last);
+					pointer new_end = &(*first) + (end() - last);
+					_clear(new_end, _end - new_end);
 					_size -= (last - first);
-					_clear(tmp, (last - first));
 					_end = new_end;
 				}
 				return (last);
+			}
+
+			iterator insert(const_iterator pos, const T& value) {
+				std::cerr << "Insert (iter, T)" << std::endl;
+
+				if (!_capacity)
+					push_back(value);
+				else {
+					if (_size == _capacity) {
+						pointer new_start = _alloc.allocate(_capacity * 2);
+						pointer new_end = new_start;
+						pointer tmp = _start;
+
+						while (tmp != &(*pos)) {
+							_alloc.construct(new_end, *tmp);
+							new_end++;
+							tmp++;
+						}
+						_alloc.construct(new_end, value);
+						pos = new_end;
+						new_end++;
+						while (tmp != _end) {
+							_alloc.construct(new_end, *tmp);
+							tmp++;
+							new_end++;
+						}
+						size_type exsize = _size;
+						this->clear();
+						_size = exsize + 1;
+						_alloc.deallocate(_start, _capacity);
+						_capacity *= 2;
+						_start = new_start;
+						_end = new_end;
+					} else {
+						_alloc.construct(_end, *(_end - 1));
+						pointer tmp = (_end - 1);
+						while (tmp != &(*pos)) {
+							*(tmp + 1) = *tmp;
+							tmp--;
+						}
+						*(tmp + 1) = *pos;
+						_alloc.construct(&(*pos), value);
+						_size += 1;
+						_end = _start + _size;
+					}
+				}
+				return (pos);
+			}
+	
+
+			iterator insert(const_iterator pos, size_type count, const T& value) {
+				std::cerr << "Insert (iter, size_type, T)" << std::endl;
+				for (size_type i = 0; i < count; i++) {
+					pos = insert(pos, value);
+				}
+				return (pos);
+			}
+
+			template<class InputIt>
+			iterator insert(const_iterator pos, InputIt first, InputIt last,
+					typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type* = NULL) {
+				if (!_capacity) {
+					assign(first, last);
+				}
+				return (_insert_range(pos, first, last, InputIt::iterator_tag));
+			}
+
+			template<class InputIt>
+			iterator _insert_range(const_iterator pos, InputIt first, InputIt last, std::input_iterator_tag) {
+				vector tmp(first, last);
+				return (_insert_range(pos, tmp.begin(), tmp.end(), ft::vector<T>::iterator_tag));
+			}
+
+			template<class InputIt>
+			iterator _insert_range(const_iterator pos, InputIt first, InputIt last, std::random_access_iterator_tag) {
+				return (pos);
 			}
 
 			iterator begin(void) {
@@ -243,10 +317,17 @@ namespace ft {
 
 			void _clear(pointer start, size_type size) {
 				for (size_type i = 0; i < size; i++) {
-					std::cout << "Destroying " << i << " : " << *start << " at " << start << std::endl;
 					_alloc.destroy(start);
 					start++;
 				}
+			}
+
+			template<class InputIt, class OutputIt>
+			OutputIt _revcopy(InputIt first, InputIt last, OutputIt d_last) {
+				for (; first != last; (void)--last, (void)--d_last) {
+					*d_last = *last;
+				}
+				return (d_last);
 			}
 
 			reference at(size_type pos) {
@@ -262,11 +343,11 @@ namespace ft {
 			}
 
 			reference front(void) {
-				return (this->begin());
+				return (*this->begin());
 			}
 
 			const_reference front(void) const {
-				return (this->begin());
+				return (*this->begin());
 			}
 
 			reference back(void) {
