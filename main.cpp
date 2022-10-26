@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/22 19:09:37 by tnaton            #+#    #+#             */
-/*   Updated: 2022/10/23 12:54:15 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/10/26 17:24:09 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "vector.hpp"
@@ -39,6 +39,18 @@ void print(int id, const ft::vector<int>& container)
 }
 
 int main () {
+
+
+	{
+		ft::vector<int> v;
+
+		ft::vector<int>::iterator it = v.insert(v.end(), 4);
+		
+		std::cerr << "capa : " << v.capacity() << " | size : " << v.size() << std::endl;
+
+		std::cerr << "Val : " << *it << std::endl;
+	}
+
 /*	{
 		ft::vector<int> c1(3, 100);
 		print(1, c1);
@@ -63,16 +75,20 @@ int main () {
  
 	}
 */
-	{
-		ft::vector<int> v(2, 400);
+/*	{
+		ft::vector<int> ft(4, 400);
+		std::vector<int> std(4, 400);
 
-		std::cerr << "Capacity : " << v.capacity() << std::endl;
+		std::cerr << "std capacity : " << std.capacity() << std::endl;
+		std::cerr << "ft capacity : " << ft.capacity() << std::endl;
 
-		v.insert(v.begin(), 5, 200);
+		std.insert(std.begin(), 3, 200);
+		ft.insert(ft.begin(), 3, 200);
 
-		std::cerr << "Capacity : " << v.capacity() << std::endl;
+		std::cerr << "std capacity : " << std.capacity() << std::endl;
+		std::cerr << "ft capacity : " << ft.capacity() << std::endl;
 	}
-	/*
+*/	/*
 	{
 		ft::vector<int> b(37, 1);
 

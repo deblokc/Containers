@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/22 16:11:43 by tnaton            #+#    #+#             */
-/*   Updated: 2022/10/23 12:53:49 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/10/26 19:13:53 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -215,12 +215,21 @@ namespace ft {
 				return (last);
 			}
 
-			iterator insert(const_iterator pos, const T& value) {
-				std::cerr << "Insert (iter, T)" << std::endl;
+			template<class InputIt, class OutputIt>
+			OutputIt _copy(InputIt first, InputIt last,
+						  OutputIt d_first)
+			{
+				for (; first != last; (void)++first, (void)++d_first) {
+					*d_first = *first;
+				}
+				return d_first;
+			}
 
-				if (!_capacity)
+			iterator insert(const_iterator pos, const T& value) {
+				if (!_capacity) {
 					push_back(value);
-				else {
+					return (_start);
+				} else {
 					if (_size == _capacity) {
 						pointer new_start = _alloc.allocate(_capacity * 2);
 						pointer new_end = new_start;
@@ -247,16 +256,22 @@ namespace ft {
 						_start = new_start;
 						_end = new_end;
 					} else {
-						_alloc.construct(_end, *(_end - 1));
-						pointer tmp = (_end - 1);
-						while (tmp != &(*pos)) {
-							*(tmp + 1) = *tmp;
-							tmp--;
+						if (pos != _end) {
+							_alloc.construct(_end, *(_end - 1));
+							pointer tmp = (_end - 1);
+							while (tmp != &(*pos)) {
+								*(tmp + 1) = *tmp;
+								tmp--;
+							}
+							*(tmp + 1) = *pos;
+							*pos = value;
+							_size += 1;
+							_end = _start + _size;
+						} else {
+							_alloc.construct(_end, value);
+							_end++;
+							_size++;
 						}
-						*(tmp + 1) = *pos;
-						_alloc.construct(&(*pos), value);
-						_size += 1;
-						_end = _start + _size;
 					}
 				}
 				return (pos);
@@ -264,9 +279,40 @@ namespace ft {
 	
 
 			iterator insert(const_iterator pos, size_type count, const T& value) {
-				std::cerr << "Insert (iter, size_type, T)" << std::endl;
-				for (size_type i = 0; i < count; i++) {
-					pos = insert(pos, value);
+				if (!_size) {
+					assign(count, value);
+				} else if (_size + count <= _capacity * 2) {
+					for (size_type i = 0; i < count; i++) {
+						pos = insert(pos, value);
+					}
+				} else {
+					pointer new_start = _alloc.allocate(_size + count);
+					pointer new_end = new_start;
+					pointer tmp = _start;
+
+					while (tmp != &(*pos)) {
+						_alloc.construct(new_end, *tmp);
+						new_end++;
+						tmp++;
+					}
+					pos = new_end;
+					for (size_type i = 0; i < count; i++) {
+						_alloc.construct(new_end, value);
+						new_end++;
+					}
+					new_end++;
+					while (tmp != _end) {
+						_alloc.construct(new_end, *tmp);
+						tmp++;
+						new_end++;
+					}
+					size_type exsize = _size;
+					this->clear();
+					_size = exsize + count;
+					_alloc.deallocate(_start, _capacity);
+					_capacity = _size;
+					_start = new_start;
+					_end = new_end;
 				}
 				return (pos);
 			}
@@ -277,7 +323,7 @@ namespace ft {
 				typedef typename iterator_traits<InputIt>::iterator_category	category;
 				if (!_capacity) {
 					assign(first, last);
-					return (pos);
+					return (_start);
 				}
 				return (_insert_range(pos, first, last, category()));
 			}
@@ -285,26 +331,57 @@ namespace ft {
 			template<class InputIt>
 			iterator _insert_range(const_iterator pos, InputIt first, InputIt last, std::input_iterator_tag) {
 				vector tmp(first, last);
-				return (_insert_range(pos, tmp.begin(), tmp.end(), ft::vector<T>::iterator_tag));
+				return (_insert_range(pos, tmp.begin(), tmp.end(), std::random_access_iterator_tag()));
 			}
 
 			template<class InputIt>
 			iterator _insert_range(const_iterator pos, InputIt first, InputIt last, std::random_access_iterator_tag) {
-				size_type	dist = 0;
-				InputIt tmp = first;
-				while (tmp != last) {
-					dist++;
-					tmp++;
+				if (!_size) {
+					assign(first, last);
+					return (_start);
 				}
-				std::cerr << "Size + dist : " << _size + dist << " vs capacity : " << _capacity << std::endl;
-				if (_size + dist > _capacity) {
-				} else {
+				size_type	dist = 0;
+				InputIt tmpIt = first;
+				while (tmpIt != last) {
+					dist++;
+					tmpIt++;
+				}
+				tmpIt = first;
+				if (_size + dist <= _capacity * 2) {
 					while (last != first) {
 						insert(pos, *last);
 						last--;
 					}
+				} else {
+					pointer new_start = _alloc.allocate(_size + dist);
+					pointer new_end = new_start;
+					pointer tmp = _start;
+
+					while (tmp != &(*pos)) {
+						_alloc.construct(new_end, *tmp);
+						new_end++;
+						tmp++;
+					}
+					pos = new_end;
+					for (size_type i = 0; i < dist; i++) {
+						_alloc.construct(new_end, *tmpIt);
+						new_end++;
+						tmpIt++;
+					}
+					new_end++;
+					while (tmp != _end) {
+						_alloc.construct(new_end, *tmp);
+						tmp++;
+						new_end++;
+					}
+					size_type exsize = _size;
+					this->clear();
+					_size = exsize + dist;
+					_alloc.deallocate(_start, _capacity);
+					_capacity = _size;
+					_start = new_start;
+					_end = new_end;
 				}
-				
 				return (pos);
 			}
 
