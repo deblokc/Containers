@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/22 19:09:37 by tnaton            #+#    #+#             */
-/*   Updated: 2022/10/22 20:39:14 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/10/23 12:54:15 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "vector.hpp"
@@ -39,7 +39,7 @@ void print(int id, const ft::vector<int>& container)
 }
 
 int main () {
-	{
+/*	{
 		ft::vector<int> c1(3, 100);
 		print(1, c1);
 	
@@ -62,8 +62,16 @@ int main () {
 		print(5, c1);
  
 	}
+*/
+	{
+		ft::vector<int> v(2, 400);
 
+		std::cerr << "Capacity : " << v.capacity() << std::endl;
 
+		v.insert(v.begin(), 5, 200);
+
+		std::cerr << "Capacity : " << v.capacity() << std::endl;
+	}
 	/*
 	{
 		ft::vector<int> b(37, 1);

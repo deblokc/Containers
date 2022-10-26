@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/22 16:11:43 by tnaton            #+#    #+#             */
-/*   Updated: 2022/10/22 21:00:20 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/10/23 12:53:49 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -274,10 +274,12 @@ namespace ft {
 			template<class InputIt>
 			iterator insert(const_iterator pos, InputIt first, InputIt last,
 					typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type* = NULL) {
+				typedef typename iterator_traits<InputIt>::iterator_category	category;
 				if (!_capacity) {
 					assign(first, last);
+					return (pos);
 				}
-				return (_insert_range(pos, first, last, InputIt::iterator_tag));
+				return (_insert_range(pos, first, last, category()));
 			}
 
 			template<class InputIt>
@@ -288,6 +290,21 @@ namespace ft {
 
 			template<class InputIt>
 			iterator _insert_range(const_iterator pos, InputIt first, InputIt last, std::random_access_iterator_tag) {
+				size_type	dist = 0;
+				InputIt tmp = first;
+				while (tmp != last) {
+					dist++;
+					tmp++;
+				}
+				std::cerr << "Size + dist : " << _size + dist << " vs capacity : " << _capacity << std::endl;
+				if (_size + dist > _capacity) {
+				} else {
+					while (last != first) {
+						insert(pos, *last);
+						last--;
+					}
+				}
+				
 				return (pos);
 			}
 
