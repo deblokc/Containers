@@ -6,15 +6,17 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/22 16:11:43 by tnaton            #+#    #+#             */
-/*   Updated: 2022/10/27 12:50:28 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/10/27 19:43:26 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef VECTOR_HPP
 # define VECTOR_HPP
 # include "iterator.hpp"
+# include "reverse_iterator.hpp"
 # include <memory>
 # include <iostream>
+# include <limits>
 # include "utils.hpp"
 
 namespace ft {
@@ -22,16 +24,19 @@ namespace ft {
 	template <class T, class Allocator = std::allocator<T> > class vector {
 		// definition des types
 		public:
-			typedef T									value_type;
-			typedef Allocator							allocator_type;
-			typedef size_t								size_type;
-			typedef std::ptrdiff_t						difference_type;
-			typedef typename Allocator::reference		reference;
-			typedef typename Allocator::const_reference	const_reference;
-			typedef typename Allocator::pointer			pointer;
-			typedef typename Allocator::const_pointer	const_pointer;
-			typedef typename ft::Iterator<T>			iterator;
-			typedef typename ft::Iterator<T>			const_iterator;
+			typedef T											value_type;
+			typedef Allocator									allocator_type;
+			typedef size_t										size_type;
+			typedef std::ptrdiff_t								difference_type;
+			typedef typename Allocator::reference				reference;
+			typedef typename Allocator::const_reference			const_reference;
+			typedef typename Allocator::pointer					pointer;
+			typedef typename Allocator::const_pointer			const_pointer;
+			typedef typename ft::Iterator<T>					iterator;
+			typedef typename ft::Iterator<T>					const_iterator;
+			typedef typename ft::reverse_iterator<iterator>		reverse_iterator;
+			typedef typename ft::reverse_iterator<iterator>		const_reverse_iterator;
+
 
 		// definition des constructeurs
 		public:
@@ -63,6 +68,11 @@ namespace ft {
 			template <class InputIt> vector(InputIt first, InputIt last, \
 					const Allocator& alloc = Allocator(),
 					typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type* = NULL) : _alloc(alloc){
+				_alloc = alloc;
+				_size = 0;
+				_start = NULL;
+				_end = NULL;
+				_capacity = 0;
 				this->assign(first, last);
 			}
 
@@ -135,14 +145,16 @@ namespace ft {
 
 			template<class InputIt>
 			void _assign(InputIt first, InputIt last, std::input_iterator_tag) {
-					this->clear();
-					while (first != last) {
-						this->push_back(*first);
-						first++;
-					}
+				this->clear();
+				while (first != last) {
+					this->push_back(*first);
+					first++;
+				}
 			}
 
 			void assign(size_type count, const value_type & value) {
+				if (count > _alloc.max_size())
+					throw (std::length_error("Over max size"));
 				this->clear();
 				if (_start)
 					_alloc.deallocate(_start, _capacity);
@@ -158,7 +170,80 @@ namespace ft {
 				_cap_end = _start + _capacity;
 			}
 
+			void reserve(size_type new_cap) {
+				if (new_cap > _alloc.max_size()) {
+					throw (std::length_error("Over max size"));
+				}
+				if (!_capacity)
+					return ;
+				if (new_cap > _capacity) {
+					pointer new_start = _alloc.allocate(new_cap);
+					pointer new_end = new_start;
+					pointer tmp = _start;
+
+					while (tmp != _end) {
+						_alloc.construct(new_end, *tmp);
+						new_end++;
+						tmp++;
+					}
+					size_type exsize = _size;
+					this->clear();
+					_size = exsize;
+					_alloc.deallocate(_start, _capacity);
+					_capacity = new_cap;
+					_start = new_start;
+					_end = new_end;
+				}
+			}
+
+			void resize(size_type count, T value = T()) {
+				if (count > _alloc.max_size()) {
+					throw (std::length_error("Over max size"));
+				}
+				if (_size > count) {
+					pointer new_start = _alloc.allocate(count);
+					pointer new_end = new_start;
+					pointer tmp = _start;
+
+					for (size_type i = 0; i < count; i++) {
+						_alloc.construct(new_end, *tmp);
+						tmp++;
+						new_end++;
+					}
+					this->clear();
+					_size = count;
+					if (_start)
+						_alloc.deallocate(_start, _capacity);
+					_capacity = count;
+					_start = new_start;
+					_end = new_end;
+				} else if (_size < count) {
+					pointer new_start = _alloc.allocate(count);
+					pointer new_end = new_start;
+					pointer tmp = _start;
+
+					while (tmp != _end) {
+						_alloc.construct(new_end, *tmp);
+						tmp++;
+						new_end++;
+					}
+					for (size_type i = _size; i < count; i++) {
+						_alloc.construct(new_end, value);
+						new_end++;
+					}
+					this->clear();
+					_size = count;
+					if (_start)
+						_alloc.deallocate(_start, _capacity);
+					_capacity = count;
+					_start = new_start;
+					_end = new_end;
+				}
+			}
+
 			void push_back(const T& value) {
+				if (_size + 1 > _alloc.max_size())
+					throw (std::length_error("Over max size"));
 				if (!_capacity) {
 					_capacity = 1;
 					_start = _alloc.allocate(_capacity);
@@ -190,6 +275,12 @@ namespace ft {
 					_end++;
 					_size++;
 				}
+			}
+
+			void pop_back(void) {
+				_alloc.destroy(_end - 1);
+				_end--;
+				_size--;
 			}
 
 			iterator erase(iterator pos) {
@@ -226,6 +317,8 @@ namespace ft {
 			}
 
 			iterator insert(const_iterator pos, const T& value) {
+				if (_size + 1 > _alloc.max_size())
+					throw (std::length_error("Over max size"));
 				if (!_capacity) {
 					push_back(value);
 					return (_start);
@@ -279,6 +372,8 @@ namespace ft {
 	
 
 			iterator insert(const_iterator pos, size_type count, const T& value) {
+				if (_size + count > _alloc.max_size())
+					throw (std::length_error("Over max size"));
 				if (!_size) {
 					assign(count, value);
 				} else if (_size + count <= _capacity * 2) {
@@ -336,15 +431,17 @@ namespace ft {
 
 			template<class InputIt>
 			iterator _insert_range(const_iterator pos, InputIt first, InputIt last, std::random_access_iterator_tag) {
-				if (!_size) {
-					assign(first, last);
-					return (_start);
-				}
 				size_type	dist = 0;
 				InputIt tmpIt = first;
 				while (tmpIt != last) {
 					dist++;
 					tmpIt++;
+				}
+				if (_size + dist > _alloc.max_size())
+					throw (std::length_error("Over max size"));
+				if (!_size) {
+					assign(first, last);
+					return (_start);
 				}
 				tmpIt = first;
 				if (_size + dist <= _capacity * 2) {
@@ -353,6 +450,7 @@ namespace ft {
 						pos = insert(pos, *last);
 						last--;
 					}
+					pos = insert(pos, *last);
 				} else {
 					pointer new_start = _alloc.allocate(_size + dist);
 					pointer new_end = new_start;
@@ -385,6 +483,13 @@ namespace ft {
 				return (pos);
 			}
 
+			void swap(vector & other) {
+				std::swap(this->_start, other._start);
+				std::swap(this->_end, other._end);
+				std::swap(this->_capacity, other._capacity);
+				std::swap(this->_size, other._size);
+			}
+
 			iterator begin(void) {
 				return (_start);
 			}
@@ -393,12 +498,28 @@ namespace ft {
 				return (_start);
 			}
 
+			reverse_iterator rbegin(void) {
+				return ((this->end())--);
+			}
+
+			const_reverse_iterator rbegin(void) const {
+				return ((this->end())--);
+			}
+
 			iterator end(void) {
 				return (_end);
 			}
 
 			const_iterator end(void) const {
 				return (_end);
+			}
+
+			reverse_iterator rend(void) {
+				return ((this->begin())--);
+			}
+
+			const_reverse_iterator rend(void) const {
+				return ((this->begin())--);
 			}
 
 			void clear(void) {
@@ -506,6 +627,10 @@ namespace ft {
 	template<class T, class Alloc>
 	bool operator>=(const ft::vector<T, Alloc> & lhs, const ft::vector<T, Alloc> & rhs) {
 		return (!(lhs < rhs));
+	}
+	template<class T, class Alloc>
+	void swap(ft::vector<T, Alloc> & lhs, ft::vector<T, Alloc> & rhs) {
+		lhs.swap(rhs);
 	}
 }
 
