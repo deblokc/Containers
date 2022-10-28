@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/22 16:11:29 by tnaton            #+#    #+#             */
-/*   Updated: 2022/10/27 19:30:50 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/10/28 22:01:55 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,6 @@ namespace ft {
 			Iterator operator-(difference_type n){Iterator tmp(*this); tmp -= n; return (tmp);}
 
 			difference_type operator-(const Iterator & other){return (_ptr - other._ptr);}
-			difference_type operator+(const Iterator & other){return (_ptr + other._ptr);}
 
 			bool operator==(const Iterator & other){return this->_ptr == other._ptr;}
 			bool operator!=(const Iterator & other){return this->_ptr != other._ptr;}
