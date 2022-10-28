@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/27 19:00:11 by tnaton            #+#    #+#             */
-/*   Updated: 2022/10/27 19:44:57 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/10/28 21:37:06 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 
 namespace ft {
 	template <class Iter>
-	class reverse_iterator {
+	class reverse_iterator : public std::iterator<typename iterator_traits<Iter>::iterator_category, typename iterator_traits<Iter>::value_type, typename iterator_traits<Iter>::difference_type, typename iterator_traits<Iter>::pointer, typename iterator_traits<Iter>::reference> {
 		public:
 			typedef iterator_traits<Iter>								iterator;
 			typedef typename iterator_traits<Iter>::iterator_category	iterator_category;
@@ -26,9 +26,9 @@ namespace ft {
 			typedef typename iterator_traits<Iter>::pointer				pointer;
 			typedef typename iterator_traits<Iter>::reference			reference;
 
-			reverse_iterator(void){}
+			reverse_iterator(void): _it(){}
 			reverse_iterator(const reverse_iterator & other){this->_it = other._it;}
-			reverse_iterator(iterator it){this->_it = it;}
+			reverse_iterator(Iter it): _it(it){}
 			~reverse_iterator(void){}
 
 			reverse_iterator &operator=(const reverse_iterator & other){if (this != &other){this->_it = other._it;}return *this;}
@@ -38,8 +38,8 @@ namespace ft {
 			reverse_iterator operator--(int){reverse_iterator tmp(*this);this->_it++;return tmp;}
 
 			value_type &operator[](difference_type n){return (*(this->_it - n));}
-			value_type &operator*(void){return *(this->_it);}
-			value_type *operator->(void){return this->_it;}
+			value_type &operator*(void){return *(this->_it - 1);}
+			value_type *operator->(void){return (this->_it);}
 
 			reverse_iterator &operator+=(difference_type n){this->_it -= n; return *this;}
 			reverse_iterator &operator-=(difference_type n){this->_it += n; return *this;}
@@ -49,6 +49,7 @@ namespace ft {
 			difference_type operator-(const reverse_iterator & other){return (_it + other._it);}
 			difference_type operator+(const reverse_iterator & other){return (_it - other._it);}
 
+		public:
 			bool operator==(const reverse_iterator & other){return this->_it == other._it;}
 			bool operator!=(const reverse_iterator & other){return this->_it != other._it;}
 			bool operator>(const reverse_iterator & other){return this->_it > other._it;}
@@ -60,7 +61,7 @@ namespace ft {
 			friend reverse_iterator operator-(typename reverse_iterator::difference_type n, reverse_iterator i){return (i - n);}
 
 		private:
-			iterator _it;
+			Iter _it;
 	};
 }
 

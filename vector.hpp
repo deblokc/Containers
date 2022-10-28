@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/22 16:11:43 by tnaton            #+#    #+#             */
-/*   Updated: 2022/10/27 19:43:26 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/10/28 19:37:45 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,8 @@ namespace ft {
 			typedef typename Allocator::const_pointer			const_pointer;
 			typedef typename ft::Iterator<T>					iterator;
 			typedef typename ft::Iterator<T>					const_iterator;
-			typedef typename ft::reverse_iterator<iterator>		reverse_iterator;
-			typedef typename ft::reverse_iterator<iterator>		const_reverse_iterator;
+			typedef typename ft::reverse_iterator<Iterator<T> >	reverse_iterator;
+			typedef typename ft::reverse_iterator<Iterator<T> >	const_reverse_iterator;
 
 
 		// definition des constructeurs
@@ -499,11 +499,11 @@ namespace ft {
 			}
 
 			reverse_iterator rbegin(void) {
-				return ((this->end())--);
+				return (reverse_iterator(this->end()));
 			}
 
 			const_reverse_iterator rbegin(void) const {
-				return ((this->end())--);
+				return (const_reverse_iterator(this->end()));
 			}
 
 			iterator end(void) {
@@ -515,11 +515,11 @@ namespace ft {
 			}
 
 			reverse_iterator rend(void) {
-				return ((this->begin())--);
+				return (reverse_iterator(this->begin()));
 			}
 
 			const_reverse_iterator rend(void) const {
-				return ((this->begin())--);
+				return (const_reverse_iterator(this->begin()));
 			}
 
 			void clear(void) {
