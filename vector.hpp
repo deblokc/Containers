@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/22 16:11:43 by tnaton            #+#    #+#             */
-/*   Updated: 2022/10/28 19:37:45 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/10/29 18:51:31 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,10 @@ namespace ft {
 			}
 
 			vector(const vector& other){
+				_size = 0;
+				_start = NULL;
+				_end = NULL;
+				_capacity = 0;
 				_alloc = other._alloc;
 				this->assign(other._start, other._end);
 			}
@@ -546,13 +550,13 @@ namespace ft {
 			}
 
 			reference at(size_type pos) {
-				if (pos >= size())
+				if (pos >= _size)
 					throw (std::out_of_range("ft::vector"));
 				return (*(_start + pos));
 			}
 
 			const_reference at(size_type pos) const {
-				if (pos >= size())
+				if (pos >= _size)
 					throw (std::out_of_range("ft::vector"));
 				return (*(_start + pos));
 			}

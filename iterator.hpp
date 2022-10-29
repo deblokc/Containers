@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/22 16:11:29 by tnaton            #+#    #+#             */
-/*   Updated: 2022/10/28 22:01:55 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/10/29 19:16:33 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,10 +41,10 @@ namespace ft {
 
 			Iterator &operator+=(difference_type n){this->_ptr += n; return *this;}
 			Iterator &operator-=(difference_type n){this->_ptr -= n; return *this;}
-			Iterator operator+(difference_type n){Iterator tmp(*this); tmp += n; return (tmp);}
-			Iterator operator-(difference_type n){Iterator tmp(*this); tmp -= n; return (tmp);}
+			Iterator operator+(difference_type n) const {Iterator tmp(*this); tmp += n; return (tmp);}
+			Iterator operator-(difference_type n) const {Iterator tmp(*this); tmp -= n; return (tmp);}
 
-			difference_type operator-(const Iterator & other){return (_ptr - other._ptr);}
+			difference_type operator-(const Iterator & other) const {return (_ptr - other._ptr);}
 
 			bool operator==(const Iterator & other){return this->_ptr == other._ptr;}
 			bool operator!=(const Iterator & other){return this->_ptr != other._ptr;}
@@ -53,10 +53,14 @@ namespace ft {
 			bool operator<(const Iterator & other){return this->_ptr < other._ptr;}
 			bool operator<=(const Iterator & other){return this->_ptr <= other._ptr;}
 
-			friend Iterator operator+(typename Iterator::difference_type n, Iterator i){return (i + n);}
-			friend Iterator operator-(typename Iterator::difference_type n, Iterator i){return (i - n);}
 		private:
 			pointer _ptr;
 	};
+
+	template<class Iterator>
+	Iterator operator+(typename Iterator::difference_type n, Iterator i) {return (i + n);}
+
+	template<class Iterator>
+	Iterator operator-(typename Iterator::difference_type n, Iterator i) {return (i - n);}
 }
 #endif
