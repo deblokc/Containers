@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/22 16:11:29 by tnaton            #+#    #+#             */
-/*   Updated: 2022/10/29 19:16:33 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/10/29 19:46:47 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,8 +36,11 @@ namespace ft {
 			Iterator operator--(int){Iterator tmp(*this);this->_ptr--;return tmp;}
 
 			value_type &operator[](difference_type n){return (*(this->_ptr + n));}
+			const value_type &operator[](difference_type n) const {return (*(this->_ptr + n));}
 			value_type &operator*(void){return *(this->_ptr);}
+			const value_type &operator*(void) const {return *(this->_ptr);}
 			value_type *operator->(void){return this->_ptr;}
+			const value_type *operator->(void) const {return this->_ptr;}
 
 			Iterator &operator+=(difference_type n){this->_ptr += n; return *this;}
 			Iterator &operator-=(difference_type n){this->_ptr -= n; return *this;}
@@ -46,12 +49,12 @@ namespace ft {
 
 			difference_type operator-(const Iterator & other) const {return (_ptr - other._ptr);}
 
-			bool operator==(const Iterator & other){return this->_ptr == other._ptr;}
-			bool operator!=(const Iterator & other){return this->_ptr != other._ptr;}
-			bool operator>(const Iterator & other){return this->_ptr > other._ptr;}
-			bool operator>=(const Iterator & other){return this->_ptr >= other._ptr;}
-			bool operator<(const Iterator & other){return this->_ptr < other._ptr;}
-			bool operator<=(const Iterator & other){return this->_ptr <= other._ptr;}
+			bool operator==(const Iterator & other) const {return this->_ptr == other._ptr;}
+			bool operator!=(const Iterator & other) const {return this->_ptr != other._ptr;}
+			bool operator>(const Iterator & other) const {return this->_ptr > other._ptr;}
+			bool operator>=(const Iterator & other) const {return this->_ptr >= other._ptr;}
+			bool operator<(const Iterator & other) const {return this->_ptr < other._ptr;}
+			bool operator<=(const Iterator & other) const {return this->_ptr <= other._ptr;}
 
 		private:
 			pointer _ptr;
