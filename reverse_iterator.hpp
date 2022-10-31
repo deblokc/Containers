@@ -6,14 +6,14 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/27 19:00:11 by tnaton            #+#    #+#             */
-/*   Updated: 2022/10/29 19:34:49 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/10/31 17:28:23 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef REVERSE_ITERATOR_HPP
 # define REVERSE_ITERATOR_HPP
 # include <iterator>
-# include "iterator.hpp"
+# include "viterator.hpp"
 #include <iostream>
 
 namespace ft {

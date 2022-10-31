@@ -92,6 +92,22 @@ namespace ft {
 		}
 		return ((first1 == last1) && (first2 != last2));
 	}
+
+	struct is_false {
+		static const bool val = false;
+		typedef is_false type;
+	};
+
+	struct is_true {
+		static const bool val = true;
+		typedef is_true type;
+	};
+
+	template<typename T, typename U>
+	struct is_same : public is_false{};
+
+	template<typename T>
+	struct is_same<T, T>: public is_true {};
 }
 
 #endif

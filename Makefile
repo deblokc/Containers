@@ -6,7 +6,7 @@
 #    By: tnaton <marvin@42.fr>                      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/09/22 19:13:09 by tnaton            #+#    #+#              #
-#    Updated: 2022/10/08 16:21:26 by tnaton           ###   ########.fr        #
+#    Updated: 2022/10/31 17:28:06 by tnaton           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,7 @@ NAME = test
 
 SRC = main.cpp
 
-INC = vector.hpp iterator.hpp iterator_traits.hpp stack.hpp
+INC = vector.hpp viterator.hpp iterator_traits.hpp stack.hpp
 
 OBJ = $(SRC:.cpp=.o)
 
