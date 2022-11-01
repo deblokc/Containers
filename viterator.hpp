@@ -16,6 +16,7 @@
 #include "utils.hpp"
 
 namespace ft {
+	
 	template <typename ptr, typename ctnr>
 	class viterator {
 		public :
@@ -30,13 +31,13 @@ namespace ft {
 			explicit viterator(const iterator_type & other_ptr) : _ptr(other_ptr) {}
 
 			template <typename Ptr>
-			viterator(const viterator<Ptr, typename enable_if<is_same<Ptr, typename ctnr::pointer>::value, ctnr>::type> & other) : _ptr(other.base()) {}
+			viterator(const viterator<Ptr, typename enable_if<is_same<Ptr, typename ctnr::pointer>::val, ctnr>::type> & other) : _ptr(other.base()) {}
 
 			~viterator() {}
 
-			viterator & operator=(const viterator &other) {
-			//	if (*this == &other)
-			//		return (*this);
+			viterator & operator=(const viterator & other) {
+				if (this == &other)
+					return (*this);
 				this->_ptr = other._ptr;
 				return (*this);
 			}

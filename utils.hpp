@@ -106,10 +106,11 @@ namespace ft {
 	};
 
 	template<typename T, typename U>
-	struct is_same : public is_false{};
+	struct is_same : public is_false {};
 
 	template<typename T>
-	struct is_same<T, T>: public is_true {};
+	struct is_same<T, T> : public is_true {};
+
 }
 
 #endif

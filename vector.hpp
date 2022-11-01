@@ -338,7 +338,7 @@ namespace ft {
 							tmp++;
 						}
 						_alloc.construct(new_end, value);
-						pos = new_end;
+						pos.base() = new_end;
 						new_end++;
 						while (tmp != _end) {
 							_alloc.construct(new_end, *tmp);
@@ -353,7 +353,7 @@ namespace ft {
 						_start = new_start;
 						_end = new_end;
 					} else {
-						if (pos != _end) {
+						if (pos.base() != _end) {
 							_alloc.construct(_end, *(_end - 1));
 							pointer tmp = (_end - 1);
 							while (tmp != &(*pos)) {
@@ -394,7 +394,7 @@ namespace ft {
 						new_end++;
 						tmp++;
 					}
-					pos = new_end;
+					pos.base() = new_end;
 					for (size_type i = 0; i < count; i++) {
 						_alloc.construct(new_end, value);
 						new_end++;
@@ -465,7 +465,7 @@ namespace ft {
 						new_end++;
 						tmp++;
 					}
-					pos = new_end;
+					pos.base() = new_end;
 					for (size_type i = 0; i < dist; i++) {
 						_alloc.construct(new_end, *tmpIt);
 						new_end++;

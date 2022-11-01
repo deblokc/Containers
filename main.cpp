@@ -9,10 +9,12 @@
 /*   Updated: 2022/10/26 17:24:09 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "vector.hpp"
+//#include "vector.hpp"
+#include <iostream>
 #include <string>
 #include <vector>
 
+/*
 template<class T>
 void print(T& vector) {
 	typedef typename T::iterator iterator;
@@ -37,9 +39,20 @@ void print(int id, const ft::vector<int>& container)
         std::cout << *it << ' ';
     std::cout << '\n';
 }
-
+*/
 int main () {
+	
 
+	{
+		std::vector<int> v;
+
+		std::vector<int>::const_iterator ctest = v.end();
+
+		std::vector<int>::iterator nit = v.insert(ctest, 10);
+
+		std::cout << *nit << std::endl;
+	}
+/*
 	{
 		ft::vector<int> v;
 
@@ -49,7 +62,7 @@ int main () {
 
 		std::cerr << "Val : " << *it << std::endl;
 	}
-
+*/
 /*	{
 		ft::vector<int> c1(3, 100);
 		print(1, c1);
