@@ -16,7 +16,33 @@
 
 namespace ft {
 
-	template<class Iter> struct iterator_traits {
+	template <typename T>
+	struct remove_const {
+		typedef T type;
+	};
+
+	template <typename T>
+	struct remove_const<const T> {
+		typedef T type;
+	};
+
+	template <typename T>
+	struct remove_volatile {
+		typedef T type;
+	};
+
+	template <typename T>
+	struct remove_volatile<volatile T> {
+		typedef T type;
+	};
+
+	template <typename T>
+	struct remove_volatile_const {
+		typedef typename remove_volatile<typename remove_const<T>::type>::type type;
+	};
+
+	template<class Iter>
+	struct iterator_traits {
 		typedef typename Iter::difference_type		difference_type;
 		typedef typename Iter::value_type			value_type;
 		typedef typename Iter::pointer				pointer;
@@ -24,14 +50,14 @@ namespace ft {
 		typedef typename Iter::iterator_category	iterator_category;
 	};
 
-	template<class T> struct iterator_traits<T*> {
+	template<class T>
+	struct iterator_traits<T*> {
 		typedef std::ptrdiff_t								difference_type;
-		typedef T											value_type;
+		typedef typename remove_volatile_const<T>::type		value_type;
 		typedef T*											pointer;
 		typedef T&											reference;
 		typedef typename std::random_access_iterator_tag	iterator_category;
 	};
-
 }
 #endif
 

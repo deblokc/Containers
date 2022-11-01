@@ -30,13 +30,13 @@ namespace ft {
 			explicit viterator(const iterator_type & other_ptr) : _ptr(other_ptr) {}
 
 			template <typename Ptr>
-			viterator(const viterator<Ptr, typename enable_if<is_same<Ptr, typename ctnr::pointer>::value, ctnr>::type> & other) : _ptr(other._ptr) {}
+			viterator(const viterator<Ptr, typename enable_if<is_same<Ptr, typename ctnr::pointer>::value, ctnr>::type> & other) : _ptr(other.base()) {}
 
 			~viterator() {}
 
 			viterator & operator=(const viterator &other) {
-				if (*this == &other)
-					return (*this);
+			//	if (*this == &other)
+			//		return (*this);
 				this->_ptr = other._ptr;
 				return (*this);
 			}
@@ -53,8 +53,8 @@ namespace ft {
 
 			viterator & operator+=(difference_type n){this->_ptr += n; return *this;}
 			viterator & operator-=(difference_type n){this->_ptr -= n; return *this;}
-			viterator operator+(difference_type n){return viterator(this->_ptr + n);}
-			viterator operator-(difference_type n){return viterator(this->_ptr - n);}
+			viterator operator+(difference_type n) const {return viterator(this->_ptr + n);}
+			viterator operator-(difference_type n) const {return viterator(this->_ptr - n);}
 
 		protected :
 			iterator_type _ptr;

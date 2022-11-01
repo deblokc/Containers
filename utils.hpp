@@ -1,6 +1,8 @@
 #ifndef UTILS_HPP
 # define UTILS_HPP
 
+#include "iterator_traits.hpp"
+
 namespace ft {
 
 	template<bool, class T = void>
@@ -49,7 +51,7 @@ namespace ft {
 		struct is_integral_type<unsigned long int> : is_integral_test<true, unsigned long int> {};
 
 	template <typename T>
-		struct is_integral : is_integral_type<T> {};
+		struct is_integral : is_integral_type<typename remove_volatile_const<T>::type> {};
 
 	template<class InputIt1, class InputIt2>
 	bool equal(InputIt1 first1, InputIt1 last1, InputIt2 first2) {

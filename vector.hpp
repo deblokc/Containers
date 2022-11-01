@@ -26,14 +26,14 @@ namespace ft {
 		public:
 			typedef T													value_type;
 			typedef Allocator											allocator_type;
-			typedef size_t												size_type;
-			typedef std::ptrdiff_t										difference_type;
+			typedef typename Allocator::size_type						size_type;
+			typedef typename Allocator::difference_type					difference_type;
 			typedef typename Allocator::reference						reference;
 			typedef typename Allocator::const_reference					const_reference;
 			typedef typename Allocator::pointer							pointer;
 			typedef typename Allocator::const_pointer					const_pointer;
 			typedef typename ft::viterator<pointer, vector>				iterator;
-			typedef typename ft::viterator<pointer, vector>		const_iterator;
+			typedef typename ft::viterator<const_pointer, vector>		const_iterator;
 			typedef typename ft::reverse_iterator<iterator>				reverse_iterator;
 			typedef typename ft::reverse_iterator<const_iterator>		const_reverse_iterator;
 
@@ -320,7 +320,7 @@ namespace ft {
 				return d_first;
 			}
 
-			iterator insert(const_iterator pos, const T& value) {
+			iterator insert(iterator pos, const T& value) {
 				if (_size + 1 > _alloc.max_size())
 					throw (std::length_error("Over max size"));
 				if (!_capacity) {
@@ -375,7 +375,7 @@ namespace ft {
 			}
 	
 
-			iterator insert(const_iterator pos, size_type count, const T& value) {
+			iterator insert(iterator pos, size_type count, const T& value) {
 				if (_size + count > _alloc.max_size())
 					throw (std::length_error("Over max size"));
 				if (!_size) {
@@ -417,7 +417,7 @@ namespace ft {
 			}
 
 			template<class InputIt>
-			iterator insert(const_iterator pos, InputIt first, InputIt last,
+			iterator insert(iterator pos, InputIt first, InputIt last,
 					typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type* = NULL) {
 				typedef typename iterator_traits<InputIt>::iterator_category	category;
 				if (!_capacity) {
@@ -428,13 +428,13 @@ namespace ft {
 			}
 
 			template<class InputIt>
-			iterator _insert_range(const_iterator pos, InputIt first, InputIt last, std::input_iterator_tag) {
+			iterator _insert_range(iterator pos, InputIt first, InputIt last, std::input_iterator_tag) {
 				vector tmp(first, last);
 				return iterator(_insert_range(pos, tmp.begin(), tmp.end(), std::random_access_iterator_tag()));
 			}
 
 			template<class InputIt>
-			iterator _insert_range(const_iterator pos, InputIt first, InputIt last, std::random_access_iterator_tag) {
+			iterator _insert_range(iterator pos, InputIt first, InputIt last, std::random_access_iterator_tag) {
 				size_type	dist = 0;
 				InputIt tmpIt = first;
 				while (tmpIt != last) {

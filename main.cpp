@@ -33,13 +33,12 @@ void printeq(T& v1, T& v2) {
 void print(int id, const ft::vector<int>& container)
 {
     std::cout << id << ". ";
-    for (ft::vector<int>::iterator it = container.begin(); it != container.end(); it++)
+    for (ft::vector<int>::const_iterator it = container.begin(); it != container.end(); it++)
         std::cout << *it << ' ';
     std::cout << '\n';
 }
 
 int main () {
-
 
 	{
 		ft::vector<int> v;

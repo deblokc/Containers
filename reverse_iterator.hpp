@@ -18,7 +18,7 @@
 
 namespace ft {
 	template <class Iter>
-	class reverse_iterator : public std::iterator<typename iterator_traits<Iter>::iterator_category, typename iterator_traits<Iter>::value_type, typename iterator_traits<Iter>::difference_type, typename iterator_traits<Iter>::pointer, typename iterator_traits<Iter>::reference> {
+	class reverse_iterator {
 		public:
 			typedef iterator_traits<Iter>								iterator;
 			typedef typename iterator_traits<Iter>::iterator_category	iterator_category;
@@ -29,27 +29,28 @@ namespace ft {
 
 			reverse_iterator(void): _it(){}
 			reverse_iterator(const reverse_iterator & other){this->_it = other._it;}
-			reverse_iterator(Iter it): _it(it){}
+			explicit reverse_iterator(Iter it): _it(it){}
+
+			template <typename It>
+			reverse_iterator(const reverse_iterator<It> & other): _it(other._it) {}
+
 			~reverse_iterator(void){}
 
-			reverse_iterator &operator=(const reverse_iterator & other){if (this != &other){this->_it = other._it;}return *this;}
-			reverse_iterator &operator++(void){this->_it--;return *this;}
+			reverse_iterator & operator=(const reverse_iterator & other){if (this != &other){this->_it = other._it;}return *this;}
+			reverse_iterator & operator++(void){this->_it--;return *this;}
 			reverse_iterator operator++(int){reverse_iterator tmp(*this);this->_it--;return tmp;}
-			reverse_iterator &operator--(void){this->_it++;return *this;}
+			reverse_iterator & operator--(void){this->_it++;return *this;}
 			reverse_iterator operator--(int){reverse_iterator tmp(*this);this->_it++;return tmp;}
 
 			Iter		base(void) const {return (_it);}
-			value_type &operator[](difference_type n) {return *(*this + n);}
-			const value_type &operator[](difference_type n) const {return *(*this + n);}
-			value_type &operator*(void){Iter tmp = _it; return (*--tmp);}
-			const value_type &operator*(void) const {Iter tmp = _it; return (*--tmp);}
-			value_type *operator->(void){return &(operator*());}
-			const value_type *operator->(void) const {return &(operator*());}
+			reference &operator[](difference_type n) const {return *(*this + n);}
+			reference &operator*(void) const {Iter tmp = _it; return (*--tmp);}
+			pointer *operator->(void) const {return &(operator*());}
 
 			reverse_iterator operator+(difference_type n) const {return reverse_iterator(base() - n);}
 			reverse_iterator operator-(difference_type n) const {return reverse_iterator(base() + n);}
-			reverse_iterator &operator+=(difference_type n){this->_it -= n; return *this;}
-			reverse_iterator &operator-=(difference_type n){this->_it += n; return *this;}
+			reverse_iterator & operator+=(difference_type n){this->_it -= n; return *this;}
+			reverse_iterator & operator-=(difference_type n){this->_it += n; return *this;}
 
 		private:
 			Iter _it;
