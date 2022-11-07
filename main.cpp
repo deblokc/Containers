@@ -48,7 +48,7 @@ int main () {
 
 		std::vector<int>::const_iterator ctest = v.end();
 
-		std::vector<int>::iterator nit = v.insert(ctest, 10);
+		std::vector<int>::iterator nit = ctest;
 
 		std::cout << *nit << std::endl;
 	}
