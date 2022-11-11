@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/27 19:00:11 by tnaton            #+#    #+#             */
-/*   Updated: 2022/10/31 17:28:23 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/11/07 12:32:48 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ namespace ft {
 			explicit reverse_iterator(Iter it): _it(it){}
 
 			template <typename It>
-			reverse_iterator(const reverse_iterator<It> & other): _it(other._it) {}
+			reverse_iterator(const reverse_iterator<It> & other): _it(other.base()) {}
 
 			~reverse_iterator(void){}
 
@@ -45,7 +45,7 @@ namespace ft {
 			Iter		base(void) const {return (_it);}
 			reference &operator[](difference_type n) const {return *(*this + n);}
 			reference &operator*(void) const {Iter tmp = _it; return (*--tmp);}
-			pointer *operator->(void) const {return &(operator*());}
+			pointer operator->(void) const {return &(operator*());}
 
 			reverse_iterator operator+(difference_type n) const {return reverse_iterator(base() - n);}
 			reverse_iterator operator-(difference_type n) const {return reverse_iterator(base() + n);}
@@ -63,6 +63,11 @@ namespace ft {
 
 	template<class Iter>
 	typename reverse_iterator<Iter>::difference_type operator-(const reverse_iterator<Iter>& lhs, const reverse_iterator<Iter>& rhs) {
+		return (rhs.base() - lhs.base());
+	}
+
+	template<class Lit, class Rit>
+	typename reverse_iterator<Lit>::difference_type operator-(const reverse_iterator<Lit>& lhs, const reverse_iterator<Rit>& rhs) {
 		return (rhs.base() - lhs.base());
 	}
 

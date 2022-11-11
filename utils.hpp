@@ -111,6 +111,14 @@ namespace ft {
 	template<typename T>
 	struct is_same<T, T> : public is_true {};
 
+	template<typename ptr>
+	void swap(ptr & lhs, ptr & rhs) {
+		ptr tmp;
+		tmp = rhs;
+		rhs = lhs;
+		lhs = tmp;
+	}
+
 }
 
 #endif

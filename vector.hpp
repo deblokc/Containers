@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/22 16:11:43 by tnaton            #+#    #+#             */
-/*   Updated: 2022/10/31 17:33:24 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/11/10 15:29:37 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,10 @@ namespace ft {
 				_capacity = count;
 				if (count > _alloc.max_size())
 					throw(std::length_error("Over max size"));
-				_start = _alloc.allocate(_capacity);
+				if (count)
+					_start = _alloc.allocate(_capacity);
+				else
+					_start = NULL;
 				_end = _start;
 				for (size_type i = 0; i < _capacity; i++){
 					_alloc.construct(_end, value);
@@ -122,18 +125,16 @@ namespace ft {
 				_assign(first, last, category());
 			}
 
+		private:
 			template<class InputIt>
 			void _assign(InputIt first, InputIt last, std::random_access_iterator_tag) {
 				pointer		old_start = _start;
 				size_type	old_capa = _capacity;
 				size_type	old_size = _size;
-				_capacity = 0;
-				InputIt tmp = first;
-				while (tmp != last){
-					tmp++;
-					_capacity++;
-				}
-				_start = _alloc.allocate(_capacity);
+
+				_capacity = last - first;
+				if (_capacity)
+					_start = _alloc.allocate(_capacity);
 				_end = _start;
 				while (first != last) {
 					_alloc.construct(_end, *first);
@@ -141,7 +142,6 @@ namespace ft {
 					_end++;
 				}
 				_size = _capacity;
-				_cap_end = _start + _capacity;
 				_clear(old_start, old_size);
 				if (old_start)
 					_alloc.deallocate(old_start, old_capa);
@@ -156,6 +156,7 @@ namespace ft {
 				}
 			}
 
+		public:
 			void assign(size_type count, const value_type & value) {
 				if (count > _alloc.max_size())
 					throw (std::length_error("Over max size"));
@@ -163,7 +164,8 @@ namespace ft {
 				if (_start)
 					_alloc.deallocate(_start, _capacity);
 				_capacity = 0;
-				_start = _alloc.allocate(count);
+				if (count)
+					_start = _alloc.allocate(count);
 				_capacity = count;
 				_size = count;
 				_end = _start;
@@ -288,6 +290,8 @@ namespace ft {
 			}
 
 			iterator erase(iterator pos) {
+				if (pos == end())
+					return (end());
 				if (pos + 1 != end()) {
 					_copy(pos + 1, end(), pos);
 				}
@@ -301,15 +305,24 @@ namespace ft {
 				if (first != last) {
 					if (last != end()) {
 						_copy(last, end(), first);
+						pointer new_end = &(*first) + (end() - last);
+						_clear(new_end, _end - new_end);
+						_size -= (last - first);
+						_end = new_end;
+						return iterator(first);
 					}
-					pointer new_end = &(*first) + (end() - last);
-					_clear(new_end, _end - new_end);
-					_size -= (last - first);
-					_end = new_end;
+					else {
+						pointer new_end = &(*first) + (end() - last);
+						_clear(new_end, _end - new_end);
+						_size -= (last - first);
+						_end = new_end;
+						return iterator(_end);
+					}
 				}
 				return iterator(last);
 			}
 
+		private:
 			template<class InputIt, class OutputIt>
 			OutputIt _copy(InputIt first, InputIt last,
 						  OutputIt d_first)
@@ -320,6 +333,7 @@ namespace ft {
 				return d_first;
 			}
 
+		public:
 			iterator insert(iterator pos, const T& value) {
 				if (_size + 1 > _alloc.max_size())
 					throw (std::length_error("Over max size"));
@@ -338,7 +352,7 @@ namespace ft {
 							tmp++;
 						}
 						_alloc.construct(new_end, value);
-						pos.base() = new_end;
+						iterator ret(new_end);
 						new_end++;
 						while (tmp != _end) {
 							_alloc.construct(new_end, *tmp);
@@ -352,6 +366,7 @@ namespace ft {
 						_capacity *= 2;
 						_start = new_start;
 						_end = new_end;
+						return (ret);
 					} else {
 						if (pos.base() != _end) {
 							_alloc.construct(_end, *(_end - 1));
@@ -394,12 +409,11 @@ namespace ft {
 						new_end++;
 						tmp++;
 					}
-					pos.base() = new_end;
+					iterator ret(new_end);
 					for (size_type i = 0; i < count; i++) {
 						_alloc.construct(new_end, value);
 						new_end++;
 					}
-					new_end++;
 					while (tmp != _end) {
 						_alloc.construct(new_end, *tmp);
 						tmp++;
@@ -412,6 +426,7 @@ namespace ft {
 					_capacity = _size;
 					_start = new_start;
 					_end = new_end;
+					return (ret);
 				}
 				return iterator(pos);
 			}
@@ -427,6 +442,7 @@ namespace ft {
 				return iterator(_insert_range(pos, first, last, category()));
 			}
 
+		private:
 			template<class InputIt>
 			iterator _insert_range(iterator pos, InputIt first, InputIt last, std::input_iterator_tag) {
 				vector tmp(first, last);
@@ -465,7 +481,7 @@ namespace ft {
 						new_end++;
 						tmp++;
 					}
-					pos.base() = new_end;
+					iterator ret(new_end);
 					for (size_type i = 0; i < dist; i++) {
 						_alloc.construct(new_end, *tmpIt);
 						new_end++;
@@ -483,15 +499,17 @@ namespace ft {
 					_capacity = _size;
 					_start = new_start;
 					_end = new_end;
+					return (ret);
 				}
 				return iterator(pos);
 			}
 
+		public:
 			void swap(vector & other) {
-				std::swap(this->_start, other._start);
-				std::swap(this->_end, other._end);
-				std::swap(this->_capacity, other._capacity);
-				std::swap(this->_size, other._size);
+				ft::swap(this->_start, other._start);
+				ft::swap(this->_end, other._end);
+				ft::swap(this->_capacity, other._capacity);
+				ft::swap(this->_size, other._size);
 			}
 
 			iterator begin(void) {
@@ -534,6 +552,7 @@ namespace ft {
 				_size = 0;
 			}
 
+		private:
 			void _clear(pointer start, size_type size) {
 				for (size_type i = 0; i < size; i++) {
 					_alloc.destroy(start);
@@ -549,6 +568,7 @@ namespace ft {
 				return (d_last);
 			}
 
+		public:
 			reference at(size_type pos) {
 				if (pos >= _size)
 					throw (std::out_of_range("ft::vector"));

@@ -6,13 +6,15 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/22 19:09:37 by tnaton            #+#    #+#             */
-/*   Updated: 2022/10/26 17:24:09 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/11/11 14:20:34 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 //#include "vector.hpp"
 #include <iostream>
 #include <string>
 #include <vector>
+#include <typeinfo>
+#define NAMESPACE std
 
 /*
 template<class T>
@@ -40,17 +42,20 @@ void print(int id, const ft::vector<int>& container)
     std::cout << '\n';
 }
 */
+
 int main () {
 	
-
 	{
-		std::vector<int> v;
+		NAMESPACE::vector<int> v(1, 42);
 
-		std::vector<int>::const_iterator ctest = v.end();
+		NAMESPACE::vector<int>::iterator it = v.begin();
 
-		std::vector<int>::iterator nit = ctest;
-
-		std::cout << *nit << std::endl;
+		std::cout << typeid(int *).name() << std::endl;
+		std::cout << typeid(int ).name() << std::endl;
+		std::cout << typeid(it).name() << std::endl;
+		std::cout << typeid(*it).name() << std::endl;
+		std::cout << typeid(it.base()).name() << std::endl;
+		std::cout << typeid(*it.base()).name() << std::endl;
 	}
 /*
 	{
