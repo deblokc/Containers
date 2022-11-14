@@ -6,7 +6,7 @@
 #    By: tnaton <marvin@42.fr>                      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/09/22 19:13:09 by tnaton            #+#    #+#              #
-#    Updated: 2022/11/11 14:17:51 by tnaton           ###   ########.fr        #
+#    Updated: 2022/11/14 10:37:09 by tnaton           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,7 +23,7 @@ CXX = c++
 CXXFLAGS = -Wall -Wextra -Werror -Wpedantic -g -std=c++98
 
 $(NAME): $(OBJ)
-	$(CXX) $(CXXFLAGS) -D NAMESPACE=FT $(OBJ) -o $@
+	$(CXX) $(CXXFLAGS) -D NAMESPACE=std $(OBJ) -o $@
 
 $(OBJ): $(INC)
 

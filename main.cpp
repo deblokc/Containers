@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/22 19:09:37 by tnaton            #+#    #+#             */
-/*   Updated: 2022/11/11 14:20:34 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/11/14 11:11:29 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 //#include "vector.hpp"
@@ -14,7 +14,16 @@
 #include <string>
 #include <vector>
 #include <typeinfo>
+#include <sys/time.h>
 #define NAMESPACE std
+
+class	Clock {
+	public:
+		Clock(void) {gettimeofday(&_time, NULL);};
+		long time(void) {struct timeval now; gettimeofday(&now, NULL); return (((now.tv_sec * 1000) - (_time.tv_sec * 1000)) + (now.tv_usec / 1000) - (_time.tv_usec / 1000));}
+	private:
+		struct timeval _time;
+};
 
 /*
 template<class T>
@@ -44,19 +53,27 @@ void print(int id, const ft::vector<int>& container)
 */
 
 int main () {
-	
+
+	Clock test;
+
 	{
-		NAMESPACE::vector<int> v(1, 42);
-
-		NAMESPACE::vector<int>::iterator it = v.begin();
-
-		std::cout << typeid(int *).name() << std::endl;
-		std::cout << typeid(int ).name() << std::endl;
-		std::cout << typeid(it).name() << std::endl;
-		std::cout << typeid(*it).name() << std::endl;
-		std::cout << typeid(it.base()).name() << std::endl;
-		std::cout << typeid(*it.base()).name() << std::endl;
+		for (int i = 0; i < 1000; i++) {
+			NAMESPACE::vector<int> v1(100000, 1);
+			NAMESPACE::vector<int> v2(100000, 2);
+			NAMESPACE::vector<int> v3(100000, 3);
+			NAMESPACE::vector<int> v4(100000, 4);
+			NAMESPACE::vector<int> v5(100000, 5);
+			NAMESPACE::vector<int> v6(100000, 6);
+			NAMESPACE::vector<int> v7(100000, 7);
+			NAMESPACE::vector<int> v8(100000, 8);
+			NAMESPACE::vector<int> v9(100000, 9);
+			std::cout << i/10 << "." << i%10 << "%" << std::flush << '\r';
+			std::cout.clear();
+		}
 	}
+	long	tmp = test.time();
+
+	std::cout << tmp/1000 << "." << tmp%1000 << "s" << std::endl;
 /*
 	{
 		ft::vector<int> v;
