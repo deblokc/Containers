@@ -6,7 +6,7 @@
 #    By: tnaton <marvin@42.fr>                      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/09/22 19:13:09 by tnaton            #+#    #+#              #
-#    Updated: 2022/11/15 15:54:19 by tnaton           ###   ########.fr        #
+#    Updated: 2022/11/16 13:25:03 by tnaton           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -29,13 +29,15 @@ CXXFLAGS = -Wall -Wextra -Werror -Wpedantic -O3 -g -std=c++98
 all: $(FT) $(STD)
 .PHONY: all
 
-$(FT): $(SRC)
+$(FT): $(SRC) $(INC)
 	$(CXX) $(CXXFLAGS) -DNAMESPACE=ft -DPREC=$(PREC) $(SRC) -o $@
 	
-$(STD): $(SRC)
+$(STD): $(SRC) $(INC)
 	$(CXX) $(CXXFLAGS) -DNAMESPACE=std -DPREC=$(PREC) $(SRC) -o $@
 
 $(OBJ): $(INC)
+
+$(SRC): $(INC)
 
 clean:
 	rm -rf $(OBJ) ft.log std.log

@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/22 16:11:43 by tnaton            #+#    #+#             */
-/*   Updated: 2022/11/15 15:24:21 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/11/16 13:19:19 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -161,12 +161,13 @@ namespace ft {
 				if (count > _alloc.max_size())
 					throw (std::length_error("Over max size"));
 				this->clear();
-				if (_start)
-					_alloc.deallocate(_start, _capacity);
-				_capacity = 0;
-				if (count)
+				if (count > _capacity)
+				{
+					if (_capacity)
+						_alloc.deallocate(_start, _capacity);
 					_start = _alloc.allocate(count);
-				_capacity = count;
+					_capacity = count;
+				}
 				_size = count;
 				_end = _start;
 				while (count--) {
