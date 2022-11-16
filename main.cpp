@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/22 19:09:37 by tnaton            #+#    #+#             */
-/*   Updated: 2022/11/14 19:37:17 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/11/15 20:20:12 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include <vector>
 #include <typeinfo>
 #include <sys/time.h>
+#include <limits>
 
 #ifndef NAMESPACE
 # define NAMESPACE std
@@ -25,103 +26,328 @@
 # define PREC 1
 #endif
 
+#define MAXSIZE (((std::size_t)std::numeric_limits<int>::max() / sizeof(int))/4)
+
+#define ROUND(x) ((x - 1 < 0)? 1 : (int)x)
+
 class	Clock {
 	public:
 		Clock(void) {gettimeofday(&_time, NULL);};
 		long time(void) {struct timeval now; gettimeofday(&now, NULL); return (((now.tv_sec * 1000) - (_time.tv_sec * 1000)) + (now.tv_usec / 1000) - (_time.tv_usec / 1000));}
-		void p(void) {long tmp = time(); std::cout << tmp/1000 << "." << tmp%1000 << "s" << std::endl;}
+		void p(void) {long tmp = time(); std::cout << tmp/1000 << "." << tmp%1000 << "s ";}
 	private:
 		struct timeval _time;
 };
 
 int main () {
 	{
-		std::cerr << "THIS IS PREC : " << PREC << std::endl;
-		std::cout << "### TEST CONSTRUCTOR VECTOR ###" << std::endl;
+		std::cerr << "### TEST CONSTRUCTOR VECTOR ###" << std::endl;
+		std::cerr << std::endl;
 		{
 			Clock test;
-			for (int i = 0; i < 10000 * PREC; i++) {
-				for (int j = 0; j < 5000; j++)
+			for (int i = 0; i < 100000 * PREC; i++) {
+				for (int j = 0; j < 50000; j++)
 					NAMESPACE::vector<std::string> v;
-				std::cerr << i/(100 * PREC) << "." << i%(100 * PREC) << "%" << std::flush << '\r';
+				std::cerr << (i+1)/(1000 * PREC) << "." << (i+1)%(1000 * PREC) << "%   " << '\r';
 				std::cout.clear();
 			}
 			test.p();
+			std::cout << "vector default constructor" << std::endl;
 		}
 		std::cerr << std::endl;
 		{
 			Clock test;
-			for (int i = 0; i < 1000 * PREC; i++) {
-				NAMESPACE::vector<int> v1(100000, 1);
-				NAMESPACE::vector<int> v2(100000, 2);
-				NAMESPACE::vector<int> v3(100000, 3);
-				NAMESPACE::vector<int> v4(100000, 4);
-				NAMESPACE::vector<int> v5(100000, 5);
-				NAMESPACE::vector<int> v6(100000, 6);
-				NAMESPACE::vector<int> v7(100000, 7);
-				NAMESPACE::vector<int> v8(100000, 8);
-				NAMESPACE::vector<int> v9(100000, 9);
-				std::cerr << i/(10 * PREC) << "." << i%(10 * PREC) << "%" << std::flush << '\r';
-				std::cout.clear();
+			for (int i = 0; i < 1 * PREC; i++) {
+				NAMESPACE::vector<int> v1(MAXSIZE, 1);
+				std::cerr << (i+1)/(0.01 * PREC) << "." << (i+1)%(ROUND(0.01 * PREC)) << "%   " << '\r';
 			}
 			test.p();
+			std::cout << "vector value constructor" << std::endl;
 		}
 		std::cerr << std::endl;
 		{
-			std::string lst[1000];
-			for (int i = 0; i < 1000; i++)
-				lst[i] = "42";
-			NAMESPACE::vector<std::string> vec(1000, "foo");
+			NAMESPACE::vector<int> vec(MAXSIZE, 42);
 			Clock test;
-			for (int i = 0; i < 10000 * PREC; i++) {
-				NAMESPACE::vector<std::string> v1(lst, lst + 1000);
-				NAMESPACE::vector<std::string> v2(lst, lst + 950);
-				NAMESPACE::vector<std::string> v4(vec.begin(), vec.begin() + 900);
-				NAMESPACE::vector<std::string> v5(lst, lst + 900);
-				NAMESPACE::vector<std::string> v7(lst, lst + 500);
-				NAMESPACE::vector<std::string> v8(lst, lst + 1000);
-				NAMESPACE::vector<std::string> v9(vec.begin(), vec.end());
-
-				std::cerr << i/(100 * PREC) << "." << i%(100 * PREC) << "%" << std::flush << '\r';
+			for (int i = 0; i < 1 * PREC; i++) {
+				NAMESPACE::vector<int> v1(vec.begin(), vec.end());
+				std::cerr << (i+1)/(0.01 * PREC) << "." << (i+1)%(ROUND(0.01 * PREC)) << "%   " << '\r';
 				std::cout.clear();
 			}
 			test.p();
+			std::cout << "vector iterator constructor" << std::endl;
 		}
 		std::cerr << std::endl;
 		{
 			Clock test;
 
-			NAMESPACE::vector<std::string> v1(500, "bar");
-			NAMESPACE::vector<NAMESPACE::vector<std::string> >v2 (2, v1);
-			NAMESPACE::vector<NAMESPACE::vector<NAMESPACE::vector<std::string> > > v3(2, v2);
-			for (int i = 0; i < 10000 * PREC; i++) {
-				NAMESPACE::vector<NAMESPACE::vector<NAMESPACE::vector<std::string> > > vector1(v3);
-				NAMESPACE::vector<NAMESPACE::vector<NAMESPACE::vector<std::string> > > vector2(v3);
-				NAMESPACE::vector<NAMESPACE::vector<NAMESPACE::vector<std::string> > > vector3(v3);
-				NAMESPACE::vector<NAMESPACE::vector<NAMESPACE::vector<std::string> > > vector4(v3);
-				NAMESPACE::vector<NAMESPACE::vector<NAMESPACE::vector<std::string> > > vector5(v3);
+			NAMESPACE::vector<int> v1(MAXSIZE, 21);
+			NAMESPACE::vector<NAMESPACE::vector<int> >v2 (1, v1);
+			NAMESPACE::vector<NAMESPACE::vector<NAMESPACE::vector<int> > > v3(1, v2);
+			for (int i = 0; i < 1 * PREC; i++) {
+				NAMESPACE::vector<NAMESPACE::vector<NAMESPACE::vector<int> > > vector1(v3);
 
-				std::cerr << i/(100 * PREC) << "." << i%(100 * PREC) << "%" << std::flush << '\r';
+				std::cerr << (i+1)/(0.01 * PREC) << "." << (i+1)%(ROUND(0.01 * PREC)) << "%   " << '\r';
 				std::cout.clear();
 			}
 			test.p();
+			std::cout << "vector copy constructor" << std::endl;
 		}
 		std::cerr << std::endl;
 	}
 	{
-		std::cout << "### TEST OPERATOR= ###" << std::endl;
+		std::cerr << "### TEST OPERATOR= ###" << std::endl;
+		std::cerr << std::endl;
 		{
 			Clock test;
 
-			NAMESPACE::vector<std::string> v1(5000, "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
-			NAMESPACE::vector<std::string> v2;
-			for (int i = 0; i < 5000 * PREC; i++) {
+			NAMESPACE::vector<int> v1(MAXSIZE, 24);
+			NAMESPACE::vector<int> v2;
+			for (int i = 0; i < 1 * PREC; i++) {
 				v2 = v1;
 				v1 = v2;
-				std::cerr << i/(50 * PREC) << "." << i%(50 * PREC) << "%" << std::flush << '\r';
+				std::cerr << (i+1)/(0.01 * PREC) << "." << (i+1)%(ROUND(0.01 * PREC)) << "%   " << '\r';
 			}
 			test.p();
+			std::cout << "vector operator =" << std::endl;
 		}
 		std::cerr << std::endl;
+	}
+	{
+		std::cerr << "### TEST ASSIGN ###" << std::endl;
+		std::cerr << std::endl;
+		{
+			Clock test;
+
+			NAMESPACE::vector<int> v;
+			for (int i = 0; i < 1 * PREC; i++) {
+				v.assign(MAXSIZE, 42);
+				std::cerr << (i+1)/(0.01 * PREC) << "." << (i+1)%(ROUND(0.01 * PREC)) << "%   " << '\r';
+			}
+			test.p();
+			std::cout << "vector assign value" << std::endl;
+		}
+		std::cerr << std::endl;
+		{
+			Clock test;
+
+			NAMESPACE::vector<int> v(MAXSIZE, 2147483647);
+			NAMESPACE::vector<int> v2;
+			for (int i = 0; i < 1 * PREC; i++) {
+				v2.assign(v.begin(), v.end());
+				std::cerr << (i+1)/(0.01 * PREC) << "." << (i+1)%(ROUND(0.01 * PREC)) << "%   " << '\r';
+			}
+			test.p();
+			std::cout << "vector assign iterator" << std::endl;
+		}
+		std::cerr << std::endl;
+		{
+			Clock test;
+
+			int	lst[1000000];
+			for (int i = 0; i < 1000000; i++)
+				lst[i] = 42;
+			NAMESPACE::vector<int> v;
+			for (int i = 0; i < 1 * PREC; i++) {
+				v.assign(lst, lst + 1000000);
+				std::cerr << (i+1)/(0.01 * PREC) << "." << (i+1)%(ROUND(0.01 * PREC)) << "%   " << '\r';
+			}
+			test.p();
+			std::cout << "vector assign InputIterator" << std::endl;
+		}
+		std::cerr << std::endl;
+	}
+	{
+		std::cerr << "### TEST RESERVE ###" << std::endl;
+		std::cerr << std::endl;
+		{
+			Clock test;
+
+			for (int i = 0; i < 1 * PREC; i++) {
+				NAMESPACE::vector<int> v(MAXSIZE, 42);
+				v.reserve(MAXSIZE);
+				std::cerr << (i+1)/(0.01 * PREC) << "." << (i+1)%(ROUND(0.01 * PREC)) << "%   " << '\r';
+			}
+			test.p();
+			std::cout << "vector reserve capacity" << std::endl;
+		}
+		std::cerr << std::endl;
+	}
+	{
+		std::cerr << "### TEST CLEAR ###" << std::endl;
+		std::cerr << std::endl;
+		{
+			Clock test;
+
+			for (int i = 0; i < 1 * PREC; i++) {
+				NAMESPACE::vector<int> v(MAXSIZE, 42);
+				v.clear();
+				std::cerr << (i+1)/(0.01 * PREC) << "." << (i+1)%(ROUND(0.01 * PREC)) << "%   " << '\r';
+			}
+			test.p();
+			std::cout << "vector create clear" << std::endl;
+		}
+		std::cerr << std::endl;
+	}
+	{
+		std::cerr << "### TEST INSERT ###" << std::endl;
+		std::cerr << std::endl;
+		{
+			Clock test;
+
+			for (int i = 0; i < 1 * PREC; i++) {
+				NAMESPACE::vector<int> v(MAXSIZE, 42);
+				v.insert(v.begin() + MAXSIZE/2, 41);
+				std::cerr << (i+1)/(0.01 * PREC) << "." << (i+1)%(ROUND(0.01 * PREC)) << "%   " << '\r';
+			}
+			test.p();
+			std::cout << "vector insert val" << std::endl;
+		}
+		std::cerr << std::endl;
+		{
+			Clock test;
+
+			for (int i = 0; i < 1 * PREC; i++) {
+				NAMESPACE::vector<int> v(1000, 42);
+				v.insert(v.begin(), MAXSIZE/4, 21);
+				std::cerr << (i+1)/(0.01 * PREC) << "." << (i+1)%(ROUND(0.01 * PREC)) << "%   " << '\r';
+			}
+			test.p();
+			std::cout << "vector insert count" << std::endl;
+		}
+		std::cerr << std::endl;
+		{
+			Clock test;
+
+			NAMESPACE::vector<int> v2(MAXSIZE, 42);
+			for (int i = 0; i < 1 * PREC; i++) {
+				NAMESPACE::vector<int> v(1000, 42);
+				v.insert(v.begin() + 500, v2.begin(), v2.end());
+				std::cerr << (i+1)/(0.01 * PREC) << "." << (i+1)%(ROUND(0.01 * PREC)) << "%   " << '\r';
+			}
+			test.p();
+			std::cout << "vector insert iterator" << std::endl;
+		}
+		std::cerr << std::endl;
+	}
+	{
+		std::cerr << "### TEST ERASE ###" << std::endl;
+		std::cerr << std::endl;
+		{
+			Clock test;
+
+			for (int i = 0; i < 1 * PREC; i++) {
+				NAMESPACE::vector<int> v(10000, 42);
+				while (v.size()) {
+					v.erase(v.begin());
+				}
+				std::cerr << (i+1)/(0.01 * PREC) << "." << (i+1)%(ROUND(0.01 * PREC)) << "%   " << '\r';
+			}
+			test.p();
+			std::cout << "vector erase value" << std::endl;
+		}
+		std::cerr << std::endl;
+		{
+			Clock test;
+
+			for (int i = 0; i < 1 * PREC; i++) {
+				NAMESPACE::vector<int> v(1000000, 42);
+				while (v.size()) {
+					if (v.size() > 1000) {
+						v.erase(v.begin(), v.begin() + 1000);
+					} else {
+						v.erase(v.begin());
+					}
+				}
+				std::cerr << (i+1)/(0.01 * PREC) << "." << (i+1)%(ROUND(0.01 * PREC)) << "%   " << '\r';
+			}
+			test.p();
+			std::cout << "vector erase range" << std::endl;
+		}
+		std::cerr << std::endl;
+	}
+	{
+		std::cerr << "### TEST PUSH_BACK ###" << std::endl;
+		std::cerr << std::endl;
+		{
+			Clock test;
+
+			for (int i = 0; i < 1 * PREC; i++) {
+				NAMESPACE::vector<int> v;
+				while (v.size() < 10000000) {
+					v.push_back(42);
+				}
+				std::cerr << (i+1)/(0.01 * PREC) << "." << (i+1)%(ROUND(0.01 * PREC)) << "%   " << '\r';
+			}
+			test.p();
+			std::cout << "vector push_back value" << std::endl;
+		}
+		std::cerr << std::endl;
+	}
+	{
+		std::cout << "### TEST POP_BACK ###" << std::endl;
+		std::cerr << std::endl;
+		{
+			Clock test;
+
+			for (int i = 0; i < 1 * PREC; i++) {
+				NAMESPACE::vector<int> v(10000000, 42);
+				while (v.size()) {
+					v.pop_back();
+				}
+				std::cerr << (i+1)/(0.01 * PREC) << "." << (i+1)%(ROUND(0.01 * PREC)) << "%   " << '\r';
+			}
+			test.p();
+			std::cout << "vector pop_back value" << std::endl;
+		}
+		std::cerr << std::endl;
+	}
+	{
+		std::cerr << "### TEST RESIZE ###" << std::endl;
+		std::cerr << std::endl;
+		{
+			Clock test;
+
+			for (int i = 0; i < 1 * PREC; i++) {
+				NAMESPACE::vector<int> v;
+				v.resize(MAXSIZE);
+				v.resize(MAXSIZE/100);
+				std::cerr << (i+1)/(0.01 * PREC) << "." << (i+1)%(ROUND(0.01 * PREC)) << "%   " << '\r';
+			}
+			test.p();
+			std::cout << "vector resize range" << std::endl;
+		}
+		std::cerr << std::endl;
+	}
+	{
+		std::cerr << "### TEST SWAP ###" << std::endl;
+		std::cerr << std::endl;
+		{
+			Clock test;
+
+			NAMESPACE::vector<int> v(MAXSIZE, 42);
+			NAMESPACE::vector<int> v2(MAXSIZE, 21);
+
+			for (int i = 0; i < 1 * PREC; i++) {
+				v.swap(v2);
+				v2.swap(v);
+				std::cerr << (i+1)/(0.01 * PREC) << "." << (i+1)%(ROUND(0.01 * PREC)) << "%   " << '\r';
+			}
+			test.p();
+			std::cout << "vector swap member" << std::endl;
+		}
+		std::cerr << std::endl;
+		{
+			Clock test;
+
+			NAMESPACE::vector<int> v(MAXSIZE, 42);
+			NAMESPACE::vector<int> v2(MAXSIZE, 21);
+
+			for (int i = 0; i < 1 * PREC; i++) {
+				NAMESPACE::swap(v, v2);
+				std::cerr << (i+1)/(0.01 * PREC) << "." << (i+1)%(ROUND(0.01 * PREC)) << "%   " << '\r';
+			}
+			test.p();
+			std::cout << "vector swap namespace" << std::endl;
+		}
 	}
 }

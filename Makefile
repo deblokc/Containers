@@ -6,7 +6,7 @@
 #    By: tnaton <marvin@42.fr>                      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/09/22 19:13:09 by tnaton            #+#    #+#              #
-#    Updated: 2022/11/14 19:25:55 by tnaton           ###   ########.fr        #
+#    Updated: 2022/11/15 15:54:19 by tnaton           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,9 +22,9 @@ OBJ = $(SRC:.cpp=.o)
 
 PREC = 1
 
-CXX = c++
+CXX = clang++
 
-CXXFLAGS = -Wall -Wextra -Werror -Wpedantic -g -std=c++98
+CXXFLAGS = -Wall -Wextra -Werror -Wpedantic -O3 -g -std=c++98
 
 all: $(FT) $(STD)
 .PHONY: all
