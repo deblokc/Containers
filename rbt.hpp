@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 16:46:15 by tnaton            #+#    #+#             */
-/*   Updated: 2022/11/16 20:03:31 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/11/17 20:03:56 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,35 +23,6 @@
 
 namespace ft {
 
-	template <class T, class Allocator = std::allocator<T> > struct node {
-		public:
-			node(void): _value(), _parent(NULL), _lchild(NULL), _rchild(NULL), color(BLACK) {}
-			node(const T & value, node *parent): _value(value), _parent(parent), _lchild(NULL), _rchild(NULL), color(!parent.color) {}
-
-			void addlchild(T value) {
-				_lchild = node(value, this);
-			}
-
-			void addrchild(T value) {
-				_rchild = node(value, this);
-			}
-
-			bool getColor(void) const {
-				return color;
-			}
-
-			T	getVal(void) const {
-				return _value;
-			}
-
-		private:
-			T		_value;
-			node<T>	*_parent;
-			node<T>	*_lchild;
-			node<T>	*_rchild;
-			bool	color;
-	};
-
 	template <class Key, class T, class Compare = std::less<Key>, class Allocator = std::allocator<ft::pair<const Key, T> > > class rbt {
 		public:
 			typedef	Key										key_type;
@@ -66,29 +37,27 @@ namespace ft {
 			typedef	typename Allocator::pointer				pointer;
 			typedef	typename Allocator::const_pointer		const_pointer;
 
+			struct node_base;
+			typedef node_base*								node;
+
+			struct node_base {
+				value_type	val;
+				node		parent;
+				node		l;
+				node		r;
+				bool		color;
+
+				node_base(const_reference val = value_type()): val(val), parent(NULL), l(NULL), r(NULL), color(BLACK) {}
+				node_base(node_base const & other): val(other.val), parent(other.parent), l(other.l), r(other.r), color(other.color) {}
+			};
+
 		explicit rbt(const allocator_type & alloc = allocator_type()) {
 			_root = NULL;
-			_alloc = alloc();
-		}
-
-		std::pair<pointer, bool> insert(const value_type &value) {
-			node<value_type>	ptr;
-
-			while (ptr) {
-				if (ptr.getVal() == value)
-					return (ptr);
-				ptr = ((ptr.getVal() < value) ? ptr._lchild : ptr._rchild);
-			}
-			if (ptr.parent.getVal() < value) {
-				ptr.parent.addlchild(value);
-			} else {
-				ptr.parent.addrchild(value);
-			}
-			return (ptr);
+			_alloc = alloc;
 		}
 
 		private:
-			node<value_type>	_root;
+			node				_root;
 			allocator_type		_alloc;
 	};
 }
