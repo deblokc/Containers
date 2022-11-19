@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 16:46:15 by tnaton            #+#    #+#             */
-/*   Updated: 2022/11/19 16:31:53 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/11/19 20:21:45 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,9 +49,7 @@ namespace ft {
 				bool		color;
 
 				node_base(const value_type & val = value_type()): val(val), parent(NULL), l(NULL), r(NULL), color(RED) {}
-				node_base(node_base const & other): val(other.val), parent(other.parent), l(other.l), r(other.r), color(other.color) {
-				std::cout << "lecaca" << std::endl;
-				}
+				node_base(node_base const & other): val(other.val), parent(other.parent), l(other.l), r(other.r), color(other.color) {}
 			};
 
 		explicit rbt(const allocator_type & alloc = allocator_type()) {
