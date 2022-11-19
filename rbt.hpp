@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 16:46:15 by tnaton            #+#    #+#             */
-/*   Updated: 2022/11/18 17:45:13 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/11/19 16:31:53 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 # ifndef RED
 # define RED 0
 # endif
+#include <iostream>
 
 namespace ft {
 
@@ -48,7 +49,9 @@ namespace ft {
 				bool		color;
 
 				node_base(const value_type & val = value_type()): val(val), parent(NULL), l(NULL), r(NULL), color(RED) {}
-				node_base(node_base const & other): val(other.val), parent(other.parent), l(other.l), r(other.r), color(other.color) {}
+				node_base(node_base const & other): val(other.val), parent(other.parent), l(other.l), r(other.r), color(other.color) {
+				std::cout << "lecaca" << std::endl;
+				}
 			};
 
 		explicit rbt(const allocator_type & alloc = allocator_type()) {
@@ -93,7 +96,7 @@ namespace ft {
 				tmp = _root;
 			}
 			while (tmp) {
-				if (val < tmp->val) {
+				if (val.first < tmp->val.first) {
 					if (tmp->l) {
 						tmp = tmp->l;
 					} else {
@@ -101,7 +104,7 @@ namespace ft {
 						tmp->l->parent = tmp;
 						return (tmp->l);
 					}
-				} else if (val > tmp->val) {
+				} else if (val.first > tmp->val.first) {
 					if (tmp->r) {
 						tmp = tmp->r;
 					} else {
