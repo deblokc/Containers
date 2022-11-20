@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 16:46:15 by tnaton            #+#    #+#             */
-/*   Updated: 2022/11/20 19:39:21 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/11/20 20:33:59 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,6 +130,53 @@ namespace ft {
 			while (first != last) {
 				insert(*first);
 				first++;
+			}
+		}
+
+		void erase(iterator pos) {
+			node tmp = pos.base();
+
+			if (tmp->r && tmp->l) {
+				node	new_root = tmp->r;
+				while (new_root->l) {
+					new_root = new_root->l;
+				}
+				if (tmp == tmp->parent->l) {
+					tmp->parent->l = new_root;
+				} else {
+					tmp->parent->r = new_root;
+				}
+				new_root->parent = tmp->parent;
+				new_root->l = tmp->l;
+				new_root->r = tmp->r;
+				delete tmp;
+			} else if (tmp->r || tmp->l) {
+				if (tmp == tmp->parent->l) {
+					if (tmp->r) {
+						tmp->parent->l = tmp->r;
+						tmp->r->parent = tmp->parent;
+						delete tmp;
+					} else {
+						tmp->parent->l = tmp->l;
+						tmp->l->parent = tmp->parent;
+						delete tmp;
+					}
+				} else {
+					if (tmp->r) {
+						tmp->parent->r = tmp->r;
+						tmp->r->parent = tmp->parent;
+						delete tmp;
+					} else {
+						tmp->parent->r = tmp->l;
+						tmp->l->parent = tmp->parent;
+						delete tmp;
+					}
+				}
+			} else {
+				if (tmp == tmp->parent->l)
+					tmp->parent->l = NULL;
+				else
+					tmp->parent->r = NULL;
 			}
 		}
 
