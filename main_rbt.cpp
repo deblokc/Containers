@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 18:49:18 by tnaton            #+#    #+#             */
-/*   Updated: 2022/11/19 16:03:24 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/11/20 18:54:46 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ void printnode(ft::rbt<int, int>::node & tmp) {
 	std::cout << "Key : " << tmp->val.first << " | Val : " << tmp->val.second << "\033[0m" << std::endl;
 }
 
-void printTree(ft::rbt<int, int>::node & root, Trunk *prev, bool isLeft) {
+void printTree(ft::rbt<int, int>::node root, Trunk *prev, bool isLeft) {
 	if (root == NULL)
 		return ;
 	std::string prev_str = "         ";
@@ -89,18 +89,17 @@ int main(void) {
 	ft::rbt<int, int>		test;
 	std::map<int, int>		std;
 
-	ft::rbt<int, int>::node root = test.insert(ft::pair<int, int>(3, 1));
+	test.insert(ft::pair<int, int>(3, 1));
 	std.insert(std::pair<int, int>(3, 1));
-	printnode(root);
-	ft::rbt<int, int>::node tmp = test.insert(ft::pair<int, int>(0, 1));
+
+	test.insert(ft::pair<int, int>(0, 1));
 	std.insert(std::pair<int, int>(0, 1));
-	printnode(tmp);
-	tmp = test.insert(ft::pair<int, int>(9, 5));
+
+	test.insert(ft::pair<int, int>(9, 5));
 	std.insert(std::pair<int, int>(9, 5));
-	printnode(tmp);
-	tmp = test.insert(ft::pair<int, int>(10, 2));
+
+	test.insert(ft::pair<int, int>(10, 2));
 	std.insert(std::pair<int, int>(10, 2));
-	printnode(tmp);
 
 	test.insert(ft::pair<int, int>(42, 42));
 	test.insert(ft::pair<int, int>(4, 4));
@@ -126,9 +125,27 @@ int main(void) {
 	std.insert(std::pair<int, int>(12, 2));
 	std.insert(std::pair<int, int>(4, 32));
 
-	printTree(root, NULL, false);
+	printTree(test.root(), NULL, false);
 
 	for (std::map<int, int>::iterator tmp = std.begin(); tmp != std.end(); tmp++) {
+		std::cout << tmp->first << "|" << tmp->second << std::endl;
+	}
+
+	std::cout << std::endl;
+
+	ft::rbt<int, int>::iterator it = test.begin();
+
+	std::cout << it->first << "|" << it->second << std::endl;
+	it++;
+	std::cout << it->first << "|" << it->second << std::endl;
+	it++;
+	std::cout << it->first << "|" << it->second << std::endl;
+	it++;
+	std::cout << it->first << "|" << it->second << std::endl;
+
+	std::cout << std::endl;
+
+	for (ft::rbt<int, int>::iterator tmp = test.begin(); tmp != test.end(); tmp++) {
 		std::cout << tmp->first << "|" << tmp->second << std::endl;
 	}
 }
