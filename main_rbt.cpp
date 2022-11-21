@@ -6,13 +6,14 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 18:49:18 by tnaton            #+#    #+#             */
-/*   Updated: 2022/11/20 18:54:46 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/11/21 21:18:43 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "rbt.hpp"
 #include <iostream>
 #include <map>
+#include "map.hpp"
 
 struct Trunk
 {
@@ -86,7 +87,21 @@ void printTree(ft::rbt<int, int>::node root, Trunk *prev, bool isLeft) {
 }
 
 int main(void) {
-	ft::rbt<int, int>		test;
+
+	ft::map<int, int>	test;
+
+	test.insert(ft::pair<int, int>(1, 1));
+
+	printTree(test.root(), NULL, false);
+
+//	typedef ft::map<int, int>::iterator iterator;
+	
+//	for (iterator it = test.begin(); it != test.end(); it++)
+//		std::cout << it->first << "|" << it->second << std::endl;
+	test.size();
+
+
+/*	ft::rbt<int, int>		test;
 	std::map<int, int>		std;
 
 	test.insert(ft::pair<int, int>(3, 1));
@@ -101,7 +116,7 @@ int main(void) {
 	test.insert(ft::pair<int, int>(10, 2));
 	std.insert(std::pair<int, int>(10, 2));
 
-	test.insert(ft::pair<int, int>(42, 42));
+	ft::pair<ft::rbt<int,int>::iterator,bool> jsp = test.insert(ft::pair<int, int>(42, 42));
 	test.insert(ft::pair<int, int>(4, 4));
 	test.insert(ft::pair<int, int>(2, 2));
 	test.insert(ft::pair<int, int>(23, 5));
@@ -112,6 +127,8 @@ int main(void) {
 	test.insert(ft::pair<int, int>(22, 0));
 	test.insert(ft::pair<int, int>(12, 2));
 	test.insert(ft::pair<int, int>(4, 32));
+	test.insert(ft::pair<int, int>(53, 53));
+	test.insert(ft::pair<int, int>(70, 53));
 
 	std.insert(std::pair<int, int>(42, 42));
 	std.insert(std::pair<int, int>(4, 4));
@@ -124,6 +141,8 @@ int main(void) {
 	std.insert(std::pair<int, int>(22, 0));
 	std.insert(std::pair<int, int>(12, 2));
 	std.insert(std::pair<int, int>(4, 32));
+	std.insert(std::pair<int, int>(53, 53));
+	std.insert(std::pair<int, int>(70, 53));
 
 	printTree(test.root(), NULL, false);
 
@@ -148,4 +167,29 @@ int main(void) {
 	for (ft::rbt<int, int>::iterator tmp = test.begin(); tmp != test.end(); tmp++) {
 		std::cout << tmp->first << "|" << tmp->second << std::endl;
 	}
+	std::cout << std::endl << "ERASE" << std::endl << std::endl;
+*/
+/*
+ * Obvious invalid read
+
+	for (std::map<int, int>::iterator tmp = std.begin(); tmp != std.end(); tmp++) {
+		std::cout << tmp->first << "|" << tmp->second << std::endl;
+		std.erase(tmp);
+	}
+*/
+
+//	std::cout << "FT" << std::endl;
+//	ft::rbt<int, int>::iterator tmp = test.find(42);
+//	std::cout << tmp->first << "|" << tmp->second << std::endl;
+//	test.erase(jsp.first);
+//	printTree(test.root(), NULL, false);
+//	std::cout << "FT" << std::endl;
+/*
+	while (test.begin() != test.end()) {
+		test.erase(test.begin());
+		std::cout << std::endl;
+		printTree(test.root(), NULL, false);
+		std::cout << std::endl;
+	}
+*/
 }

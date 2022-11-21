@@ -1,4 +1,3 @@
-/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   rbtiterator.hpp                                    :+:      :+:    :+:   */
@@ -19,20 +18,20 @@ namespace ft {
 	template <typename ptr, typename cmp, typename ctnr>
 	class rbtiterator {
 		public:
-			typedef ptr									iterator_type;
-			typedef std::bidirectional_iterator_tag		iterator_category;
-			typedef typename ctnr::value_type			value_type;
-			typedef typename ctnr::difference_type		difference_type;
-			typedef typename ctnr::reference			reference;
-			typedef typename ctnr::pointer				pointer;
-			typedef typename ctnr::node					node;
-			typedef typename ctnr::node_base			node_base;
+			typedef ptr													iterator_type;
+			typedef std::bidirectional_iterator_tag						iterator_category;
+			typedef typename iterator_traits<ptr>::value_type			value_type;
+			typedef typename iterator_traits<ptr>::difference_type		difference_type;
+			typedef typename iterator_traits<ptr>::reference			reference;
+			typedef typename iterator_traits<ptr>::pointer				pointer;
+			typedef typename ctnr::node								node;
+			typedef typename ctnr::node_base							node_base;
 
 			rbtiterator(void): _ptr() {}
 			explicit rbtiterator(const node & other_ptr): _ptr(other_ptr) {}
 
 			template <typename Ptr>
-			rbtiterator(const rbtiterator<Ptr, std::less<Ptr>, typename enable_if<is_same<Ptr, typename ctnr::pointer>::val, ctnr>::type> & other) : _ptr(other.base()) {}
+			rbtiterator(const rbtiterator<Ptr, cmp, typename enable_if<is_same<Ptr, typename ctnr::pointer>::val, ctnr>::type> & other) : _ptr(other.base()) {}
 
 			~rbtiterator() {
 			}
@@ -78,7 +77,7 @@ namespace ft {
 					}
 					return (*this);
 				} else {
-					iterator_type tmp = _ptr->val;
+					value_type tmp = _ptr->val;
 					while (_ptr && _cmp(tmp.first, _ptr->val.first)) {
 						_ptr = _ptr->parent;
 					}
@@ -90,6 +89,10 @@ namespace ft {
 				rbtiterator tmp(*this);
 				--(*this);
 				return (tmp);
+			}
+
+			operator rbtiterator<ptr, value_type const, ctnr>() const {
+				return (rbtiterator<ptr, value_type const, ctnr>(this->_ptr));
 			}
 
 		protected:
