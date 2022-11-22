@@ -28,10 +28,10 @@ namespace ft {
 			typedef typename ctnr::node_base							node_base;
 
 			rbtiterator(void): _ptr() {}
-			explicit rbtiterator(const node & other_ptr): _ptr(other_ptr) {}
+			explicit rbtiterator(const node & other_ptr, const ctnr * tree): _ptr(other_ptr), _tree(tree) {}
 
 			template <typename Ptr>
-			rbtiterator(const rbtiterator<Ptr, cmp, typename enable_if<is_same<Ptr, typename ctnr::pointer>::val, ctnr>::type> & other) : _ptr(other.base()) {}
+			rbtiterator(const rbtiterator<Ptr, cmp, typename enable_if<is_same<Ptr, typename ctnr::pointer>::val, ctnr>::type> & other) : _ptr(other.base()), _tree(other._tree) {}
 
 			~rbtiterator() {
 			}
@@ -40,12 +40,14 @@ namespace ft {
 				if (this == &other)
 					return (*this);
 				this->_ptr = other._ptr;
+				this->_tree = other._tree;
 				return (*this);
 			}
 
 			const node base(void) const {return _ptr;}
-			reference operator*(void) const {return *(_ptr->val);}
+			reference operator*(void) const {return (_ptr->val);}
 			pointer operator->(void) {return &(_ptr->val);}
+			pointer operator->(void) const {return &(_ptr->val);}
 
 			rbtiterator & operator++(void) {
 				if (_ptr->r) {
@@ -70,6 +72,13 @@ namespace ft {
 			}
 
 			rbtiterator & operator--(void) {
+				if (!_ptr) {
+					_ptr = _tree->root();
+					while (_ptr->r) {
+						_ptr = _ptr->r;
+					}
+					return (*this);
+				}
 				if (_ptr->l) {
 					_ptr = _ptr->l;
 					while (_ptr->r) {
@@ -91,12 +100,13 @@ namespace ft {
 				return (tmp);
 			}
 
-			operator rbtiterator<T, value_type const, ctnr>() const {
-				return (rbtiterator<T, value_type const, ctnr>(this->_ptr));
+			operator rbtiterator<const T, cmp, ctnr>() const {
+				return (rbtiterator<const T, cmp, ctnr>(this->_ptr, this->_tree));
 			}
 
 		protected:
 			node	_ptr;
+			const ctnr *	_tree;
 			cmp		_cmp;
 	};
 

@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 16:46:15 by tnaton            #+#    #+#             */
-/*   Updated: 2022/11/22 12:35:40 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/11/22 18:49:52 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,7 @@ namespace ft {
 
 		////////////////////////////////////////
 		
-		node root(void) {
+		node root(void) const {
 			return (_root);
 		}
 		
@@ -135,6 +135,12 @@ namespace ft {
 			}
 		}
 
+		iterator insert(iterator pos, const value_type & val) {
+			(void)pos;
+			ft::pair<iterator, bool> ret = insert(val);
+			return (ret.first);
+		}
+
 		ft::pair<iterator, bool> insert(const value_type & val) {
 			node tmp = _root;
 
@@ -149,7 +155,7 @@ namespace ft {
 					} else {
 						tmp->l = new node_base(val);
 						tmp->l->parent = tmp;
-						return ft::make_pair(iterator(tmp->l), true);
+						return ft::make_pair(iterator(tmp->l, this), true);
 					}
 				} else if (_cmp(tmp->val.first, val.first)) {
 					if (tmp->r) {
@@ -157,19 +163,26 @@ namespace ft {
 					} else {
 						tmp->r = new node_base(val);
 						tmp->r->parent = tmp;
-						return ft::make_pair(iterator(tmp->r), true);
+						return ft::make_pair(iterator(tmp->r, this), true);
 					}
 				} else {
-					return ft::make_pair(iterator(tmp), false);
+					return ft::make_pair(iterator(tmp, this), false);
 				}
 			}
-			return ft::make_pair(iterator(tmp), true);
+			return ft::make_pair(iterator(tmp, this), true);
 		}
 
 		template< class InputIt >
 		void insert(InputIt first, InputIt last) {
 			while (first != last) {
 				insert(*first);
+				first++;
+			}
+		}
+
+		void erase(iterator first, iterator last) {
+			while (first != last) {
+				erase(first->first);
 				first++;
 			}
 		}
@@ -255,29 +268,29 @@ namespace ft {
 		iterator begin(void) {
 			node tmp = _root;
 			if (!_root)
-				return iterator(_root);
+				return iterator(_root, this);
 			while (tmp->l) {
 				tmp = tmp->l;
 			}
-			return iterator(tmp);
+			return iterator(tmp, this);
 		}
 
 		const_iterator begin(void) const {
 			node tmp = _root;
 			if (!_root)
-				return const_iterator(_root);
+				return const_iterator(_root, this);
 			while (tmp->l) {
 				tmp = tmp->l;
 			}
-			return const_iterator(tmp);
+			return const_iterator(tmp, this);
 		}
 
 		iterator end(void) {
-			return iterator(NULL);
+			return iterator(NULL, this);
 		}
 
 		const_iterator end(void) const {
-			return const_iterator(NULL);
+			return const_iterator(NULL, this);
 		}
 
 		reverse_iterator rbegin(void) {
@@ -306,7 +319,7 @@ namespace ft {
 
 		size_type size(void) const {
 			size_type i = 0;
-			for (iterator it = iterator(_root); it != end(); it++) {
+			for (iterator it = iterator(_root, this); it != end(); it++) {
 				i++;
 			}
 			return (i);
@@ -329,10 +342,33 @@ namespace ft {
 						break ;
 					}
 				} else {
-					return iterator(tmp);
+					return iterator(tmp, this);
 				}
 			}
-			return iterator(NULL);
+			return iterator(NULL, this);
+		}
+
+		const_iterator find(const Key & key) const {
+			node tmp = _root;
+
+			while (tmp) {
+				if (_cmp(key, tmp->val.first)) {
+					if (tmp->l) {
+						tmp = tmp->l;
+					} else {
+						break ;
+					}
+				} else if (_cmp(tmp->val.first, key)) {
+					if (tmp->r) {
+						tmp = tmp->r;
+					} else {
+						break ;
+					}
+				} else {
+					return iterator(tmp, this);
+				}
+			}
+			return iterator(NULL, this);
 		}
 
 		T& at(const Key & key) {
@@ -342,16 +378,25 @@ namespace ft {
 			return (it->second);
 		}
 
+		const T& at(const Key & key) const {
+			const_iterator it = find(key);
+			if (it == end())
+				throw (std::out_of_range("Map out of range"));
+			return (it->second);
+		}
+
 		T& operator[](const Key & key) {
 			iterator it = find(key);
 			if (it == end()) {
-				it = insert(ft::make_pair<Key, T>(key, T()));
+				ft::pair<iterator, bool> ret = insert(ft::make_pair<Key, T>(key, T()));
+				if (ret.second)
+					it = ret.first;
 			}
 			return (it->second);
 		}
 
 		size_type count(const Key & key) const {
-			iterator it = find(key);
+			const_iterator it = find(key);
 			if (it == end())
 				return 0;
 			return 1;
@@ -359,6 +404,10 @@ namespace ft {
 
 		ft::pair<iterator, iterator> equal_range(const Key & key) {
 			return (ft::make_pair<iterator, iterator>(lower_bound(key), upper_bound(key)));
+		}
+
+		ft::pair<const_iterator, const_iterator> equal_range(const Key & key) const {
+			return (ft::make_pair<const_iterator, const_iterator>(lower_bound(key), upper_bound(key)));
 		}
 
 		iterator upper_bound(const Key & key) {
@@ -371,19 +420,44 @@ namespace ft {
 					if (tmp->l)
 						tmp = tmp->l;
 					else
-						return iterator(tmp);
+						return iterator(tmp, this);
 				} else if (_cmp(tmp->val.first, key)) {
 					if (tmp->r)
 						tmp = tmp->r;
 					else
-						return iterator(ret);
+						return iterator(ret, this);
 				} else {
-					iterator it(tmp);
+					iterator it(tmp, this);
 					it++;
 					return (it);
 				}
 			}
-			return iterator(NULL);
+			return iterator(NULL, this);
+		}
+
+		const_iterator upper_bound(const Key & key) const {
+			node tmp = _root;
+			node ret = NULL;
+
+			while (tmp) {
+				if (_cmp(key, tmp->val.first)) {
+					ret = tmp;
+					if (tmp->l)
+						tmp = tmp->l;
+					else
+						return const_iterator(tmp, this);
+				} else if (_cmp(tmp->val.first, key)) {
+					if (tmp->r)
+						tmp = tmp->r;
+					else
+						return const_iterator(ret, this);
+				} else {
+					const_iterator it(tmp, this);
+					it++;
+					return (it);
+				}
+			}
+			return const_iterator(NULL, this);
 		}
 
 		iterator lower_bound(const Key & key) {
@@ -395,18 +469,41 @@ namespace ft {
 					if (tmp->l)
 						tmp = tmp->l;
 					else
-						return iterator(ret);
+						return iterator(ret, this);
 				} else if (_cmp(tmp->val.first, key)) {
 					ret = tmp;
 					if (tmp->r)
 						tmp = tmp->r;
 					else
-						return iterator(tmp);
+						return iterator(tmp, this);
 				} else {
-					return iterator(tmp);
+					return iterator(tmp, this);
 				}
 			}
-			return iterator(NULL);
+			return iterator(NULL, this);
+		}
+
+		const_iterator lower_bound(const Key & key) const {
+			node tmp = _root;
+			node ret = NULL;
+
+			while (tmp) {
+				if (_cmp(key, tmp->val.first)) {
+					if (tmp->l)
+						tmp = tmp->l;
+					else
+						return const_iterator(ret, this);
+				} else if (_cmp(tmp->val.first, key)) {
+					ret = tmp;
+					if (tmp->r)
+						tmp = tmp->r;
+					else
+						return const_iterator(tmp, this);
+				} else {
+					return const_iterator(tmp, this);
+				}
+			}
+			return const_iterator(NULL, this);
 		}
 
 		void swap(rbt & other) {

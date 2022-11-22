@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/22 16:11:43 by tnaton            #+#    #+#             */
-/*   Updated: 2022/11/16 13:19:19 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/11/22 19:18:02 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,6 @@ namespace ft {
 				_alloc = alloc;
 				_start = NULL;
 				_end = NULL;
-				_cap_end = NULL;
 				_capacity = 0;
 				_size = 0;
 			}
@@ -64,7 +63,6 @@ namespace ft {
 					_alloc.construct(_end, value);
 					_end++;
 				}
-				_cap_end = _start + count;
 				_size = count;
 			}
 
@@ -91,7 +89,7 @@ namespace ft {
 			// definition du destructeur
 			~vector(void){
 				this->clear();
-				if (_start)
+				if (_capacity)
 					_alloc.deallocate(_start, _capacity);
 			}
 
@@ -174,7 +172,6 @@ namespace ft {
 					_alloc.construct(_end, value);
 					_end++;
 				}
-				_cap_end = _start + _capacity;
 			}
 
 			void reserve(size_type new_cap) {
@@ -208,7 +205,9 @@ namespace ft {
 					throw (std::length_error("Over max size"));
 				}
 				if (_size > count) {
-					pointer new_start = _alloc.allocate(count);
+					pointer new_start = NULL;
+					if (count)
+						new_start = _alloc.allocate(count);
 					pointer new_end = new_start;
 					pointer tmp = _start;
 
@@ -511,6 +510,7 @@ namespace ft {
 				ft::swap(this->_end, other._end);
 				ft::swap(this->_capacity, other._capacity);
 				ft::swap(this->_size, other._size);
+				ft::swap(this->_alloc, other._alloc);
 			}
 
 			iterator begin(void) {
@@ -618,7 +618,6 @@ namespace ft {
 		private:
 			pointer			_start;
 			pointer			_end;
-			pointer			_cap_end;
 			allocator_type	_alloc;
 			size_type		_size;
 			size_type		_capacity;

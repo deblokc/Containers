@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/27 19:00:11 by tnaton            #+#    #+#             */
-/*   Updated: 2022/11/07 12:32:48 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/11/22 19:00:53 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,8 @@ namespace ft {
 			reverse_iterator operator--(int){reverse_iterator tmp(*this);this->_it++;return tmp;}
 
 			Iter		base(void) const {return (_it);}
-			reference &operator[](difference_type n) const {return *(*this + n);}
-			reference &operator*(void) const {Iter tmp = _it; return (*--tmp);}
+			reference operator[](difference_type n) const {return *(*this + n);}
+			reference operator*(void) const {Iter tmp = _it; return (*--tmp);}
 			pointer operator->(void) const {return &(operator*());}
 
 			reverse_iterator operator+(difference_type n) const {return reverse_iterator(base() - n);}
