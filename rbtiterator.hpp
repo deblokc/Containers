@@ -15,16 +15,16 @@
 
 namespace ft {
 
-	template <typename ptr, typename cmp, typename ctnr>
+	template <typename T, typename cmp, typename ctnr>
 	class rbtiterator {
 		public:
-			typedef ptr													iterator_type;
+			typedef T													iterator_type;
 			typedef std::bidirectional_iterator_tag						iterator_category;
-			typedef typename iterator_traits<ptr>::value_type			value_type;
-			typedef typename iterator_traits<ptr>::difference_type		difference_type;
-			typedef typename iterator_traits<ptr>::reference			reference;
-			typedef typename iterator_traits<ptr>::pointer				pointer;
-			typedef typename ctnr::node								node;
+			typedef T													value_type;
+			typedef typename ctnr::difference_type						difference_type;
+			typedef T &													reference;
+			typedef T *													pointer;
+			typedef typename ctnr::node									node;
 			typedef typename ctnr::node_base							node_base;
 
 			rbtiterator(void): _ptr() {}
@@ -91,8 +91,8 @@ namespace ft {
 				return (tmp);
 			}
 
-			operator rbtiterator<ptr, value_type const, ctnr>() const {
-				return (rbtiterator<ptr, value_type const, ctnr>(this->_ptr));
+			operator rbtiterator<T, value_type const, ctnr>() const {
+				return (rbtiterator<T, value_type const, ctnr>(this->_ptr));
 			}
 
 		protected:

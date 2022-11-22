@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 18:49:18 by tnaton            #+#    #+#             */
-/*   Updated: 2022/11/21 21:18:43 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/11/22 12:08:00 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,7 @@ void printTree(ft::rbt<int, int>::node root, Trunk *prev, bool isLeft) {
 int main(void) {
 
 	ft::map<int, int>	test;
+	ft::map<int, int>	map2;
 
 	test.insert(ft::pair<int, int>(1, 1));
 
@@ -100,6 +101,7 @@ int main(void) {
 //		std::cout << it->first << "|" << it->second << std::endl;
 	test.size();
 
+	map2 = test;
 
 /*	ft::rbt<int, int>		test;
 	std::map<int, int>		std;

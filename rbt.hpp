@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 16:46:15 by tnaton            #+#    #+#             */
-/*   Updated: 2022/11/21 21:19:33 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/11/22 12:35:40 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,22 +30,22 @@ namespace ft {
 
 			struct node_base;
 
-			typedef node_base*													node;
-			typedef	Key															key_type;
-			typedef	T															mapped_type;
-			typedef	ft::pair<const Key, T>										value_type;
-			typedef	typename Allocator::size_type								size_type;
-			typedef	typename Allocator::difference_type							difference_type;
-			typedef	Compare														key_compare;
-			typedef	Allocator													allocator_type;
-			typedef	typename Allocator::reference								reference;
-			typedef	typename Allocator::const_reference							const_reference;
-			typedef	value_type*													pointer;
-			typedef	const value_type*											const_pointer;
-			typedef	typename ft::rbtiterator<pointer, key_compare, rbt>			iterator;
-			typedef	typename ft::rbtiterator<const_pointer, key_compare, rbt>	const_iterator;
-			typedef	typename ft::reverse_iterator<iterator>						reverse_iterator;
-			typedef	typename ft::reverse_iterator<const_iterator>				const_reverse_iterator;
+			typedef node_base*														node;
+			typedef	Key																key_type;
+			typedef	T																mapped_type;
+			typedef	ft::pair<const Key, T>											value_type;
+			typedef	typename Allocator::size_type									size_type;
+			typedef	typename Allocator::difference_type								difference_type;
+			typedef	Compare															key_compare;
+			typedef	Allocator														allocator_type;
+			typedef	typename Allocator::reference									reference;
+			typedef	typename Allocator::const_reference								const_reference;
+			typedef	value_type*														pointer;
+			typedef	const value_type*												const_pointer;
+			typedef	typename ft::rbtiterator<value_type, key_compare, rbt>			iterator;
+			typedef	typename ft::rbtiterator<const value_type, key_compare, rbt>	const_iterator;
+			typedef	typename ft::reverse_iterator<iterator>							reverse_iterator;
+			typedef	typename ft::reverse_iterator<const_iterator>					const_reverse_iterator;
 
 			struct node_base {
 				value_type	val;
