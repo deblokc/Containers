@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 18:49:18 by tnaton            #+#    #+#             */
-/*   Updated: 2022/11/22 18:56:05 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/11/22 20:18:02 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,39 +88,42 @@ void printTree(ft::rbt<int, int>::node root, Trunk *prev, bool isLeft) {
 
 int main(void) {
 
-	typedef ft::map<int, int>::iterator			iterator;
-	typedef ft::map<int, int>::const_iterator	const_iterator;
+//	typedef ft::map<int, int>::iterator			iterator;
+//	typedef ft::map<int, int>::const_iterator	const_iterator;
 
 	ft::map<int, int>	test;
-	ft::map<int, int>	map2;
+//	ft::map<int, int>	map2;
 
 	test.insert(ft::pair<int, int>(1, 1));
+	test.insert(ft::pair<int, int>(2, 1));
 
-//	printTree(test.root(), NULL, false);
+	printTree(test.root(), NULL, false);
 
 //	typedef ft::map<int, int>::iterator iterator;
 	
 //	for (iterator it = test.begin(); it != test.end(); it++)
 //		std::cout << it->first << "|" << it->second << std::endl;
-	test.size();
+//	test.size();
 
-	map2 = test;
+//	map2 = test;
 
-	iterator it = test.begin();
-	std::cout << it->first << "|" << it->second << std::endl;
-	it->second = 10;
+//	iterator it = test.begin();
+//	std::cout << it->first << "|" << it->second << std::endl;
+//	it->second = 10;
 
-	const_iterator cit = test.begin();
-	std::cout <<cit->first << "|" <<cit->second << std::endl;
+//	const_iterator cit = test.begin();
+//	std::cout <<cit->first << "|" <<cit->second << std::endl;
 
-	iterator t = test.end();
-	t--;
+//	iterator t = test.end();
+//	t--;
 
 	typedef ft::map<int, int>::reverse_iterator		reverse_iterator;
 
 	for (reverse_iterator rit = test.rbegin(); rit != test.rend(); rit++) {
 		std::cout << rit->first << "|" << rit->second << std::endl;
 	}
+
+
 
 /*	ft::rbt<int, int>		test;
 	std::map<int, int>		std;

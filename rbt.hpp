@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 16:46:15 by tnaton            #+#    #+#             */
-/*   Updated: 2022/11/22 18:49:52 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/11/22 21:18:25 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,7 @@ namespace ft {
 			_root = NULL;
 			_alloc = alloc;
 			_cmp = comp;
+			_size = 0;
 		}
 
 		template <class InputIt>
@@ -71,6 +72,7 @@ namespace ft {
 			_root = NULL;
 			_alloc = alloc;
 			_cmp = comp;
+			_size = 0;
 			insert(first, last);
 		}
 
@@ -78,6 +80,7 @@ namespace ft {
 			_root = NULL;
 			_alloc = other._alloc;
 			_cmp = other._cmp;
+			_size = 0;
 			insert(other.begin(), other.end());
 		}
 
@@ -92,6 +95,7 @@ namespace ft {
 			_root = NULL;
 			_alloc = other._alloc;
 			_cmp = other._cmp;
+			_size = 0;
 			insert(other.begin(), other.end());
 			return (*this);
 		}
@@ -118,6 +122,7 @@ namespace ft {
 					if (!tmp->parent) {
 						delete tmp;
 						_root = NULL;
+						_size = 0;
 						return ;
 					}
 					tmp = tmp->parent;
@@ -147,6 +152,8 @@ namespace ft {
 			if (!tmp) {
 				_root = new node_base(val);
 				tmp = _root;
+				_size++;
+				return ft::make_pair(iterator(tmp, this), true);
 			}
 			while (tmp) {
 				if (_cmp(val.first, tmp->val.first)) {
@@ -155,6 +162,7 @@ namespace ft {
 					} else {
 						tmp->l = new node_base(val);
 						tmp->l->parent = tmp;
+						_size++;
 						return ft::make_pair(iterator(tmp->l, this), true);
 					}
 				} else if (_cmp(tmp->val.first, val.first)) {
@@ -163,6 +171,7 @@ namespace ft {
 					} else {
 						tmp->r = new node_base(val);
 						tmp->r->parent = tmp;
+						_size++;
 						return ft::make_pair(iterator(tmp->r, this), true);
 					}
 				} else {
@@ -263,6 +272,7 @@ namespace ft {
 				}
 				delete tmp;
 			}
+			_size--;
 		}
 
 		iterator begin(void) {
@@ -310,7 +320,7 @@ namespace ft {
 		}
 
 		bool empty(void) const {
-			return (begin() == end());
+			return (_size == 0);
 		}
 
 		size_type max_size(void) const {
@@ -318,11 +328,7 @@ namespace ft {
 		}
 
 		size_type size(void) const {
-			size_type i = 0;
-			for (iterator it = iterator(_root, this); it != end(); it++) {
-				i++;
-			}
-			return (i);
+			return (_size);
 		}
 
 		iterator find(const Key & key) {
@@ -461,49 +467,17 @@ namespace ft {
 		}
 
 		iterator lower_bound(const Key & key) {
-			node tmp = _root;
-			node ret = NULL;
-
-			while (tmp) {
-				if (_cmp(key, tmp->val.first)) {
-					if (tmp->l)
-						tmp = tmp->l;
-					else
-						return iterator(ret, this);
-				} else if (_cmp(tmp->val.first, key)) {
-					ret = tmp;
-					if (tmp->r)
-						tmp = tmp->r;
-					else
-						return iterator(tmp, this);
-				} else {
-					return iterator(tmp, this);
-				}
-			}
-			return iterator(NULL, this);
+			if (count(key))
+				return (find(key));
+			else
+				return (upper_bound(key));
 		}
 
 		const_iterator lower_bound(const Key & key) const {
-			node tmp = _root;
-			node ret = NULL;
-
-			while (tmp) {
-				if (_cmp(key, tmp->val.first)) {
-					if (tmp->l)
-						tmp = tmp->l;
-					else
-						return const_iterator(ret, this);
-				} else if (_cmp(tmp->val.first, key)) {
-					ret = tmp;
-					if (tmp->r)
-						tmp = tmp->r;
-					else
-						return const_iterator(tmp, this);
-				} else {
-					return const_iterator(tmp, this);
-				}
-			}
-			return const_iterator(NULL, this);
+			if (count(key))
+				return (find(key));
+			else
+				return (upper_bound(key));
 		}
 
 		void swap(rbt & other) {
@@ -515,6 +489,7 @@ namespace ft {
 			node				_root;
 			allocator_type		_alloc;
 			key_compare			_cmp;
+			size_type			_size;
 	};
 
 	template<class Key, class T, class Compare, class Alloc>
