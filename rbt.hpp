@@ -6,13 +6,14 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 16:46:15 by tnaton            #+#    #+#             */
-/*   Updated: 2022/11/23 12:42:15 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/11/23 18:52:00 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef RBT_HPP
 # define RBT_HPP
 # include <functional>
+# include <limits>
 # include "utils.hpp"
 # include "reverse_iterator.hpp"
 # include "rbtiterator.hpp"
@@ -126,8 +127,6 @@ namespace ft {
 						return ;
 					}
 					tmp = tmp->parent;
-					if (tmp->l) {
-					}
 					if (tmp->l && todel == tmp->l)
 						tmp->l = NULL;
 					else
@@ -140,6 +139,85 @@ namespace ft {
 			}
 		}
 
+		void cas6(node p, node g) {
+			if (g->parent) {
+				if (g->parent->l == g)
+					g->parent->l = p;
+				else
+					g->parent->r = p;
+			} else {
+				_root = p;
+			}
+			p->parent = g->parent;
+			g->parent = p;
+			if (g->l == p) {
+				g->l = p->r;
+				p->r = g;
+				if (g->l)
+					g->l->parent = g;
+			} else {
+				g->r = p->l;
+				p->l = g;
+				if (g->r)
+					g->r->parent = g;
+			}
+			p->color = BLACK;
+			g->color = RED;
+		}
+
+		void cas5(node n, node p, node g) {
+			if ((g->l == p && p->r == n) || (g->r == p && p->l == n)) {
+				if (g->l == p) {
+					g->l = n;
+					p->r = n->l;
+					n->l = p;
+					if (p->r)
+						p->r->parent = p;
+				} else {
+					g->r = n;
+					p->l = n->r;
+					n->r = p;
+					if (p->l)
+						p->l->parent = p;
+				}
+				n->parent = g;
+				p->parent = n;
+				p = n;
+			}
+			cas6(p, g);
+		}
+
+		void cas4(node p) {
+			p->color = BLACK;
+		}
+
+		void checkInsert(iterator pos) {
+			node n = pos.base();
+			node p = NULL;
+
+			if (!n->parent) {
+				return ;
+			}
+			do {
+				p = n->parent;
+				if (p->color == BLACK) {
+					return ;
+				}
+				node g = p->parent;
+				if (!g) {
+					return cas4(p);
+				}
+				node u = (g->l == p ? g->r : g->l);
+				if (!u || u->color == BLACK) {
+					return cas5(n, p, g);
+				}
+				p->color = BLACK;
+				u->color = BLACK;
+				g->color = RED;
+				n = g;
+			} while ((p = n->parent) != NULL);
+		}
+
 		iterator insert(iterator pos, const value_type & val) {
 			(void)pos;
 			ft::pair<iterator, bool> ret = insert(val);
@@ -147,11 +225,19 @@ namespace ft {
 		}
 
 		ft::pair<iterator, bool> insert(const value_type & val) {
+			ft::pair<iterator, bool> ret = _insert(val);
+			if (ret.second)
+				checkInsert(ret.first);
+			return (ret);
+		}
+
+	private:
+		ft::pair<iterator, bool> _insert(const value_type & val) {
 			node tmp = _root;
 
 			if (!tmp) {
-				_root = new node_base(val);
-				tmp = _root;
+				tmp = new node_base(val);
+				_root = tmp;
 				_size++;
 				return ft::make_pair(iterator(tmp, this), true);
 			}
@@ -181,10 +267,11 @@ namespace ft {
 			return ft::make_pair(iterator(tmp, this), true);
 		}
 
+	public:
 		template< class InputIt >
 		void insert(InputIt first, InputIt last) {
 			while (first != last) {
-				insert(*first);
+				_insert(*first);
 				first++;
 			}
 		}
@@ -214,15 +301,15 @@ namespace ft {
 				while (new_root->l) {
 					new_root = new_root->l;
 				}
-				if (tmp->l)
-					tmp->l->parent = new_root;
-				if (tmp->r)
+				tmp->l->parent = new_root;
+				if (new_root != tmp->r) {
 					tmp->r->parent = new_root;
-				if (new_root->r) {
-					new_root->r->parent = new_root->parent;
-					new_root->parent->l = new_root->r;
-				} else {
-					new_root->parent->l = NULL;
+					if (new_root->r) {
+						new_root->r->parent = new_root->parent;
+						new_root->parent->l = new_root->r;
+						} else {
+						new_root->parent->l = NULL;
+					}
 				}
 				if (tmp->parent) {
 					if (tmp == tmp->parent->l) {
@@ -233,7 +320,8 @@ namespace ft {
 				}
 				new_root->parent = tmp->parent;
 				new_root->l = tmp->l;
-				new_root->r = tmp->r;
+				if (new_root != tmp->r)
+					new_root->r = tmp->r;
 				if (tmp == _root)
 					_root = new_root;
 				delete tmp;
@@ -326,7 +414,7 @@ namespace ft {
 		}
 
 		size_type max_size(void) const {
-			return (_alloc.max_size());
+			return std::min(_alloc.max_size(), static_cast<size_type>(std::numeric_limits<difference_type>::max()));
 		}
 
 		size_type size(void) const {
@@ -485,6 +573,12 @@ namespace ft {
 		void swap(rbt & other) {
 			ft::swap(this->_root, other._root);
 			ft::swap(this->_cmp, other._cmp);
+			ft::swap(this->_alloc, other._alloc);
+			ft::swap(this->_size, other._size);
+		}
+
+		key_compare key_comp(void) const {
+			return (_cmp);
 		}
 
 		private:

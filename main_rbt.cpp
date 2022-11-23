@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 18:49:18 by tnaton            #+#    #+#             */
-/*   Updated: 2022/11/23 12:56:05 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/11/23 18:46:15 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ void printTree(ft::rbt<int, int>::node root, Trunk *prev, bool isLeft) {
 		std::cout << "\033[0;90m"; 
 	else
 		std::cout << "\033[0;91m";
-	std::cout << " " << root->val.first << "|" << root->val.second << "\033[0m" << std::endl;
+	std::cout << " " << root->val.first << "\033[0m" << std::endl;
 
     if (prev) {
         prev->str = prev_str;
@@ -86,27 +86,58 @@ void printTree(ft::rbt<int, int>::node root, Trunk *prev, bool isLeft) {
 	delete trunk;
 }
 
+void pT(ft::rbt<int, int>::node root) {
+	printTree(root, NULL, false);
+	std::cout << "-------------------------------------------------------------------------------------" << std::endl;
+}
+
 int main(void) {
 
-//	typedef ft::map<int, int>::iterator			iterator;
 //	typedef ft::map<int, int>::const_iterator	const_iterator;
 
 	ft::map<int, int>	test;
 //	ft::map<int, int>	map2;
 
 	test.insert(ft::pair<int, int>(23, 1));
+	pT(test.root());
 	test.insert(ft::pair<int, int>(25, 1));
+	pT(test.root());
 	test.insert(ft::pair<int, int>(1, 1));
+	pT(test.root());
 	test.insert(ft::pair<int, int>(2, 1));
+	pT(test.root());
 	test.insert(ft::pair<int, int>(3, 1));
+	pT(test.root());
 	test.insert(ft::pair<int, int>(75, 1));
+	pT(test.root());
 	test.insert(ft::pair<int, int>(30, 1));
+	pT(test.root());
 	test.insert(ft::pair<int, int>(-22, 1));
+	pT(test.root());
 	test.insert(ft::pair<int, int>(-23, 1));
+	pT(test.root());
+
+	std::cout << "####################################################################################" << std::endl;
+
+	typedef ft::map<int, int>::iterator			iterator;
+	for (iterator it = test.begin(); it != test.end(); it++)
+		std::cout << it->first << "|" << it->second << std::endl;
+	test.size();
+
+	std::cout << "####################################################################################" << std::endl;
+
 	test.insert(ft::pair<int, int>(0, 1));
+	pT(test.root());
+	
+	std::cout << "####################################################################################" << std::endl;
 
-	printTree(test.root(), NULL, false);
+	for (iterator it = test.begin(); it != test.end(); it++)
+		std::cout << it->first << "|" << it->second << std::endl;
+	test.size();
 
+	std::cout << "####################################################################################" << std::endl;
+
+	/*
 	test.erase(64);
 
 	std::cout << "----------------------------------------------------------" << std::endl;
@@ -127,6 +158,8 @@ int main(void) {
 
 	test.erase(1);
 
+	std::cout << "----------------------------------------------------------" << std::endl;
+	std::cout << "-------------------------REMOVE 1-------------------------" << std::endl;
 	std::cout << "----------------------------------------------------------" << std::endl;
 
 	printTree(test.root(), NULL, false);
@@ -179,12 +212,10 @@ int main(void) {
 
 	printTree(test.root(), NULL, false);
 
-
+*/
 //	typedef ft::map<int, int>::iterator iterator;
 	
-//	for (iterator it = test.begin(); it != test.end(); it++)
-//		std::cout << it->first << "|" << it->second << std::endl;
-//	test.size();
+
 
 //	map2 = test;
 
