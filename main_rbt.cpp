@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 18:49:18 by tnaton            #+#    #+#             */
-/*   Updated: 2022/11/23 18:46:15 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/11/23 20:55:47 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,8 +117,29 @@ int main(void) {
 	test.insert(ft::pair<int, int>(-23, 1));
 	pT(test.root());
 
+	
 	std::cout << "####################################################################################" << std::endl;
 
+	ft::rbt<int, int>::node x = test.root();
+
+	typedef ft::map<int, int>::iterator			iterator;
+
+	iterator it = test.begin();
+
+	it++;
+	it++;
+	it++;
+	it++;
+
+	ft::rbt<int, int>::node y = it.base();
+
+	pT(test.root());
+
+	std::cout << "trying to swap " << x->val.first << " and " << y->val.first << std::endl;
+	std::cout << "-------------------------------------------------------------------------------------" << std::endl;
+
+	pT(test.root());
+/*
 	typedef ft::map<int, int>::iterator			iterator;
 	for (iterator it = test.begin(); it != test.end(); it++)
 		std::cout << it->first << "|" << it->second << std::endl;
@@ -137,81 +158,27 @@ int main(void) {
 
 	std::cout << "####################################################################################" << std::endl;
 
-	/*
-	test.erase(64);
-
-	std::cout << "----------------------------------------------------------" << std::endl;
-
-	printTree(test.root(), NULL, false);
-
-	test.erase(0);
-
-	std::cout << "----------------------------------------------------------" << std::endl;
-
-	printTree(test.root(), NULL, false);
-
-	test.erase(75);
-
-	std::cout << "----------------------------------------------------------" << std::endl;
-
-	printTree(test.root(), NULL, false);
-
-	test.erase(1);
-
-	std::cout << "----------------------------------------------------------" << std::endl;
-	std::cout << "-------------------------REMOVE 1-------------------------" << std::endl;
-	std::cout << "----------------------------------------------------------" << std::endl;
-
-	printTree(test.root(), NULL, false);
-
+	pT(test.root());
 	test.erase(2);
-
-	std::cout << "----------------------------------------------------------" << std::endl;
-
-	printTree(test.root(), NULL, false);
-
+	pT(test.root());
+	test.erase(75);
+	pT(test.root());
+	test.erase(1);
+	pT(test.root());
+	test.erase(23);
+	pT(test.root());
 	test.erase(3);
-
-	std::cout << "----------------------------------------------------------" << std::endl;
-
-	printTree(test.root(), NULL, false);
-
-	test.erase(23);
-
-	std::cout << "----------------------------------------------------------" << std::endl;
-
-	printTree(test.root(), NULL, false);
-
-	test.erase(23);
-
-	std::cout << "----------------------------------------------------------" << std::endl;
-
-	printTree(test.root(), NULL, false);
-
+	pT(test.root());
 	test.erase(30);
-
-	std::cout << "----------------------------------------------------------" << std::endl;
-
-	printTree(test.root(), NULL, false);
-
+	pT(test.root());
 	test.erase(-22);
-
-	std::cout << "----------------------------------------------------------" << std::endl;
-
-	printTree(test.root(), NULL, false);
-
+	pT(test.root());
 	test.erase(-23);
-
-	std::cout << "----------------------------------------------------------" << std::endl;
-
-	printTree(test.root(), NULL, false);
-
+	pT(test.root());
 	test.erase(25);
-
-	std::cout << "----------------------------------------------------------" << std::endl;
-
-	printTree(test.root(), NULL, false);
-
+	pT(test.root());
+	test.erase(75);
+	pT(test.root());
 */
 //	typedef ft::map<int, int>::iterator iterator;
 	

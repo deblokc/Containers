@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 16:46:15 by tnaton            #+#    #+#             */
-/*   Updated: 2022/11/23 18:52:00 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/11/23 20:55:43 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,6 @@ namespace ft {
 
 				node_base(const value_type & val = value_type()): val(val), parent(NULL), l(NULL), r(NULL), color(RED), end(false) {}
 				node_base(node_base const & other): val(other.val), parent(other.parent), l(other.l), r(other.r), color(other.color), end(other.end) {}
-
 			};
 
 		explicit rbt(const Compare & comp = Compare(), const allocator_type & alloc = allocator_type()) {
@@ -139,7 +138,31 @@ namespace ft {
 			}
 		}
 
-		void cas6(node p, node g) {
+	private:
+		void rotate(node n, node p) {
+			node g = p->parent;
+			if (g->l == p) {
+				g->l = n;
+				p->r = n->l;
+				n->l = p;
+				if (p->r)
+					p->r->parent = p;
+			} else {
+				g->r = n;
+				p->l = n->r;
+				n->r = p;
+				if (p->l)
+					p->l->parent = p;
+			}
+			n->parent = g;
+			p->parent = n;
+		}
+
+		void rebalance(node n, node p, node g) {
+			if ((g->l == p && p->r == n) || (g->r == p && p->l == n)) {
+				rotate(n, p);
+				p = n;
+			}
 			if (g->parent) {
 				if (g->parent->l == g)
 					g->parent->l = p;
@@ -165,32 +188,6 @@ namespace ft {
 			g->color = RED;
 		}
 
-		void cas5(node n, node p, node g) {
-			if ((g->l == p && p->r == n) || (g->r == p && p->l == n)) {
-				if (g->l == p) {
-					g->l = n;
-					p->r = n->l;
-					n->l = p;
-					if (p->r)
-						p->r->parent = p;
-				} else {
-					g->r = n;
-					p->l = n->r;
-					n->r = p;
-					if (p->l)
-						p->l->parent = p;
-				}
-				n->parent = g;
-				p->parent = n;
-				p = n;
-			}
-			cas6(p, g);
-		}
-
-		void cas4(node p) {
-			p->color = BLACK;
-		}
-
 		void checkInsert(iterator pos) {
 			node n = pos.base();
 			node p = NULL;
@@ -205,11 +202,12 @@ namespace ft {
 				}
 				node g = p->parent;
 				if (!g) {
-					return cas4(p);
+					p->color = BLACK;
+					return ;
 				}
 				node u = (g->l == p ? g->r : g->l);
 				if (!u || u->color == BLACK) {
-					return cas5(n, p, g);
+					return rebalance(n, p, g);
 				}
 				p->color = BLACK;
 				u->color = BLACK;
@@ -218,6 +216,7 @@ namespace ft {
 			} while ((p = n->parent) != NULL);
 		}
 
+	public:
 		iterator insert(iterator pos, const value_type & val) {
 			(void)pos;
 			ft::pair<iterator, bool> ret = insert(val);
@@ -276,6 +275,52 @@ namespace ft {
 			}
 		}
 
+		void cas6() {
+		}
+		void cas5() {
+		}
+		void cas4() {
+		}
+		void cas3(node p, node s, node c, node d) {
+			rotate(s, p);
+			(void)c;
+			(void)d;
+		}
+
+		void _erase(node n) {
+			node p = NULL;
+			node s = NULL;
+			node c = NULL;
+			node d = NULL;
+
+			do {
+				p = n->parent;
+				if (p->l == n) {
+					s = p->r;
+					c = s->l;
+					d = s->r;
+				} else {
+					s = p->l;
+					c = s->r;
+					d = s->l;
+				}
+				if (s->color == RED) {
+					return (cas3(p, s, c, d));
+				}
+				if (d != NULL && d->color == RED) {
+					return (cas6());
+				}
+				if (c != NULL && c->color == RED) {
+					return (cas5());
+				}
+				if (p->color == RED) {
+					return (cas4());
+				}
+				s->color = RED;
+				n = p;
+			} while ((p = n->parent) != NULL);
+		}
+
 		void erase(iterator first, iterator last) {
 			Key	val;
 			while (first != last) {
@@ -286,6 +331,7 @@ namespace ft {
 		}
 
 		size_type erase(const Key & key) {
+			std::cout << "n:" << key << std::endl;
 			iterator it = find(key);
 			if (it == end())
 				return (0);
@@ -293,38 +339,19 @@ namespace ft {
 			return (1);
 		}
 
+		void _two_child(node tmp) {
+			node	new_root = tmp->r;
+			while (new_root->l) {
+				new_root = new_root->l;
+			}
+			ft::swap(tmp, new_root);
+		}
+
 		void erase(iterator pos) {
 			node tmp = pos.base();
 
 			if (tmp->r && tmp->l) {
-				node	new_root = tmp->r;
-				while (new_root->l) {
-					new_root = new_root->l;
-				}
-				tmp->l->parent = new_root;
-				if (new_root != tmp->r) {
-					tmp->r->parent = new_root;
-					if (new_root->r) {
-						new_root->r->parent = new_root->parent;
-						new_root->parent->l = new_root->r;
-						} else {
-						new_root->parent->l = NULL;
-					}
-				}
-				if (tmp->parent) {
-					if (tmp == tmp->parent->l) {
-						tmp->parent->l = new_root;
-					} else {
-						tmp->parent->r = new_root;
-					}
-				}
-				new_root->parent = tmp->parent;
-				new_root->l = tmp->l;
-				if (new_root != tmp->r)
-					new_root->r = tmp->r;
-				if (tmp == _root)
-					_root = new_root;
-				delete tmp;
+				_two_child(tmp);
 			} else if (tmp->r || tmp->l) {
 				if (tmp->r) {
 					if (tmp->parent) {
@@ -337,6 +364,7 @@ namespace ft {
 					tmp->r->parent = tmp->parent;
 					if (tmp == _root)
 						_root = tmp->r;
+					tmp->r->color = BLACK;
 					delete tmp;
 				} else {
 					if (tmp->parent) {
@@ -349,18 +377,24 @@ namespace ft {
 					tmp->l->parent = tmp->parent;
 					if (tmp == _root)
 						_root = tmp->l;
+					tmp->l->color = BLACK;
 					delete tmp;
 				}
 			} else {
 				if (tmp->parent) {
-					if (tmp == tmp->parent->l)
-						tmp->parent->l = NULL;
-					else
-						tmp->parent->r = NULL;
+					if (tmp->color == BLACK) {
+						_erase(tmp);
+					} else {
+						if (tmp->parent->l == tmp)
+							tmp->parent->l = NULL;
+						else
+							tmp->parent->r = NULL;
+						delete tmp;
+					}
 				} else {
+					delete tmp;
 					_root = NULL;
 				}
-				delete tmp;
 			}
 			_size--;
 		}
@@ -622,6 +656,7 @@ namespace ft {
 	bool operator<=(const ft::rbt<Key, T, Compare, Alloc> & lhs, const ft::rbt<Key, T, Compare, Alloc> & rhs) {
 		return !(lhs > rhs);
 	}
+
 }
 
 #endif
