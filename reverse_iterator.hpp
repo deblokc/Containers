@@ -6,15 +6,13 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/27 19:00:11 by tnaton            #+#    #+#             */
-/*   Updated: 2022/11/22 19:00:53 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/11/22 21:30:56 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef REVERSE_ITERATOR_HPP
 # define REVERSE_ITERATOR_HPP
-# include <iterator>
 # include "viterator.hpp"
-#include <iostream>
 
 namespace ft {
 	template <class Iter>

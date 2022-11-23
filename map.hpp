@@ -6,14 +6,13 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/21 19:49:48 by tnaton            #+#    #+#             */
-/*   Updated: 2022/11/22 18:48:15 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/11/23 12:30:20 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MAP_HPP
 # define MAP_HPP
 # include "rbt.hpp"
-
 namespace ft {
 
 	template <class Key, class T, class Compare = std::less<Key>, class Allocator = std::allocator<ft::pair<const Key, T> > >

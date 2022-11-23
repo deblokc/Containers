@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 16:46:15 by tnaton            #+#    #+#             */
-/*   Updated: 2022/11/22 21:18:25 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/11/23 12:42:15 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -190,9 +190,11 @@ namespace ft {
 		}
 
 		void erase(iterator first, iterator last) {
+			Key	val;
 			while (first != last) {
-				erase(first->first);
+				val = first->first;
 				first++;
+				erase(val);
 			}
 		}
 
@@ -256,9 +258,9 @@ namespace ft {
 							tmp->parent->r = tmp->l;
 						}
 					}
-					tmp->r->parent = tmp->parent;
+					tmp->l->parent = tmp->parent;
 					if (tmp == _root)
-						_root = tmp->r;
+						_root = tmp->l;
 					delete tmp;
 				}
 			} else {
