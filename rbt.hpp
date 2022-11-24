@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 16:46:15 by tnaton            #+#    #+#             */
-/*   Updated: 2022/11/24 18:37:36 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/11/24 21:08:11 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@
 
 namespace ft {
 
-	template <class Key, class T, class Compare = std::less<Key>, class Allocator = std::allocator<ft::pair<const Key, T> > > class rbt {
+	template <class Key, class T, class value_type, class Compare, class Allocator = std::allocator<ft::pair<const Key, T> > > class rbt {
 		public:
 
 			struct node_base;
@@ -34,7 +34,6 @@ namespace ft {
 			typedef node_base*														node;
 			typedef	Key																key_type;
 			typedef	T																mapped_type;
-			typedef	ft::pair<const Key, T>											value_type;
 			typedef	typename Allocator::size_type									size_type;
 			typedef	typename Allocator::difference_type								difference_type;
 			typedef	Compare															key_compare;
@@ -166,66 +165,6 @@ namespace ft {
 		
 		node root(void) const {
 			return (_root);
-		}
-
-		struct Trunk
-		{
-			Trunk *prev;
-			std::string str;
-		 
-			Trunk(Trunk *prev, std::string str)
-			{
-				this->prev = prev;
-				this->str = str;
-			}
-		};
-
-		void showTrunks(Trunk *p)
-		{
-			if (p == NULL) {
-				return;
-			}
-
-			showTrunks(p->prev);
-			std::cout << p->str;
-		}
-
-		void printTree(node root, Trunk *prev, bool isLeft) {
-			if (root == NULL)
-				return ;
-		//	std::cout << "root : " << root->val.first << std::endl;
-			std::string prev_str = "         ";
-			Trunk *trunk = new Trunk(prev, prev_str);
-
-			printTree(root->r, trunk, true);
-
-			if (!prev) {
-				trunk->str = "—————————";
-			}
-			else if (isLeft)
-			{
-				trunk->str = ".—————————";
-				prev_str = "         |";
-			}
-			else {
-				trunk->str = "`—————————";
-				prev->str = prev_str;
-			}
-
-			showTrunks(trunk);
-			if (root->color)
-				std::cout << "\033[0;90m"; 
-			else
-				std::cout << "\033[0;91m";
-			std::cout << " " << root->val.first << "\033[0m" << std::endl;
-
-			if (prev) {
-				prev->str = prev_str;
-			}
-			trunk->str = "         |";
-
-			printTree(root->l, trunk, false);
-			delete trunk;
 		}
 
 		void debug(void) {
@@ -401,7 +340,7 @@ namespace ft {
 				return ft::make_pair(iterator(tmp, this), true);
 			}
 			while (tmp) {
-				if (_cmp(val.first, tmp->val.first)) {
+				if (_cmp(val, tmp->val)) {
 					if (tmp->l) {
 						tmp = tmp->l;
 					} else {
@@ -410,7 +349,7 @@ namespace ft {
 						_size++;
 						return ft::make_pair(iterator(tmp->l, this), true);
 					}
-				} else if (_cmp(tmp->val.first, val.first)) {
+				} else if (_cmp(tmp->val, val)) {
 					if (tmp->r) {
 						tmp = tmp->r;
 					} else {
@@ -653,13 +592,13 @@ namespace ft {
 			node tmp = _root;
 
 			while (tmp) {
-				if (_cmp(key, tmp->val.first)) {
+				if (_cmp(key, tmp->val)) {
 					if (tmp->l) {
 						tmp = tmp->l;
 					} else {
 						break ;
 					}
-				} else if (_cmp(tmp->val.first, key)) {
+				} else if (_cmp(tmp->val, key)) {
 					if (tmp->r) {
 						tmp = tmp->r;
 					} else {
@@ -676,13 +615,13 @@ namespace ft {
 			node tmp = _root;
 
 			while (tmp) {
-				if (_cmp(key, tmp->val.first)) {
+				if (_cmp(key, tmp->val)) {
 					if (tmp->l) {
 						tmp = tmp->l;
 					} else {
 						break ;
 					}
-				} else if (_cmp(tmp->val.first, key)) {
+				} else if (_cmp(tmp->val, key)) {
 					if (tmp->r) {
 						tmp = tmp->r;
 					} else {
@@ -739,13 +678,13 @@ namespace ft {
 			node ret = NULL;
 
 			while (tmp) {
-				if (_cmp(key, tmp->val.first)) {
+				if (_cmp(key, tmp->val)) {
 					ret = tmp;
 					if (tmp->l)
 						tmp = tmp->l;
 					else
 						return iterator(tmp, this);
-				} else if (_cmp(tmp->val.first, key)) {
+				} else if (_cmp(tmp->val, key)) {
 					if (tmp->r)
 						tmp = tmp->r;
 					else
@@ -764,13 +703,13 @@ namespace ft {
 			node ret = NULL;
 
 			while (tmp) {
-				if (_cmp(key, tmp->val.first)) {
+				if (_cmp(key, tmp->val)) {
 					ret = tmp;
 					if (tmp->l)
 						tmp = tmp->l;
 					else
 						return const_iterator(tmp, this);
-				} else if (_cmp(tmp->val.first, key)) {
+				} else if (_cmp(tmp->val, key)) {
 					if (tmp->r)
 						tmp = tmp->r;
 					else

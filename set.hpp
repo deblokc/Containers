@@ -1,76 +1,55 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   map.hpp                                            :+:      :+:    :+:   */
+/*   set.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/21 19:49:48 by tnaton            #+#    #+#             */
-/*   Updated: 2022/11/24 21:13:04 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/11/24 21:47:48 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MAP_HPP
-# define MAP_HPP
+#ifndef SET_HPP
+# define SET_HPP
 # include "rbt.hpp"
 namespace ft {
 
-	template <class Key, class T, class Compare = std::less<Key>, class Allocator = std::allocator<ft::pair<const Key, T> > >
-	class map {
+	template <class Key, class Compare = std::less<Key>, class Allocator = std::allocator<Key> >
+	class set {
 		public:
 
-			typedef	Key																key_type;
-			typedef	T																mapped_type;
-			typedef	ft::pair<const Key, T>											value_type;
+			typedef	Key																	key_type;
+			typedef	Key																	value_type;
+			typedef	typename Allocator::size_type										size_type;
+			typedef	typename Allocator::difference_type									difference_type;
+			typedef	Compare																key_compare;
+			typedef	Compare																value_compare;
+			typedef	Allocator															allocator_type;
+			typedef	typename Allocator::reference										reference;
+			typedef	typename Allocator::const_reference									const_reference;
+			typedef	value_type*															pointer;
+			typedef	typename Allocator::const_pointer									const_pointer;
+			typedef	typename ft::rbt<Key, Key, const value_type, value_compare, Allocator>	rbt;
+			typedef	typename ft::rbtiterator<const value_type, value_compare, rbt>			iterator;
+			typedef	typename ft::rbtiterator<const value_type, value_compare, rbt>		const_iterator;
+			typedef	typename ft::reverse_iterator<iterator>								reverse_iterator;
+			typedef	typename ft::reverse_iterator<const_iterator>						const_reverse_iterator;
 
-			class value_compare : public std::binary_function<value_type, value_type, bool> {
-
-				public:
-					value_compare(void): comp() {}
-					value_compare(Compare c): comp(c) {}
-					bool operator()(const value_type & lhs, const value_type & rhs) const {
-						return comp(lhs.first, rhs.first);
-					}
-					bool operator()(const key_type & lhs, const value_type & rhs) const {
-						return comp(lhs, rhs.first);
-					}
-					bool operator()(const value_type & lhs, const key_type & rhs) const {
-						return comp(lhs.first, rhs);
-					}
-
-				protected:
-					Compare	comp;
-			};
-
-			typedef	typename Allocator::size_type									size_type;
-			typedef	typename Allocator::difference_type								difference_type;
-			typedef	Compare															key_compare;
-			typedef	Allocator														allocator_type;
-			typedef	typename Allocator::reference									reference;
-			typedef	typename Allocator::const_reference								const_reference;
-			typedef	value_type*														pointer;
-			typedef	typename Allocator::const_pointer								const_pointer;
-			typedef	typename ft::rbt<Key, T, value_type, value_compare, Allocator>	rbt;
-			typedef	typename ft::rbtiterator<value_type, value_compare, rbt>		iterator;
-			typedef	typename ft::rbtiterator<const value_type, value_compare, rbt>	const_iterator;
-			typedef	typename ft::reverse_iterator<iterator>							reverse_iterator;
-			typedef	typename ft::reverse_iterator<const_iterator>					const_reverse_iterator;
-
-
-			explicit map(const Compare & comp = Compare(), const allocator_type & alloc = allocator_type()): _tree(comp, alloc) {
+			explicit set(const Compare & comp = Compare(), const allocator_type & alloc = allocator_type()): _tree(comp, alloc) {
 			}
 
 			template <class InputIt>
-			map (InputIt first, InputIt last, const Compare & comp = Compare(), const allocator_type & alloc = allocator_type()): _tree(first, last, comp, alloc) {
+			set (InputIt first, InputIt last, const Compare & comp = Compare(), const allocator_type & alloc = allocator_type()): _tree(first, last, comp, alloc) {
 			}
 
-			map (const map & other): _tree(other._tree) {
+			set (const set & other): _tree(other._tree) {
 			}
 
-			~map(void) {
+			~set(void) {
 			}
 
-			map &operator=(const map & other) {
+			set &operator=(const set & other) {
 				if (this == &other)
 					return (*this);
 				_tree = other._tree;
@@ -174,15 +153,15 @@ namespace ft {
 				return (_tree.find(key));
 			}
 
-			T& at(const Key & key) {
+			value_type& at(const Key & key) {
 				return (_tree.at(key));
 			}
 
-			const T& at(const Key & key) const {
+			const value_type& at(const Key & key) const {
 				return (_tree.at(key));
 			}
 
-			T& operator[](const Key & key) {
+			value_type& operator[](const Key & key) {
 				return (_tree[key]);
 			}
 
@@ -218,54 +197,54 @@ namespace ft {
 				return (allocator_type());
 			}
 
-			void swap(map & other) {
+			void swap(set & other) {
 				ft::swap(_tree, other._tree);
 			}
 
 			key_compare key_comp(void) const {
-				return (key_compare());
+				return (_tree.key_comp());
 			}
 
 			value_compare	value_comp(void) const {
-				return (value_compare(key_comp()));
+				return (key_comp());
 			}
 
 		private:
 			rbt	_tree;
 	};
 
-	template<class Key, class T, class Compare, class Alloc>
-	void swap(ft::map<Key, T, Compare, Alloc> & lhs, ft::map<Key, T, Compare, Alloc> & rhs) {
+	template<class Key, class Compare, class Alloc>
+	void swap(ft::set<Key, Compare, Alloc> & lhs, ft::set<Key, Compare, Alloc> & rhs) {
 		lhs.swap(rhs);
 	}
 
-	template<class Key, class T, class Compare, class Alloc>
-	bool operator==(const ft::map<Key, T, Compare, Alloc> & lhs, const ft::map<Key, T, Compare, Alloc> & rhs) {
+	template<class Key, class Compare, class Alloc>
+	bool operator==(const ft::set<Key, Compare, Alloc> & lhs, const ft::set<Key, Compare, Alloc> & rhs) {
 		return ((lhs.size() == rhs.size()) && ft::equal(lhs.begin(), lhs.end(), rhs.begin()));
 	}
 
-	template<class Key, class T, class Compare, class Alloc>
-	bool operator!=(const ft::map<Key, T, Compare, Alloc> & lhs, const ft::map<Key, T, Compare, Alloc> & rhs) {
+	template<class Key, class Compare, class Alloc>
+	bool operator!=(const ft::set<Key, Compare, Alloc> & lhs, const ft::set<Key, Compare, Alloc> & rhs) {
 		return !(lhs == rhs);
 	}
 
-	template<class Key, class T, class Compare, class Alloc>
-	bool operator<(const ft::map<Key, T, Compare, Alloc> & lhs, const ft::map<Key, T, Compare, Alloc> & rhs) {
+	template<class Key, class Compare, class Alloc>
+	bool operator<(const ft::set<Key, Compare, Alloc> & lhs, const ft::set<Key, Compare, Alloc> & rhs) {
 		return (ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
 	}
 
-	template<class Key, class T, class Compare, class Alloc>
-	bool operator>=(const ft::map<Key, T, Compare, Alloc> & lhs, const ft::map<Key, T, Compare, Alloc> & rhs) {
+	template<class Key, class Compare, class Alloc>
+	bool operator>=(const ft::set<Key, Compare, Alloc> & lhs, const ft::set<Key, Compare, Alloc> & rhs) {
 		return !(lhs < rhs);
 	}
 
-	template<class Key, class T, class Compare, class Alloc>
-	bool operator>(const ft::map<Key, T, Compare, Alloc> & lhs, const ft::map<Key, T, Compare, Alloc> & rhs) {
+	template<class Key, class Compare, class Alloc>
+	bool operator>(const ft::set<Key, Compare, Alloc> & lhs, const ft::set<Key, Compare, Alloc> & rhs) {
 		return (ft::lexicographical_compare(rhs.begin(), rhs.end(), lhs.begin(), lhs.end()));
 	}
 
-	template<class Key, class T, class Compare, class Alloc>
-	bool operator<=(const ft::map<Key, T, Compare, Alloc> & lhs, const ft::map<Key, T, Compare, Alloc> & rhs) {
+	template<class Key, class Compare, class Alloc>
+	bool operator<=(const ft::set<Key, Compare, Alloc> & lhs, const ft::set<Key, Compare, Alloc> & rhs) {
 		return !(lhs > rhs);
 	}
 

@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 18:49:18 by tnaton            #+#    #+#             */
-/*   Updated: 2022/11/24 18:00:35 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/11/24 20:52:22 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include <iostream>
 #include <map>
 #include "map.hpp"
+#include "set.hpp"
 
 struct Trunk
 {
@@ -37,7 +38,7 @@ void showTrunks(Trunk *p)
 	std::cout << p->str;
 }
 
-void printnode(ft::rbt<int, int>::node & tmp) {
+void printnode(ft::rbt<int, int, int>::node & tmp) {
 	if (!tmp) {
 		std::cout << "Invalide insert" << std::endl;
 		return ;
@@ -46,10 +47,10 @@ void printnode(ft::rbt<int, int>::node & tmp) {
 		std::cout << "\033[0;90m"; 
 	else
 		std::cout << "\033[0;91m";
-	std::cout << "Key : " << tmp->val.first << " | Val : " << tmp->val.second << "\033[0m" << std::endl;
+	std::cout << "Key : " << tmp->val << " | Val : " << tmp->val << "\033[0m" << std::endl;
 }
 
-void printTree(ft::rbt<int, int>::node root, Trunk *prev, bool isLeft) {
+void printTree(ft::rbt<int, int, int>::node root, Trunk *prev, bool isLeft) {
 	if (root == NULL)
 		return ;
 //	std::cout << "root : " << root->val.first << std::endl;
@@ -76,7 +77,7 @@ void printTree(ft::rbt<int, int>::node root, Trunk *prev, bool isLeft) {
 		std::cout << "\033[0;90m"; 
 	else
 		std::cout << "\033[0;91m";
-	std::cout << " " << root->val.first << "\033[0m" << std::endl;
+	std::cout << " " << root->val<< "\033[0m" << std::endl;
 
     if (prev) {
         prev->str = prev_str;
@@ -87,7 +88,7 @@ void printTree(ft::rbt<int, int>::node root, Trunk *prev, bool isLeft) {
 	delete trunk;
 }
 
-void pT(ft::rbt<int, int>::node root) {
+void pT(ft::rbt<int, int, int>::node root) {
 	printTree(root, NULL, false);
 	std::cout << "-------------------------------------------------------------------------------------" << std::endl;
 }
@@ -174,6 +175,8 @@ int main(void) {
 		pT(test.root());
     }
 
+	ft::set<int> set;
+	set.insert(1);
 //	typedef ft::map<int, int>::iterator iterator;
 	
 

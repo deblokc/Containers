@@ -58,7 +58,7 @@ namespace ft {
 					return (*this);
 				} else {
 					value_type tmp = _ptr->val;
-					while (_ptr && !_cmp(tmp.first, _ptr->val.first)) {
+					while (_ptr && !_cmp(tmp, _ptr->val)) {
 						_ptr = _ptr->parent;
 					}
 					return (*this);
@@ -87,7 +87,7 @@ namespace ft {
 					return (*this);
 				} else {
 					value_type tmp = _ptr->val;
-					while (_ptr && !_cmp(_ptr->val.first, tmp.first)) {
+					while (_ptr && !_cmp(_ptr->val, tmp)) {
 						_ptr = _ptr->parent;
 					}
 					return (*this);
@@ -105,9 +105,9 @@ namespace ft {
 			}
 
 		protected:
-			node	_ptr;
+			node			_ptr;
 			const ctnr *	_tree;
-			cmp		_cmp;
+			cmp				_cmp;
 	};
 
 	template <typename lit, typename rit, typename cmp, typename ctnr>
