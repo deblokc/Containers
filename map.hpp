@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/21 19:49:48 by tnaton            #+#    #+#             */
-/*   Updated: 2022/11/23 18:45:30 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/11/24 17:53:00 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,8 +70,16 @@ namespace ft {
 
 			////////////////////////////////////
 			
+			void swapNode(typename rbt::node x, typename rbt::node y) {
+				_tree.swapNode(x, y);
+			}
+
 			typename rbt::node root(void) {
 				return _tree.root();
+			}
+
+			void debug(void) {
+				_tree.debug();
 			}
 
 			////////////////////////////////////

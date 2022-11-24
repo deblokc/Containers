@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 16:46:15 by tnaton            #+#    #+#             */
-/*   Updated: 2022/11/23 20:55:43 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/11/24 18:37:36 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,68 @@ namespace ft {
 
 				node_base(const value_type & val = value_type()): val(val), parent(NULL), l(NULL), r(NULL), color(RED), end(false) {}
 				node_base(node_base const & other): val(other.val), parent(other.parent), l(other.l), r(other.r), color(other.color), end(other.end) {}
+				void swap(const node & other) {
+					if (this->parent == other->parent) {
+						ft::swap(this->parent->l, other->parent->r);
+					} else {
+						if (this->parent && this->parent != other) {
+							if (this->parent->l == this) {
+								this->parent->l = other;
+							} else {
+								this->parent->r = other;
+							}
+						}
+						if (other->parent && other->parent != this) {
+							if (other->parent->l == other) {
+								other->parent->l = this;
+							} else {
+								other->parent->r = this;
+							}
+						}
+					}
+					if (this->l && this->l != other) {
+						this->l->parent = other;
+					}
+					if (this->r && this->r != other) {
+						this->r->parent = other;
+					}
+					if (other->l && other->l != this) {
+						other->l->parent = this;
+					}
+					if (other->r && other->r != this) {
+						other->r->parent = this;
+					}
+					if (this->parent != other && other->parent != this) {
+						ft::swap(this->parent, other->parent);
+						ft::swap(this->l, other->l);
+						ft::swap(this->r, other->r);
+					} else if (this->parent == other) {
+						this->parent = other->parent;
+						other->parent = this;
+						if (other->l == this) {
+							other->l = this->l;
+							this->l = other;
+							ft::swap(other->r, this->r);
+						} else {
+							other->r = this->r;
+							this->r = other;
+							ft::swap(other->l, this->l);
+						}
+					} else if (other->parent == this) {
+						other->parent = this->parent;
+						this->parent = other;
+						if (this->l == other) {
+							this->l = other->l;
+							other->l = this;
+							ft::swap(other->r, this->r);
+						} else {
+							this->r = other->r;
+							other->r = this;
+							ft::swap(other->l, this->l);
+						}
+					}
+					ft::swap(this->color, other->color);
+				}
 			};
 
 		explicit rbt(const Compare & comp = Compare(), const allocator_type & alloc = allocator_type()) {
@@ -105,6 +167,70 @@ namespace ft {
 		node root(void) const {
 			return (_root);
 		}
+
+		struct Trunk
+		{
+			Trunk *prev;
+			std::string str;
+		 
+			Trunk(Trunk *prev, std::string str)
+			{
+				this->prev = prev;
+				this->str = str;
+			}
+		};
+
+		void showTrunks(Trunk *p)
+		{
+			if (p == NULL) {
+				return;
+			}
+
+			showTrunks(p->prev);
+			std::cout << p->str;
+		}
+
+		void printTree(node root, Trunk *prev, bool isLeft) {
+			if (root == NULL)
+				return ;
+		//	std::cout << "root : " << root->val.first << std::endl;
+			std::string prev_str = "         ";
+			Trunk *trunk = new Trunk(prev, prev_str);
+
+			printTree(root->r, trunk, true);
+
+			if (!prev) {
+				trunk->str = "—————————";
+			}
+			else if (isLeft)
+			{
+				trunk->str = ".—————————";
+				prev_str = "         |";
+			}
+			else {
+				trunk->str = "`—————————";
+				prev->str = prev_str;
+			}
+
+			showTrunks(trunk);
+			if (root->color)
+				std::cout << "\033[0;90m"; 
+			else
+				std::cout << "\033[0;91m";
+			std::cout << " " << root->val.first << "\033[0m" << std::endl;
+
+			if (prev) {
+				prev->str = prev_str;
+			}
+			trunk->str = "         |";
+
+			printTree(root->l, trunk, false);
+			delete trunk;
+		}
+
+		void debug(void) {
+			printTree(_root, NULL, false);
+		}
 		
 		////////////////////////////////////////
 
@@ -141,21 +267,55 @@ namespace ft {
 	private:
 		void rotate(node n, node p) {
 			node g = p->parent;
-			if (g->l == p) {
-				g->l = n;
-				p->r = n->l;
-				n->l = p;
-				if (p->r)
-					p->r->parent = p;
+
+			if (g) {
+				if (g->l == p) {
+					if (p->r == n) {
+						g->l = n;
+						p->r = n->l;
+						n->l = p;
+						if (p->r)
+							p->r->parent = p;
+					} else {
+						g->l = n;
+						p->l = n->r;
+						n->r = p;
+						if (p->l)
+							p->l->parent = p;
+					}
+				} else {
+					if (p->l == n) {
+						g->r = n;
+						p->l = n->r;
+						n->r = p;
+						if (p->l)
+							p->l->parent = p;
+					} else {
+						g->r = n;
+						p->r = n->l;
+						n->l = p;
+						if (p->r)
+							p->r->parent = p;
+					}
+				}
+				n->parent = g;
+				p->parent = n;
 			} else {
-				g->r = n;
-				p->l = n->r;
-				n->r = p;
-				if (p->l)
-					p->l->parent = p;
+				if (p->r == n) {
+					p->r = n->l;
+					n->l = p;
+					if (p->r)
+						p->r->parent = p;
+				} else {
+					p->l = n->r;
+					n->r = p;
+					if (p->l)
+						p->l->parent = p;
+				}
+				n->parent = NULL;
+				p->parent = n;
+				_root = n;
 			}
-			n->parent = g;
-			p->parent = n;
 		}
 
 		void rebalance(node n, node p, node g) {
@@ -270,21 +430,48 @@ namespace ft {
 		template< class InputIt >
 		void insert(InputIt first, InputIt last) {
 			while (first != last) {
-				_insert(*first);
+				insert(*first);
 				first++;
 			}
 		}
 
-		void cas6() {
-		}
-		void cas5() {
-		}
-		void cas4() {
-		}
-		void cas3(node p, node s, node c, node d) {
+		void cas6(node p, node s, node d) {
 			rotate(s, p);
-			(void)c;
-			(void)d;
+			s->color = p->color;
+			p->color = BLACK;
+			d->color = BLACK;
+			return ;
+		}
+
+		void cas5(node p, node s, node c, node d) {
+			rotate(c, s);
+			s->color = RED;
+			c->color = BLACK;
+			d = s;
+			s = c;
+			return cas6(p, s, d);
+		}
+
+		void cas4(node s, node p) {
+			s->color = RED;
+			p->color = BLACK;
+			return ;
+		}
+
+		void cas3(bool isleft, node p, node s, node c, node d) {
+			rotate(s, p);
+			p->color = RED;
+			s->color = BLACK;
+			s = c;
+			d = (isleft ? s->r : s->l);
+			if (d != NULL && d->color == RED) {
+				return cas6(p, s, d);
+			}
+			c = (isleft ? s->l : s->r);
+			if (c != NULL && c->color == RED) {
+				return cas5(p, s, c, d);
+			}
+			return (cas4(s, p));
 		}
 
 		void _erase(node n) {
@@ -292,29 +479,33 @@ namespace ft {
 			node s = NULL;
 			node c = NULL;
 			node d = NULL;
+			bool	isleft;
 
+			p = n->parent;
+			isleft = p->l == n;
+			if (isleft)
+				p->l = NULL;
+			else
+				p->r = NULL;
+			delete n;
+			n = NULL;
 			do {
-				p = n->parent;
-				if (p->l == n) {
-					s = p->r;
-					c = s->l;
-					d = s->r;
-				} else {
-					s = p->l;
-					c = s->r;
-					d = s->l;
-				}
+				if (n)
+					isleft = p->l == n;
+				s = (isleft ? p->r : p->l);
+				c = (isleft ? s->l : s->r);
+				d = (isleft ? s->r : s->l);
 				if (s->color == RED) {
-					return (cas3(p, s, c, d));
+					return (cas3(isleft, p, s, c, d));
 				}
 				if (d != NULL && d->color == RED) {
-					return (cas6());
+					return (cas6(p, s, d));
 				}
 				if (c != NULL && c->color == RED) {
-					return (cas5());
+					return (cas5(p, s, c, d));
 				}
 				if (p->color == RED) {
-					return (cas4());
+					return (cas4(s, p));
 				}
 				s->color = RED;
 				n = p;
@@ -322,16 +513,15 @@ namespace ft {
 		}
 
 		void erase(iterator first, iterator last) {
-			Key	val;
+			iterator	val;
 			while (first != last) {
-				val = first->first;
+				val = first;
 				first++;
 				erase(val);
 			}
 		}
 
 		size_type erase(const Key & key) {
-			std::cout << "n:" << key << std::endl;
 			iterator it = find(key);
 			if (it == end())
 				return (0);
@@ -344,7 +534,10 @@ namespace ft {
 			while (new_root->l) {
 				new_root = new_root->l;
 			}
-			ft::swap(tmp, new_root);
+			if (tmp == _root) {
+				_root = new_root;
+			}
+			tmp->swap(new_root);
 		}
 
 		void erase(iterator pos) {
@@ -352,7 +545,8 @@ namespace ft {
 
 			if (tmp->r && tmp->l) {
 				_two_child(tmp);
-			} else if (tmp->r || tmp->l) {
+			}
+			if (tmp->r || tmp->l) {
 				if (tmp->r) {
 					if (tmp->parent) {
 						if (tmp == tmp->parent->l) {

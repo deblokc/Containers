@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 18:49:18 by tnaton            #+#    #+#             */
-/*   Updated: 2022/11/23 20:55:47 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/11/24 18:00:35 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,7 @@ void printnode(ft::rbt<int, int>::node & tmp) {
 void printTree(ft::rbt<int, int>::node root, Trunk *prev, bool isLeft) {
 	if (root == NULL)
 		return ;
+//	std::cout << "root : " << root->val.first << std::endl;
 	std::string prev_str = "         ";
     Trunk *trunk = new Trunk(prev, prev_str);
 
@@ -117,30 +118,27 @@ int main(void) {
 	test.insert(ft::pair<int, int>(-23, 1));
 	pT(test.root());
 
+	typedef ft::map<int, int>::iterator			iterator;
+	for (iterator it = test.begin(); it != test.end(); it++)
+		std::cout << it->first << "|" << it->second << std::endl;
 	
 	std::cout << "####################################################################################" << std::endl;
 
-	ft::rbt<int, int>::node x = test.root();
-
-	typedef ft::map<int, int>::iterator			iterator;
-
-	iterator it = test.begin();
-
-	it++;
-	it++;
-	it++;
-	it++;
-
-	ft::rbt<int, int>::node y = it.base();
+	ft::rbt<int, int>::node y = test.find(3).base();
+	ft::rbt<int, int>::node x = test.find(2).base();
 
 	pT(test.root());
 
 	std::cout << "trying to swap " << x->val.first << " and " << y->val.first << std::endl;
 	std::cout << "-------------------------------------------------------------------------------------" << std::endl;
 
+//	x->swap(y);
+
 	pT(test.root());
-/*
-	typedef ft::map<int, int>::iterator			iterator;
+
+	std::cout << "-22's parent is " << test.find(-22).base()->parent->val.first << std::endl;
+	std::cout << "-22's brother is " << test.find(-22).base()->parent->r->val.first << std::endl;
+
 	for (iterator it = test.begin(); it != test.end(); it++)
 		std::cout << it->first << "|" << it->second << std::endl;
 	test.size();
@@ -160,26 +158,22 @@ int main(void) {
 
 	pT(test.root());
 	test.erase(2);
+
+	for (iterator it = test.begin(); it != test.end(); it++)
+		std::cout << it->first << "|" << it->second << std::endl;
+
+	std::cout << "$$$$$$$$$" << std::endl;
+
+	test.debug();
+
+	std::cout << "$$$$$$$$$" << std::endl;
+
 	pT(test.root());
-	test.erase(75);
-	pT(test.root());
-	test.erase(1);
-	pT(test.root());
-	test.erase(23);
-	pT(test.root());
-	test.erase(3);
-	pT(test.root());
-	test.erase(30);
-	pT(test.root());
-	test.erase(-22);
-	pT(test.root());
-	test.erase(-23);
-	pT(test.root());
-	test.erase(25);
-	pT(test.root());
-	test.erase(75);
-	pT(test.root());
-*/
+	while (test.size()) {
+		test.erase(test.root()->val.first);
+		pT(test.root());
+    }
+
 //	typedef ft::map<int, int>::iterator iterator;
 	
 
