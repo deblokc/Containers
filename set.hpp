@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/21 19:49:48 by tnaton            #+#    #+#             */
-/*   Updated: 2022/11/24 21:47:48 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/11/25 19:33:22 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,8 @@ namespace ft {
 			typedef	typename Allocator::const_reference									const_reference;
 			typedef	value_type*															pointer;
 			typedef	typename Allocator::const_pointer									const_pointer;
-			typedef	typename ft::rbt<Key, Key, const value_type, value_compare, Allocator>	rbt;
-			typedef	typename ft::rbtiterator<const value_type, value_compare, rbt>			iterator;
+			typedef	typename ft::rbt<Key, Key, value_type, value_compare, Allocator>	rbt;
+			typedef	typename ft::rbtiterator<const value_type, value_compare, rbt>		iterator;
 			typedef	typename ft::rbtiterator<const value_type, value_compare, rbt>		const_iterator;
 			typedef	typename ft::reverse_iterator<iterator>								reverse_iterator;
 			typedef	typename ft::reverse_iterator<const_iterator>						const_reverse_iterator;
@@ -55,22 +55,6 @@ namespace ft {
 				_tree = other._tree;
 				return (*this);
 			}
-
-			////////////////////////////////////
-			
-			void swapNode(typename rbt::node x, typename rbt::node y) {
-				_tree.swapNode(x, y);
-			}
-
-			typename rbt::node root(void) {
-				return _tree.root();
-			}
-
-			void debug(void) {
-				_tree.debug();
-			}
-
-			////////////////////////////////////
 
 			void clear(void) {
 				_tree.clear();
@@ -151,18 +135,6 @@ namespace ft {
 
 			const_iterator find(const Key & key) const {
 				return (_tree.find(key));
-			}
-
-			value_type& at(const Key & key) {
-				return (_tree.at(key));
-			}
-
-			const value_type& at(const Key & key) const {
-				return (_tree.at(key));
-			}
-
-			value_type& operator[](const Key & key) {
-				return (_tree[key]);
 			}
 
 			size_type count(const Key & key) const {

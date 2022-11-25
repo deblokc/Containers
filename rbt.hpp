@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 16:46:15 by tnaton            #+#    #+#             */
-/*   Updated: 2022/11/24 21:08:11 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/11/25 19:37:12 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,15 +48,44 @@ namespace ft {
 			typedef	typename ft::reverse_iterator<const_iterator>					const_reverse_iterator;
 
 			struct node_base {
-				value_type	val;
+				pointer		val;
 				node		parent;
 				node		l;
 				node		r;
 				bool		color;
 				bool		end;
 
-				node_base(const value_type & val = value_type()): val(val), parent(NULL), l(NULL), r(NULL), color(RED), end(false) {}
-				node_base(node_base const & other): val(other.val), parent(other.parent), l(other.l), r(other.r), color(other.color), end(other.end) {}
+				~node_base(void) {
+					allocator_type	alloc;
+					alloc.destroy(val);
+					alloc.deallocate(val, 1);
+				}
+
+				node_base(const value_type & value): parent(NULL), l(NULL), r(NULL), color(RED), end(false) {
+					allocator_type	alloc;
+					val = alloc.allocate(1);
+					alloc.construct(val, value);
+				}
+
+				node_base(node_base const & other): parent(other.parent), l(other.l), r(other.r), color(other.color), end(other.end) {
+					allocator_type	alloc;
+					val = alloc.allocate(1);
+					alloc.construct(val, *other.val);
+				}
+
+				node_base & operator=(node_base const & other) {
+					if (this == &other)
+						return (*this);
+					allocator_type	alloc;
+					alloc.destroy(val);
+					alloc.construct(val, *other.val);
+					parent = other.parent;
+					l = other.l;
+					r = other.r;
+					color = other.color;
+					end = other.end;
+				}
+
 				void swap(const node & other) {
 					if (this->parent == other->parent) {
 						ft::swap(this->parent->l, other->parent->r);
@@ -161,17 +190,9 @@ namespace ft {
 			return (*this);
 		}
 
-		////////////////////////////////////////
-		
 		node root(void) const {
-			return (_root);
+			return _root;
 		}
-
-		void debug(void) {
-			printTree(_root, NULL, false);
-		}
-		
-		////////////////////////////////////////
 
 		void clear(void) {
 			node tmp = _root;
@@ -185,7 +206,8 @@ namespace ft {
 				} else {
 					todel = tmp;
 					if (!tmp->parent) {
-						delete tmp;
+						_allocnode.destroy(tmp);
+						_allocnode.deallocate(tmp, 1);
 						_root = NULL;
 						_size = 0;
 						return ;
@@ -197,7 +219,8 @@ namespace ft {
 						tmp->r = NULL;
 				}
 				if (todel) {
-					delete todel;
+					_allocnode.destroy(todel);
+					_allocnode.deallocate(todel, 1);
 					todel = NULL;
 				}
 			}
@@ -287,7 +310,7 @@ namespace ft {
 			g->color = RED;
 		}
 
-		void checkInsert(iterator pos) {
+		void checkInsert(const_iterator pos) {
 			node n = pos.base();
 			node p = NULL;
 
@@ -316,7 +339,7 @@ namespace ft {
 		}
 
 	public:
-		iterator insert(iterator pos, const value_type & val) {
+		iterator insert(const_iterator pos, const value_type & val) {
 			(void)pos;
 			ft::pair<iterator, bool> ret = insert(val);
 			return (ret.first);
@@ -334,26 +357,29 @@ namespace ft {
 			node tmp = _root;
 
 			if (!tmp) {
-				tmp = new node_base(val);
+				tmp = _allocnode.allocate(1);
+				_allocnode.construct(tmp, val);
 				_root = tmp;
 				_size++;
 				return ft::make_pair(iterator(tmp, this), true);
 			}
 			while (tmp) {
-				if (_cmp(val, tmp->val)) {
+				if (_cmp(val, *tmp->val)) {
 					if (tmp->l) {
 						tmp = tmp->l;
 					} else {
-						tmp->l = new node_base(val);
+						tmp->l = _allocnode.allocate(1);
+						_allocnode.construct(tmp->l, val);
 						tmp->l->parent = tmp;
 						_size++;
 						return ft::make_pair(iterator(tmp->l, this), true);
 					}
-				} else if (_cmp(tmp->val, val)) {
+				} else if (_cmp(*tmp->val, val)) {
 					if (tmp->r) {
 						tmp = tmp->r;
 					} else {
-						tmp->r = new node_base(val);
+						tmp->r = _allocnode.allocate(1);
+						_allocnode.construct(tmp->r, val);
 						tmp->r->parent = tmp;
 						_size++;
 						return ft::make_pair(iterator(tmp->r, this), true);
@@ -426,7 +452,8 @@ namespace ft {
 				p->l = NULL;
 			else
 				p->r = NULL;
-			delete n;
+			_allocnode.destroy(n);
+			_allocnode.deallocate(n, 1);
 			n = NULL;
 			do {
 				if (n)
@@ -451,8 +478,8 @@ namespace ft {
 			} while ((p = n->parent) != NULL);
 		}
 
-		void erase(iterator first, iterator last) {
-			iterator	val;
+		void erase(const_iterator first, const_iterator last) {
+			const_iterator	val;
 			while (first != last) {
 				val = first;
 				first++;
@@ -461,7 +488,7 @@ namespace ft {
 		}
 
 		size_type erase(const Key & key) {
-			iterator it = find(key);
+			const_iterator it = find(key);
 			if (it == end())
 				return (0);
 			erase(it);
@@ -479,7 +506,7 @@ namespace ft {
 			tmp->swap(new_root);
 		}
 
-		void erase(iterator pos) {
+		void erase(const_iterator pos) {
 			node tmp = pos.base();
 
 			if (tmp->r && tmp->l) {
@@ -498,7 +525,8 @@ namespace ft {
 					if (tmp == _root)
 						_root = tmp->r;
 					tmp->r->color = BLACK;
-					delete tmp;
+					_allocnode.destroy(tmp);
+					_allocnode.deallocate(tmp, 1);
 				} else {
 					if (tmp->parent) {
 						if (tmp == tmp->parent->l) {
@@ -511,7 +539,8 @@ namespace ft {
 					if (tmp == _root)
 						_root = tmp->l;
 					tmp->l->color = BLACK;
-					delete tmp;
+					_allocnode.destroy(tmp);
+					_allocnode.deallocate(tmp, 1);
 				}
 			} else {
 				if (tmp->parent) {
@@ -522,10 +551,12 @@ namespace ft {
 							tmp->parent->l = NULL;
 						else
 							tmp->parent->r = NULL;
-						delete tmp;
+						_allocnode.destroy(tmp);
+						_allocnode.deallocate(tmp, 1);
 					}
 				} else {
-					delete tmp;
+					_allocnode.destroy(tmp);
+					_allocnode.deallocate(tmp, 1);
 					_root = NULL;
 				}
 			}
@@ -592,13 +623,13 @@ namespace ft {
 			node tmp = _root;
 
 			while (tmp) {
-				if (_cmp(key, tmp->val)) {
+				if (_cmp(key, *tmp->val)) {
 					if (tmp->l) {
 						tmp = tmp->l;
 					} else {
 						break ;
 					}
-				} else if (_cmp(tmp->val, key)) {
+				} else if (_cmp(*tmp->val, key)) {
 					if (tmp->r) {
 						tmp = tmp->r;
 					} else {
@@ -615,13 +646,13 @@ namespace ft {
 			node tmp = _root;
 
 			while (tmp) {
-				if (_cmp(key, tmp->val)) {
+				if (_cmp(key, *tmp->val)) {
 					if (tmp->l) {
 						tmp = tmp->l;
 					} else {
 						break ;
 					}
-				} else if (_cmp(tmp->val, key)) {
+				} else if (_cmp(*tmp->val, key)) {
 					if (tmp->r) {
 						tmp = tmp->r;
 					} else {
@@ -678,13 +709,13 @@ namespace ft {
 			node ret = NULL;
 
 			while (tmp) {
-				if (_cmp(key, tmp->val)) {
+				if (_cmp(key, *tmp->val)) {
 					ret = tmp;
 					if (tmp->l)
 						tmp = tmp->l;
 					else
 						return iterator(tmp, this);
-				} else if (_cmp(tmp->val, key)) {
+				} else if (_cmp(*tmp->val, key)) {
 					if (tmp->r)
 						tmp = tmp->r;
 					else
@@ -703,13 +734,13 @@ namespace ft {
 			node ret = NULL;
 
 			while (tmp) {
-				if (_cmp(key, tmp->val)) {
+				if (_cmp(key, *tmp->val)) {
 					ret = tmp;
 					if (tmp->l)
 						tmp = tmp->l;
 					else
 						return const_iterator(tmp, this);
-				} else if (_cmp(tmp->val, key)) {
+				} else if (_cmp(*tmp->val, key)) {
 					if (tmp->r)
 						tmp = tmp->r;
 					else
@@ -749,14 +780,15 @@ namespace ft {
 		}
 
 		private:
-			node				_root;
-			allocator_type		_alloc;
-			key_compare			_cmp;
-			size_type			_size;
+			node						_root;
+			allocator_type				_alloc;
+			std::allocator<node_base>	_allocnode;
+			key_compare					_cmp;
+			size_type					_size;
 	};
 
-	template<class Key, class T, class Compare, class Alloc>
-	void swap(ft::rbt<Key, T, Compare, Alloc> & lhs, ft::rbt<Key, T, Compare, Alloc> & rhs) {
+	template<class Key, class T, class value_type, class Compare, class Alloc>
+	void swap(ft::rbt<Key, T, value_type, Compare, Alloc> & lhs, ft::rbt<Key, T, value_type, Compare, Alloc> & rhs) {
 		lhs.swap(rhs);
 	}
 

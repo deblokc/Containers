@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 18:49:18 by tnaton            #+#    #+#             */
-/*   Updated: 2022/11/24 20:52:22 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/11/25 19:27:21 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,8 @@
 #include <map>
 #include "map.hpp"
 #include "set.hpp"
-
+#include "vector.hpp"
+/*
 struct Trunk
 {
     Trunk *prev;
@@ -92,14 +93,24 @@ void pT(ft::rbt<int, int, int>::node root) {
 	printTree(root, NULL, false);
 	std::cout << "-------------------------------------------------------------------------------------" << std::endl;
 }
+*/
 
 int main(void) {
 
+	ft::map<int, int>	test;
+
+	test.insert(ft::make_pair<int, int>(42, 0));
+	test.insert(ft::make_pair<int, int>(2, 0));
+	test.insert(ft::make_pair<int, int>(4, 0));
+	test.insert(ft::make_pair<int, int>(420, 0));
+	test.insert(ft::make_pair<int, int>(402, 0));
+	test.insert(ft::make_pair<int, int>(4020, 0));
+
 //	typedef ft::map<int, int>::const_iterator	const_iterator;
 
-	ft::map<int, int>	test;
+//	ft::map<int, int>	test;
 //	ft::map<int, int>	map2;
-
+/*
 	test.insert(ft::pair<int, int>(23, 1));
 	pT(test.root());
 	test.insert(ft::pair<int, int>(25, 1));
@@ -192,7 +203,7 @@ int main(void) {
 
 //	iterator t = test.end();
 //	t--;
-
+*/
 /*	typedef ft::map<int, int>::reverse_iterator		reverse_iterator;
 
 	for (reverse_iterator rit = test.rbegin(); rit != test.rend(); rit++) {

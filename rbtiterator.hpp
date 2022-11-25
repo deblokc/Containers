@@ -45,9 +45,9 @@ namespace ft {
 			}
 
 			const node base(void) const {return _ptr;}
-			reference operator*(void) const {return (_ptr->val);}
-			pointer operator->(void) {return &(_ptr->val);}
-			pointer operator->(void) const {return &(_ptr->val);}
+			reference operator*(void) const {return (*_ptr->val);}
+			pointer operator->(void) {return &(*_ptr->val);}
+			pointer operator->(void) const {return &(*_ptr->val);}
 
 			rbtiterator & operator++(void) {
 				if (_ptr->r) {
@@ -57,8 +57,8 @@ namespace ft {
 					}
 					return (*this);
 				} else {
-					value_type tmp = _ptr->val;
-					while (_ptr && !_cmp(tmp, _ptr->val)) {
+					value_type tmp = *_ptr->val;
+					while (_ptr && !_cmp(tmp, *_ptr->val)) {
 						_ptr = _ptr->parent;
 					}
 					return (*this);
@@ -86,8 +86,8 @@ namespace ft {
 					}
 					return (*this);
 				} else {
-					value_type tmp = _ptr->val;
-					while (_ptr && !_cmp(_ptr->val, tmp)) {
+					value_type tmp = *_ptr->val;
+					while (_ptr && !_cmp(*_ptr->val, tmp)) {
 						_ptr = _ptr->parent;
 					}
 					return (*this);
