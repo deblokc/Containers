@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/22 19:09:37 by tnaton            #+#    #+#             */
-/*   Updated: 2022/11/23 19:07:29 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/11/26 18:02:48 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include <typeinfo>
 #include <sys/time.h>
 #include <limits>
+#include <list>
 
 #ifndef NAMESPACE
 # define NAMESPACE std
@@ -226,6 +227,19 @@ int main () {
 			}
 			test.p();
 			std::cout << "vector insert iterator" << std::endl;
+		}
+		std::cerr << std::endl;
+		{
+			Clock test;
+
+			std::list<int> v2(MAXSIZE/40, 42);
+			for (int i = 0; i < 1 * PREC; i++) {
+				NAMESPACE::vector<int> v(1000, 42);
+				v.insert(v.begin() + 500, v2.begin(), v2.end());
+				std::cerr << (i+1)/(0.01 * PREC) << "." << (i+1)%(ROUND(0.01 * PREC)) << "%   " << '\r';
+			}
+			test.p();
+			std::cout << "vector insert InputIterator" << std::endl;
 		}
 		std::cerr << std::endl;
 	}
