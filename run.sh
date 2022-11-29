@@ -2,16 +2,16 @@
 
 if [ $# -gt 2 ]
 then
-	echo "./rush.sh [all|stack|vector|map|set] [number (optional)]"
+	echo "./rush.sh [all|vector|map|set] [0 < number < 100]"
 	exit
 fi
 if [ "$2" != "" ]
 then
-	if [ $2 -lt 100 ]
+	if [ $2 -lt 100 ] && [ $2 -gt 0 ]
 	then
 		PREC="PREC=""$2"
 	else
-		echo "PREC TOO HIGH, MAX IS 99"
+		echo "0 < PREC < 100"
 		exit
 	fi
 fi
@@ -27,9 +27,6 @@ then
 elif [ "$1" == "set" ]
 then
 	TEST="TEST=""3"
-elif [ "$1" == "stack" ]
-then
-	TEST="TEST=""4"
 else
 	echo "UNKOWN CONTAINER"
 	exit 1

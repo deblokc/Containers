@@ -14,6 +14,8 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <set>
+#include <stack>
 #include <typeinfo>
 #include <sys/time.h>
 #include <limits>
@@ -39,7 +41,7 @@
 class	Clock {
 	public:
 		Clock(void) {gettimeofday(&_time, NULL);};
-		long time(void) {struct timeval now; gettimeofday(&now, NULL); return (((now.tv_sec * 1000) - (_time.tv_sec * 1000)) + (now.tv_usec / 1000) - (_time.tv_usec / 1000));}
+		long time(void) {struct timeval now; gettimeofday(&now, NULL); return (((now.tv_sec - _time.tv_sec)*1000) + ((now.tv_usec - _time.tv_usec)/1000));}
 		void p(void) {long tmp = time(); std::cout << tmp/1000 << "." << tmp%1000 << "s ";}
 	private:
 		struct timeval _time;
@@ -162,7 +164,7 @@ int main () {
 						std::cerr << (i+1)/(0.01 * PREC) << "." << (i+1)%(ROUND(0.01 * PREC)) << "%   " << '\r';
 					}
 					test.p();
-					std::cout << "vector assign InputIterator" << std::endl;
+					std::cout << "vector assign BidirectionalIterator" << std::endl;
 				}
 				std::cerr << std::endl;
 			}
@@ -307,7 +309,7 @@ int main () {
 				std::cerr << std::endl;
 			}
 			{
-				std::cout << "### TEST POP_BACK ###" << std::endl;
+				std::cerr << "### TEST POP_BACK ###" << std::endl;
 				std::cerr << std::endl;
 				{
 					Clock test;
@@ -341,38 +343,6 @@ int main () {
 				}
 				std::cerr << std::endl;
 			}
-			{
-				std::cerr << "### TEST SWAP ###" << std::endl;
-				std::cerr << std::endl;
-				{
-					Clock test;
-
-					NAMESPACE::vector<int> v(MAXSIZE, 42);
-					NAMESPACE::vector<int> v2(MAXSIZE, 21);
-
-					for (int i = 0; i < 1 * PREC; i++) {
-						v.swap(v2);
-						v2.swap(v);
-						std::cerr << (i+1)/(0.01 * PREC) << "." << (i+1)%(ROUND(0.01 * PREC)) << "%   " << '\r';
-					}
-					test.p();
-					std::cout << "vector swap member" << std::endl;
-				}
-				std::cerr << std::endl;
-				{
-					Clock test;
-
-					NAMESPACE::vector<int> v(MAXSIZE, 42);
-					NAMESPACE::vector<int> v2(MAXSIZE, 21);
-
-					for (int i = 0; i < 1 * PREC; i++) {
-						NAMESPACE::swap(v, v2);
-						std::cerr << (i+1)/(0.01 * PREC) << "." << (i+1)%(ROUND(0.01 * PREC)) << "%   " << '\r';
-					}
-					test.p();
-					std::cout << "vector swap namespace" << std::endl;
-				}
-			}
 			if (TEST)
 				break;
 		}
@@ -395,14 +365,388 @@ int main () {
 				}
 				std::cerr << std::endl;
 				{
+					NAMESPACE::map<int, int> m;
+					for (int i = 0; i < 10000; i++) {
+						m.insert(NAMESPACE::make_pair(i, 42));
+					}
 					Clock test;
-
+					for (int i = 0; i < 1 * PREC; i++) {
+						NAMESPACE::map<int, int> t(m.begin(), m.end());
+						std::cerr << (i+1)/(0.01 * PREC) << "." << (i+1)%ROUND(0.01 * PREC) << "%   " << '\r';
+						std::cout.clear();
+					}
+					test.p();
+					std::cout << "map iterator constructor" << std::endl;
 				}
+				std::cerr << std::endl;
+				{
+					NAMESPACE::map<int, int> m;
+					for (int i = 0; i < 10000; i++) {
+						m.insert(NAMESPACE::make_pair(i, 42));
+					}
+					Clock test;
+					for (int i = 0; i < 1 * PREC; i++) {
+						NAMESPACE::map<int, int> t(m);
+						std::cerr << (i+1)/(0.01 * PREC) << "." << (i+1)%ROUND(0.01 * PREC) << "%   " << '\r';
+						std::cout.clear();
+					}
+					test.p();
+					std::cout << "map copy constructor" << std::endl;
+				}
+				std::cerr << std::endl;
+			}
+			{
+				std::cerr << "### TEST OPERATOR= ###" << std::endl;
+				std::cerr << std::endl;
+				{
+					NAMESPACE::map<int, int> m;
+					for (int i = 0; i < 10000; i++) {
+						m.insert(NAMESPACE::make_pair(i, 42));
+					}
+					NAMESPACE::map<int, int> t;
+					Clock test;
+					for (int i = 0; i < 1 * PREC; i++) {
+						t = m;
+						m = t;
+						std::cerr << (i+1)/(0.01 * PREC) << "." << (i+1)%ROUND(0.01 * PREC) << "%   " << '\r';
+						std::cout.clear();
+					}
+					test.p();
+					std::cout << "map operator =" << std::endl;
+				}
+				std::cerr << std::endl;
+			}
+			{
+				std::cerr << "### TEST ACCESS ###" << std::endl;
+				std::cerr << std::endl;
+				{
+					NAMESPACE::map<int, int> m;
+					for (int i = 0; i < 10000; i++) {
+						m.insert(NAMESPACE::make_pair(i, 42));
+					}
+					Clock test;
+					for (int i = 0; i < 100 * PREC; i++) {
+						for (int i = 0; i < 10000; i++) {
+							m.at(i);
+						}
+						std::cerr << (i+1)/(1 * PREC) << "." << (i+1)%(1 * PREC) << "%   " << '\r';
+						std::cout.clear();
+					}
+					test.p();
+					std::cout << "map access at" << std::endl;
+				}
+				std::cerr << std::endl;
+				{
+					NAMESPACE::map<int, int> m;
+					Clock test;
+					for (int i = 0; i < 100 * PREC; i++) {
+						for (int i = 0; i < 10000; i++) {
+							m[i];
+						}
+						std::cerr << (i+1)/(1 * PREC) << "." << (i+1)%(1 * PREC) << "%   " << '\r';
+						std::cout.clear();
+					}
+					test.p();
+					std::cout << "map access operator[]" << std::endl;
+				}
+				std::cerr << std::endl;
+				{
+					NAMESPACE::map<int, int> m;
+					for (int i = 0; i < 10000; i++) {
+						m[i];
+					}
+					Clock test;
+					for (int i = 0; i < 100 * PREC; i++) {
+						for (int i = 0; i < 10000; i++) {
+							m.find(i);
+						}
+						std::cerr << (i+1)/(1 * PREC) << "." << (i+1)%(1 * PREC) << "%   " << '\r';
+						std::cout.clear();
+					}
+					test.p();
+					std::cout << "map access find" << std::endl;
+				}
+				std::cerr << std::endl;
+			}
+			{
+				std::cerr << "### TEST INSERT ###" << std::endl;
+				std::cerr << std::endl;
+				{
+					Clock test;
+					for (int i = 0; i < 100 * PREC; i++) {
+						NAMESPACE::map<int, int> m;
+						for (int i = 0; i < 10000; i++) {
+							m.insert(NAMESPACE::make_pair(i, 42));
+						}
+						std::cerr << (i+1)/(1 * PREC) << "." << (i+1)%(1 * PREC) << "%   " << '\r';
+						std::cout.clear();
+					}
+					test.p();
+					std::cout << "map insert val" << std::endl;
+				}
+				std::cerr << std::endl;
+				{
+					NAMESPACE::map<int, int> m;
+					for (int i = 0; i < 10000; i++) {
+						m[i];
+					}
+					Clock test;
+					for (int i = 0; i < 100 * PREC; i++) {
+						NAMESPACE::map<int, int> t;
+						t.insert(m.begin(), m.end());
+						std::cerr << (i+1)/(1 * PREC) << "." << (i+1)%(1 * PREC) << "%   " << '\r';
+						std::cout.clear();
+					}
+					test.p();
+					std::cout << "map insert iterator" << std::endl;
+				}
+				std::cerr << std::endl;
+			}
+			{
+				std::cerr << "### TEST REMOVE ###" << std::endl;
+				std::cerr << std::endl;
+				{
+					Clock test;
+					for (int i = 0; i < 100 * PREC; i++) {
+						NAMESPACE::map<int, int> m;
+						for (int i = 0; i < 10000; i++) {
+							m[i];
+						}
+						for (int i = 0; i < 10000; i++) {
+							m.erase(i);
+						}
+						std::cerr << (i+1)/(1 * PREC) << "." << (i+1)%(1 * PREC) << "%   " << '\r';
+						std::cout.clear();
+					}
+					test.p();
+					std::cout << "map erase value" << std::endl;
+				}
+				std::cerr << std::endl;
+				{
+					Clock test;
+					for (int i = 0; i < 100 * PREC; i++) {
+						NAMESPACE::map<int, int> m;
+						for (int i = 0; i < 10000; i++) {
+							m[i];
+						}
+						m.erase(m.begin(), m.end());
+						std::cerr << (i+1)/(1 * PREC) << "." << (i+1)%(1 * PREC) << "%   " << '\r';
+						std::cout.clear();
+					}
+					test.p();
+					std::cout << "map erase range" << std::endl;
+				}
+				std::cerr << std::endl;
+				{
+					Clock test;
+					for (int i = 0; i < 100 * PREC; i++) {
+						NAMESPACE::map<int, int> m;
+						for (int i = 0; i < 10000; i++) {
+							m[i];
+						}
+						for (int i = 0; i < 10000; i++) {
+							m.erase(m.begin());
+						}
+						std::cerr << (i+1)/(1 * PREC) << "." << (i+1)%(1 * PREC) << "%   " << '\r';
+						std::cout.clear();
+					}
+					test.p();
+					std::cout << "map erase iterator" << std::endl;
+				}
+				std::cerr << std::endl;
+				{
+					Clock test;
+					for (int i = 0; i < 100 * PREC; i++) {
+						NAMESPACE::map<int, int> m;
+						for (int i = 0; i < 10000; i++) {
+							m[i];
+						}
+						m.clear();
+						std::cerr << (i+1)/(1 * PREC) << "." << (i+1)%(1 * PREC) << "%   " << '\r';
+						std::cout.clear();
+					}
+					test.p();
+					std::cout << "map clear all" << std::endl;
+				}
+				std::cerr << std::endl;
 			}
 			if (TEST)
 				break;
 		}
-		case (3):{}
-		case (4):{}
+		case (3):{
+			std::cerr << "=-=-=-=-=-=-=-SET-=-=-=-=-=-=-=" << std::endl;
+			{
+				std::cerr << "### TEST CONSTRUCTOR SET ###" << std::endl;
+				std::cerr << std::endl;
+				{
+					Clock test;
+					for (int i = 0; i < 100000 * PREC; i++) {
+						for (int j = 0; j < 1000; j++) {
+							NAMESPACE::set<std::string> v;
+						}
+						std::cerr << (i+1)/(1000 * PREC) << "." << (i+1)%(1000 * PREC) << "%   " << '\r';
+						std::cout.clear();
+					}
+					test.p();
+					std::cout << "set default constructor" << std::endl;
+				}
+				std::cerr << std::endl;
+				{
+					NAMESPACE::set<int> m;
+					for (int i = 0; i < 10000; i++) {
+						m.insert(i);
+					}
+					Clock test;
+					for (int i = 0; i < 1 * PREC; i++) {
+						NAMESPACE::set<int> t(m.begin(), m.end());
+						std::cerr << (i+1)/(0.01 * PREC) << "." << (i+1)%ROUND(0.01 * PREC) << "%   " << '\r';
+						std::cout.clear();
+					}
+					test.p();
+					std::cout << "set iterator constructor" << std::endl;
+				}
+				std::cerr << std::endl;
+				{
+					NAMESPACE::set<int> m;
+					for (int i = 0; i < 10000; i++) {
+						m.insert(i);
+					}
+					Clock test;
+					for (int i = 0; i < 1 * PREC; i++) {
+						NAMESPACE::set<int> t(m);
+						std::cerr << (i+1)/(0.01 * PREC) << "." << (i+1)%ROUND(0.01 * PREC) << "%   " << '\r';
+						std::cout.clear();
+					}
+					test.p();
+					std::cout << "set copy constructor" << std::endl;
+				}
+				std::cerr << std::endl;
+			}
+			{
+				std::cerr << "### TEST OPERATOR= ###" << std::endl;
+				std::cerr << std::endl;
+				{
+					NAMESPACE::set<int> m;
+					for (int i = 0; i < 10000; i++) {
+						m.insert(i);
+					}
+					NAMESPACE::set<int> t;
+					Clock test;
+					for (int i = 0; i < 1 * PREC; i++) {
+						t = m;
+						m = t;
+						std::cerr << (i+1)/(0.01 * PREC) << "." << (i+1)%ROUND(0.01 * PREC) << "%   " << '\r';
+						std::cout.clear();
+					}
+					test.p();
+					std::cout << "set operator =" << std::endl;
+				}
+				std::cerr << std::endl;
+			}
+			{
+				std::cerr << "### TEST INSERT ###" << std::endl;
+				std::cerr << std::endl;
+				{
+					Clock test;
+					for (int i = 0; i < 100 * PREC; i++) {
+						NAMESPACE::set<int> m;
+						for (int i = 0; i < 10000; i++) {
+							m.insert(i);
+						}
+						std::cerr << (i+1)/(1 * PREC) << "." << (i+1)%(1 * PREC) << "%   " << '\r';
+						std::cout.clear();
+					}
+					test.p();
+					std::cout << "set insert val" << std::endl;
+				}
+				std::cerr << std::endl;
+				{
+					NAMESPACE::set<int> m;
+					for (int i = 0; i < 10000; i++) {
+						m.insert(i);
+					}
+					Clock test;
+					for (int i = 0; i < 100 * PREC; i++) {
+						NAMESPACE::set<int> t;
+						t.insert(m.begin(), m.end());
+						std::cerr << (i+1)/(1 * PREC) << "." << (i+1)%ROUND(1 * PREC) << "%   " << '\r';
+						std::cout.clear();
+					}
+					test.p();
+					std::cout << "set insert iterator" << std::endl;
+				}
+				std::cerr << std::endl;
+			}
+			{
+				std::cerr << "### TEST REMOVE ###" << std::endl;
+				std::cerr << std::endl;
+				{
+					Clock test;
+					for (int i = 0; i < 100 * PREC; i++) {
+						NAMESPACE::set<int> m;
+						for (int i = 0; i < 10000; i++) {
+							m.insert(i);
+						}
+						for (int i = 0; i < 10000; i++) {
+							m.erase(i);
+						}
+						std::cerr << (i+1)/(1 * PREC) << "." << (i+1)%(1 * PREC) << "%   " << '\r';
+						std::cout.clear();
+					}
+					test.p();
+					std::cout << "set erase value" << std::endl;
+				}
+				std::cerr << std::endl;
+				{
+					Clock test;
+					for (int i = 0; i < 100 * PREC; i++) {
+						NAMESPACE::set<int> m;
+						for (int i = 0; i < 10000; i++) {
+							m.insert(i);
+						}
+						m.erase(m.begin(), m.end());
+						std::cerr << (i+1)/(1 * PREC) << "." << (i+1)%(1 * PREC) << "%   " << '\r';
+						std::cout.clear();
+					}
+					test.p();
+					std::cout << "set erase range" << std::endl;
+				}
+				std::cerr << std::endl;
+				{
+					Clock test;
+					for (int i = 0; i < 100 * PREC; i++) {
+						NAMESPACE::set<int> m;
+						for (int i = 0; i < 10000; i++) {
+							m.insert(i);
+						}
+						for (int i = 0; i < 10000; i++) {
+							m.erase(m.begin());
+						}
+						std::cerr << (i+1)/(1 * PREC) << "." << (i+1)%(1 * PREC) << "%   " << '\r';
+						std::cout.clear();
+					}
+					test.p();
+					std::cout << "set erase iterator" << std::endl;
+				}
+				std::cerr << std::endl;
+				{
+					Clock test;
+					for (int i = 0; i < 100 * PREC; i++) {
+						NAMESPACE::set<int> m;
+						for (int i = 0; i < 10000; i++) {
+							m.insert(i);
+						}
+						m.clear();
+						std::cerr << (i+1)/(1 * PREC) << "." << (i+1)%(1 * PREC) << "%   " << '\r';
+						std::cout.clear();
+					}
+					test.p();
+					std::cout << "set clear all" << std::endl;
+				}
+				std::cerr << std::endl;
+			}
+			if (TEST)
+				break;
+		}
 	}
 }
