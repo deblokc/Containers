@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/22 19:09:37 by tnaton            #+#    #+#             */
-/*   Updated: 2022/11/29 17:23:40 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/11/30 12:04:10 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 #include <sys/time.h>
 #include <limits>
 #include <list>
+#include <iomanip>
 #include "include.hpp"
 
 #ifndef NAMESPACE
@@ -42,7 +43,7 @@ class	Clock {
 	public:
 		Clock(void) {gettimeofday(&_time, NULL);};
 		long time(void) {struct timeval now; gettimeofday(&now, NULL); return (((now.tv_sec - _time.tv_sec)*1000) + ((now.tv_usec - _time.tv_usec)/1000));}
-		void p(void) {long tmp = time(); std::cout << tmp/1000 << "." << tmp%1000 << "s ";}
+		void p(void) {long tmp = time(); std::cout << tmp/1000 << "." << std::setfill('0') << std::setw(3) << tmp%1000 << "s ";}
 	private:
 		struct timeval _time;
 };
@@ -315,7 +316,7 @@ int main () {
 					Clock test;
 
 					for (int i = 0; i < 1 * PREC; i++) {
-						NAMESPACE::vector<int> v(10000000, 42);
+						NAMESPACE::vector<int> v(MAXSIZE, 42);
 						while (v.size()) {
 							v.pop_back();
 						}
@@ -426,8 +427,8 @@ int main () {
 					}
 					Clock test;
 					for (int i = 0; i < 100 * PREC; i++) {
-						for (int i = 0; i < 10000; i++) {
-							m.at(i);
+						for (int j = 0; j < 10000; j++) {
+							m.at(j);
 						}
 						std::cerr << (i+1)/(1 * PREC) << "." << (i+1)%(1 * PREC) << "%   " << '\r';
 						std::cout.clear();
@@ -440,8 +441,8 @@ int main () {
 					NAMESPACE::map<int, int> m;
 					Clock test;
 					for (int i = 0; i < 100 * PREC; i++) {
-						for (int i = 0; i < 10000; i++) {
-							m[i];
+						for (int j = 0; j < 10000; j++) {
+							m[j];
 						}
 						std::cerr << (i+1)/(1 * PREC) << "." << (i+1)%(1 * PREC) << "%   " << '\r';
 						std::cout.clear();
@@ -457,8 +458,8 @@ int main () {
 					}
 					Clock test;
 					for (int i = 0; i < 100 * PREC; i++) {
-						for (int i = 0; i < 10000; i++) {
-							m.find(i);
+						for (int j = 0; j < 10000; j++) {
+							m.find(j);
 						}
 						std::cerr << (i+1)/(1 * PREC) << "." << (i+1)%(1 * PREC) << "%   " << '\r';
 						std::cout.clear();
@@ -475,8 +476,8 @@ int main () {
 					Clock test;
 					for (int i = 0; i < 100 * PREC; i++) {
 						NAMESPACE::map<int, int> m;
-						for (int i = 0; i < 10000; i++) {
-							m.insert(NAMESPACE::make_pair(i, 42));
+						for (int j = 0; j < 10000; j++) {
+							m.insert(NAMESPACE::make_pair(j, 42));
 						}
 						std::cerr << (i+1)/(1 * PREC) << "." << (i+1)%(1 * PREC) << "%   " << '\r';
 						std::cout.clear();
@@ -509,11 +510,11 @@ int main () {
 					Clock test;
 					for (int i = 0; i < 100 * PREC; i++) {
 						NAMESPACE::map<int, int> m;
-						for (int i = 0; i < 10000; i++) {
-							m[i];
+						for (int j = 0; j < 10000; j++) {
+							m[j];
 						}
-						for (int i = 0; i < 10000; i++) {
-							m.erase(i);
+						for (int j = 0; j < 10000; j++) {
+							m.erase(j);
 						}
 						std::cerr << (i+1)/(1 * PREC) << "." << (i+1)%(1 * PREC) << "%   " << '\r';
 						std::cout.clear();
@@ -526,8 +527,8 @@ int main () {
 					Clock test;
 					for (int i = 0; i < 100 * PREC; i++) {
 						NAMESPACE::map<int, int> m;
-						for (int i = 0; i < 10000; i++) {
-							m[i];
+						for (int j = 0; j < 10000; j++) {
+							m[j];
 						}
 						m.erase(m.begin(), m.end());
 						std::cerr << (i+1)/(1 * PREC) << "." << (i+1)%(1 * PREC) << "%   " << '\r';
@@ -541,10 +542,10 @@ int main () {
 					Clock test;
 					for (int i = 0; i < 100 * PREC; i++) {
 						NAMESPACE::map<int, int> m;
-						for (int i = 0; i < 10000; i++) {
-							m[i];
+						for (int j = 0; j < 10000; j++) {
+							m[j];
 						}
-						for (int i = 0; i < 10000; i++) {
+						for (int j = 0; j < 10000; j++) {
 							m.erase(m.begin());
 						}
 						std::cerr << (i+1)/(1 * PREC) << "." << (i+1)%(1 * PREC) << "%   " << '\r';
@@ -558,8 +559,8 @@ int main () {
 					Clock test;
 					for (int i = 0; i < 100 * PREC; i++) {
 						NAMESPACE::map<int, int> m;
-						for (int i = 0; i < 10000; i++) {
-							m[i];
+						for (int j = 0; j < 10000; j++) {
+							m[j];
 						}
 						m.clear();
 						std::cerr << (i+1)/(1 * PREC) << "." << (i+1)%(1 * PREC) << "%   " << '\r';
@@ -650,8 +651,8 @@ int main () {
 					Clock test;
 					for (int i = 0; i < 100 * PREC; i++) {
 						NAMESPACE::set<int> m;
-						for (int i = 0; i < 10000; i++) {
-							m.insert(i);
+						for (int j = 0; j < 10000; j++) {
+							m.insert(j);
 						}
 						std::cerr << (i+1)/(1 * PREC) << "." << (i+1)%(1 * PREC) << "%   " << '\r';
 						std::cout.clear();
@@ -684,11 +685,11 @@ int main () {
 					Clock test;
 					for (int i = 0; i < 100 * PREC; i++) {
 						NAMESPACE::set<int> m;
-						for (int i = 0; i < 10000; i++) {
-							m.insert(i);
+						for (int j = 0; j < 10000; j++) {
+							m.insert(j);
 						}
-						for (int i = 0; i < 10000; i++) {
-							m.erase(i);
+						for (int j = 0; j < 10000; j++) {
+							m.erase(j);
 						}
 						std::cerr << (i+1)/(1 * PREC) << "." << (i+1)%(1 * PREC) << "%   " << '\r';
 						std::cout.clear();
@@ -701,8 +702,8 @@ int main () {
 					Clock test;
 					for (int i = 0; i < 100 * PREC; i++) {
 						NAMESPACE::set<int> m;
-						for (int i = 0; i < 10000; i++) {
-							m.insert(i);
+						for (int j = 0; j < 10000; j++) {
+							m.insert(j);
 						}
 						m.erase(m.begin(), m.end());
 						std::cerr << (i+1)/(1 * PREC) << "." << (i+1)%(1 * PREC) << "%   " << '\r';
@@ -716,10 +717,10 @@ int main () {
 					Clock test;
 					for (int i = 0; i < 100 * PREC; i++) {
 						NAMESPACE::set<int> m;
-						for (int i = 0; i < 10000; i++) {
-							m.insert(i);
+						for (int j = 0; j < 10000; j++) {
+							m.insert(j);
 						}
-						for (int i = 0; i < 10000; i++) {
+						for (int j = 0; j < 10000; j++) {
 							m.erase(m.begin());
 						}
 						std::cerr << (i+1)/(1 * PREC) << "." << (i+1)%(1 * PREC) << "%   " << '\r';
@@ -733,8 +734,8 @@ int main () {
 					Clock test;
 					for (int i = 0; i < 100 * PREC; i++) {
 						NAMESPACE::set<int> m;
-						for (int i = 0; i < 10000; i++) {
-							m.insert(i);
+						for (int j = 0; j < 10000; j++) {
+							m.insert(j);
 						}
 						m.clear();
 						std::cerr << (i+1)/(1 * PREC) << "." << (i+1)%(1 * PREC) << "%   " << '\r';
