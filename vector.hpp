@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/22 16:11:43 by tnaton            #+#    #+#             */
-/*   Updated: 2022/11/25 14:16:16 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/11/30 12:53:53 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,7 +141,7 @@ namespace ft {
 				}
 				_size = _capacity;
 				_clear(old_start, old_size);
-				if (old_start)
+				if (old_capa)
 					_alloc.deallocate(old_start, old_capa);
 			}
 
@@ -239,7 +239,7 @@ namespace ft {
 					}
 					this->clear();
 					_size = count;
-					if (_start)
+					if (_capacity)
 						_alloc.deallocate(_start, _capacity);
 					_capacity = count;
 					_start = new_start;
@@ -451,19 +451,16 @@ namespace ft {
 
 			template<class InputIt>
 			iterator _insert_range(iterator pos, InputIt first, InputIt last, std::random_access_iterator_tag) {
-				size_type	dist = 0;
-				InputIt tmpIt = first;
-				while (tmpIt != last) {
-					dist++;
-					tmpIt++;
-				}
+				if (first == last)
+					return pos;
+				size_type	dist = last - first;
 				if (_size + dist > _alloc.max_size())
 					throw (std::length_error("Over max size"));
 				if (!_size) {
 					assign(first, last);
 					return iterator(_start);
 				}
-				tmpIt = first;
+				InputIt	tmpIt = first;
 				if (_size + dist <= _capacity * 2) {
 					last--;
 					while (last != first) {

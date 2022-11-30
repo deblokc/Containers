@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/22 16:11:34 by tnaton            #+#    #+#             */
-/*   Updated: 2022/10/31 14:50:20 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/11/30 15:27:53 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,5 +59,5 @@ namespace ft {
 		typedef typename std::random_access_iterator_tag	iterator_category;
 	};
 }
-#endif
 
+#endif

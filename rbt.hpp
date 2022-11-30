@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 16:46:15 by tnaton            #+#    #+#             */
-/*   Updated: 2022/11/25 19:37:12 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/11/30 15:14:58 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -604,7 +604,7 @@ namespace ft {
 		}
 
 		const_reverse_iterator rend(void) const {
-			return const_reverse_iterator(end());
+			return const_reverse_iterator(begin());
 		}
 
 		bool empty(void) const {

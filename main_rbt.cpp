@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 18:49:18 by tnaton            #+#    #+#             */
-/*   Updated: 2022/11/25 19:27:21 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/11/30 15:13:58 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,19 +95,25 @@ void pT(ft::rbt<int, int, int>::node root) {
 }
 */
 
+void printMap(const ft::map<int, int> & m) {
+	std::cout << "PRINT WITH CONST_ITERATOR" << std::endl;
+	for (ft::map<int, int>::const_iterator it = m.begin(); it != m.end(); it++) {
+		std::cout << it->second << std::endl;
+	}
+	std::cout << "PRINT WITH CONST_REVERSE_ITERATOR" << std::endl;
+	for (ft::map<int, int>::const_reverse_iterator rit = m.rbegin(); rit != m.rend(); rit++) {
+		std::cout << rit->second << std::endl;
+	}
+}
+
 int main(void) {
 
-	ft::map<int, int>	test;
+	ft::map<int, int>	m;
 
-	test.insert(ft::make_pair<int, int>(42, 0));
-	test.insert(ft::make_pair<int, int>(2, 0));
-	test.insert(ft::make_pair<int, int>(4, 0));
-	test.insert(ft::make_pair<int, int>(420, 0));
-	test.insert(ft::make_pair<int, int>(402, 0));
-	test.insert(ft::make_pair<int, int>(4020, 0));
-
-//	typedef ft::map<int, int>::const_iterator	const_iterator;
-
+	for (int i = 0; i < 100; i++) {
+		m[i] = i;
+	}
+	printMap(m);
 //	ft::map<int, int>	test;
 //	ft::map<int, int>	map2;
 /*

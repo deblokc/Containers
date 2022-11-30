@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/27 19:00:11 by tnaton            #+#    #+#             */
-/*   Updated: 2022/11/22 21:30:56 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/11/30 15:13:03 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ namespace ft {
 
 			reverse_iterator(void): _it(){}
 			reverse_iterator(const reverse_iterator & other){this->_it = other._it;}
-			explicit reverse_iterator(Iter it): _it(it){}
+			explicit reverse_iterator(const Iter & it): _it(it){}
 
 			template <typename It>
 			reverse_iterator(const reverse_iterator<It> & other): _it(other.base()) {}
