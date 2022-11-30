@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/22 16:11:43 by tnaton            #+#    #+#             */
-/*   Updated: 2022/11/30 12:53:53 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/11/30 19:02:04 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -462,13 +462,22 @@ namespace ft {
 				}
 				InputIt	tmpIt = first;
 				if (_size + dist <= _capacity * 2) {
-					last--;
-					while (last != first) {
-						pos = insert(pos, *last);
-						last--;
+					std::cerr << "NO REALLOC OF CAPACITY" << std::endl;
+					if (pos == end()) {
+						for (; first != last; first++) {
+							push_back(first);
+						}
+					} else {
+						pointer tmp = pos.base() + dist;
 					}
-					pos = insert(pos, *last);
+				//	last--;
+				//	while (last != first) {
+				//		insert(pos, *last);
+				//		last--;
+				//	}
+				//	pos = insert(pos, *last);
 				} else {
+					std::cerr << "REALLOC OF CAPACITY" << std::endl;
 					pointer new_start = _alloc.allocate(_size + dist);
 					pointer new_end = new_start;
 					pointer tmp = _start;

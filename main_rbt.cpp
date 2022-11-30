@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 18:49:18 by tnaton            #+#    #+#             */
-/*   Updated: 2022/11/30 15:13:58 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/11/30 18:19:49 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,7 @@ void pT(ft::rbt<int, int, int>::node root) {
 	std::cout << "-------------------------------------------------------------------------------------" << std::endl;
 }
 */
-
+/*
 void printMap(const ft::map<int, int> & m) {
 	std::cout << "PRINT WITH CONST_ITERATOR" << std::endl;
 	for (ft::map<int, int>::const_iterator it = m.begin(); it != m.end(); it++) {
@@ -105,15 +105,13 @@ void printMap(const ft::map<int, int> & m) {
 		std::cout << rit->second << std::endl;
 	}
 }
-
+*/
 int main(void) {
 
-	ft::map<int, int>	m;
+	ft::vector<int> data(50, 50);
+	ft::vector<int>	v(10, 10);
 
-	for (int i = 0; i < 100; i++) {
-		m[i] = i;
-	}
-	printMap(m);
+	v.insert(v.begin() + 5, data.begin(), data.begin() + 50);
 //	ft::map<int, int>	test;
 //	ft::map<int, int>	map2;
 /*
