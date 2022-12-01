@@ -108,10 +108,14 @@ void printMap(const ft::map<int, int> & m) {
 */
 int main(void) {
 
-	ft::vector<int> data(50, 50);
-	ft::vector<int>	v(10, 10);
-
-	v.insert(v.begin() + 5, data.begin(), data.begin() + 50);
+	ft::vector<int> v(20, 2);
+	ft::vector<int> data(4, 42);
+	std::cout << std::endl;
+	v.reserve(50);
+	v.insert(v.begin(), data.begin(), data.begin() + 2);
+	for (ft::vector<int>::iterator it = v.begin(); it != v.end(); it++) {
+		std::cout << *it << std::endl;
+	}
 //	ft::map<int, int>	test;
 //	ft::map<int, int>	map2;
 /*

@@ -462,32 +462,21 @@ namespace ft {
 				}
 				InputIt	tmpIt = first;
 				if (_size + dist <= _capacity * 2) {
-/*					if (pos == end()) {
+					std::cerr << "NO REALLOC OF CAPACITY" << std::endl;
+					if (pos == end()) {
 						for (; first != last; first++) {
-							push_back(*first);
+							push_back(first);
 						}
 					} else {
-						pointer tmp_end = _end - 1;
-						pointer new_end = _end + dist - 1;
-						std::cout << new_end << std::endl;
-						for (; tmp_end != pos.base(); --new_end, --tmp_end) {
-							std::cout << tmp_end << std::endl;
-							_alloc.construct(new_end, *tmp_end);
+						pointer tmp_start = _end;
+						iterator tmp(pos);
+						for (; tmp.base() != _end; ++tmp_start, ++tmp) {
+							_alloc.construct(tmp_start, *tmp);
 						}
-						_alloc.construct(new_end, *tmp_end);
-						pointer tmp = pos.base();
-						for (; first != last; tmp++, first++) {
-							_alloc.construct(tmp, *first);
-						}
-						_end += dist;
-					}*/
-					last--;
-					while (last != first) {
-						insert(pos, *last);
-						last--;
+						_end = tmp.base() + 1;
 					}
-					pos = insert(pos, *last);
 				} else {
+					std::cerr << "REALLOC OF CAPACITY" << std::endl;
 					pointer new_start = _alloc.allocate(_size + dist);
 					pointer new_end = new_start;
 					pointer tmp = _start;
