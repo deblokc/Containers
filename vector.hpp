@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/22 16:11:43 by tnaton            #+#    #+#             */
-/*   Updated: 2022/11/30 19:02:04 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/12/01 13:27:45 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -461,8 +461,8 @@ namespace ft {
 					return iterator(_start);
 				}
 				InputIt	tmpIt = first;
-				if (_size + dist <= _capacity * 2) {
-/*					if (pos == end()) {
+				if (_size + dist <= _capacity) {
+					if (pos == end()) {
 						for (; first != last; first++) {
 							push_back(*first);
 						}
@@ -480,7 +480,8 @@ namespace ft {
 							_alloc.construct(tmp, *first);
 						}
 						_end += dist;
-					}*/
+					}
+				} else if (_size + dist <= _capacity * 2) {
 					last--;
 					while (last != first) {
 						insert(pos, *last);
