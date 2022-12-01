@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 18:49:18 by tnaton            #+#    #+#             */
-/*   Updated: 2022/11/30 18:19:49 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/12/01 16:53:11 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,8 +111,7 @@ int main(void) {
 	ft::vector<int> v(20, 2);
 	ft::vector<int> data(4, 42);
 	std::cout << std::endl;
-	v.reserve(50);
-	v.insert(v.begin(), data.begin(), data.begin() + 2);
+	v.insert(v.begin() + 4, data.begin(), data.begin() + 2);
 	for (ft::vector<int>::iterator it = v.begin(); it != v.end(); it++) {
 		std::cout << *it << std::endl;
 	}

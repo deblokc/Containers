@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/22 16:11:43 by tnaton            #+#    #+#             */
-/*   Updated: 2022/12/01 13:27:45 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/12/01 18:48:57 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,23 +126,29 @@ namespace ft {
 		private:
 			template<class InputIt>
 			void _assign(InputIt first, InputIt last, std::random_access_iterator_tag) {
-				pointer		old_start = _start;
-				size_type	old_capa = _capacity;
-				size_type	old_size = _size;
-
-				_capacity = last - first;
-				if (_capacity)
-					_start = _alloc.allocate(_capacity);
-				_end = _start;
-				while (first != last) {
-					_alloc.construct(_end, *first);
-					first++;
-					_end++;
+				if (static_cast<size_type>(last - first) > _alloc.max_size())
+					throw (std::length_error("Over max size"));
+				this->clear();
+				if (static_cast<size_type>(last - first) > _capacity) {
+					if (_capacity)
+						_alloc.deallocate(_start, _capacity);
+					_capacity = last - first;
+					if (_capacity)
+						_start = _alloc.allocate(_capacity);
+					_end = _start;
+					while (first != last) {
+						_alloc.construct(_end, *first);
+						first++;
+						_end++;
+					}
+					_size = _capacity;
+				} else {
+					pointer	tmp = _start;
+					for (; first != last; tmp++, first++, _size++) {
+						_alloc.construct(tmp, *first);
+					}
+					_end = tmp;
 				}
-				_size = _capacity;
-				_clear(old_start, old_size);
-				if (old_capa)
-					_alloc.deallocate(old_start, old_capa);
 			}
 
 			template<class InputIt>
@@ -395,6 +401,26 @@ namespace ft {
 					throw (std::length_error("Over max size"));
 				if (!_size) {
 					assign(count, value);
+				} else if (_size + count <= _capacity) {
+					if (pos == end()) {
+						for (; count; count--) {
+							push_back(value);
+						}
+					} else { 
+						pointer tmp_end = _end - 1;
+						pointer new_end = _end + count - 1;
+						for (; tmp_end != pos.base(); --new_end, --tmp_end) {
+							_alloc.construct(new_end, *tmp_end);
+						}
+						_alloc.construct(new_end, *tmp_end);
+						pointer tmp = pos.base();
+						for (; count; count--, tmp++, _size++, _end++) {
+							_alloc.construct(tmp, value);
+						}
+						//for (size_type i = 0; i < count; i++) {
+						//	pos = insert(pos, value);
+						//}
+					}
 				} else if (_size + count <= _capacity * 2) {
 					for (size_type i = 0; i < count; i++) {
 						pos = insert(pos, value);
@@ -469,9 +495,7 @@ namespace ft {
 					} else {
 						pointer tmp_end = _end - 1;
 						pointer new_end = _end + dist - 1;
-						std::cout << new_end << std::endl;
 						for (; tmp_end != pos.base(); --new_end, --tmp_end) {
-							std::cout << tmp_end << std::endl;
 							_alloc.construct(new_end, *tmp_end);
 						}
 						_alloc.construct(new_end, *tmp_end);
@@ -480,14 +504,31 @@ namespace ft {
 							_alloc.construct(tmp, *first);
 						}
 						_end += dist;
+						_size += dist;
 					}
 				} else if (_size + dist <= _capacity * 2) {
-					last--;
-					while (last != first) {
-						insert(pos, *last);
-						last--;
+					pointer new_start = _alloc.allocate(_capacity * 2);
+					pointer tmp = new_start;
+					pointer old_tmp = _start;
+					for (; old_tmp != pos.base(); tmp++, old_tmp++) {
+						_alloc.construct(tmp, *old_tmp);
 					}
-					pos = insert(pos, *last);
+					for (; first != last; first++, tmp++) {
+						_alloc.construct(tmp, *first);
+					}
+					for (; old_tmp != _end; tmp++, old_tmp++) {
+						_alloc.construct(tmp, *old_tmp);
+					}
+					old_tmp = _start;
+					for (; old_tmp != _end; old_tmp++) {
+						_alloc.destroy(old_tmp);
+					}
+					if (_capacity)
+						_alloc.deallocate(_start, _capacity);
+					_start = new_start;
+					_end = tmp;
+					_capacity *= 2;
+					_size = _end - _start;
 				} else {
 					pointer new_start = _alloc.allocate(_size + dist);
 					pointer new_end = new_start;
