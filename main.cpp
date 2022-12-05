@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/22 19:09:37 by tnaton            #+#    #+#             */
-/*   Updated: 2022/11/30 12:04:10 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/12/05 14:48:56 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,18 +55,6 @@ int main () {
 			std::cerr << "=-=-=-=-=-=-=-VECTOR-=-=-=-=-=-=-=" << std::endl;
 			{
 				std::cerr << "### TEST CONSTRUCTOR VECTOR ###" << std::endl;
-				std::cerr << std::endl;
-				{
-					Clock test;
-					for (int i = 0; i < 100000 * PREC; i++) {
-						for (int j = 0; j < 50000; j++)
-							NAMESPACE::vector<std::string> v;
-						std::cerr << (i+1)/(1000 * PREC) << "." << (i+1)%(1000 * PREC) << "%   " << '\r';
-						std::cout.clear();
-					}
-					test.p();
-					std::cout << "vector default constructor" << std::endl;
-				}
 				std::cerr << std::endl;
 				{
 					Clock test;
@@ -353,19 +341,6 @@ int main () {
 				std::cerr << "### TEST CONSTRUCTOR MAP ###" << std::endl;
 				std::cerr << std::endl;
 				{
-					Clock test;
-					for (int i = 0; i < 100000 * PREC; i++) {
-						for (int j = 0; j < 1000; j++) {
-							NAMESPACE::map<std::string, std::string> v;
-						}
-						std::cerr << (i+1)/(1000 * PREC) << "." << (i+1)%(1000 * PREC) << "%   " << '\r';
-						std::cout.clear();
-					}
-					test.p();
-					std::cout << "map default constructor" << std::endl;
-				}
-				std::cerr << std::endl;
-				{
 					NAMESPACE::map<int, int> m;
 					for (int i = 0; i < 10000; i++) {
 						m.insert(NAMESPACE::make_pair(i, 42));
@@ -577,20 +552,6 @@ int main () {
 		case (3):{
 			std::cerr << "=-=-=-=-=-=-=-SET-=-=-=-=-=-=-=" << std::endl;
 			{
-				std::cerr << "### TEST CONSTRUCTOR SET ###" << std::endl;
-				std::cerr << std::endl;
-				{
-					Clock test;
-					for (int i = 0; i < 100000 * PREC; i++) {
-						for (int j = 0; j < 1000; j++) {
-							NAMESPACE::set<std::string> v;
-						}
-						std::cerr << (i+1)/(1000 * PREC) << "." << (i+1)%(1000 * PREC) << "%   " << '\r';
-						std::cout.clear();
-					}
-					test.p();
-					std::cout << "set default constructor" << std::endl;
-				}
 				std::cerr << std::endl;
 				{
 					NAMESPACE::set<int> m;
