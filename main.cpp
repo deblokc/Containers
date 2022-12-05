@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/22 19:09:37 by tnaton            #+#    #+#             */
-/*   Updated: 2022/12/05 14:48:56 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/12/05 15:09:14 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ class	Clock {
 };
 
 int main () {
+	volatile int x = 0;
 	switch (TEST) {
 		case (0):{}
 		case (1):{
@@ -61,6 +62,8 @@ int main () {
 					for (int i = 0; i < 1 * PREC; i++) {
 						NAMESPACE::vector<int> v1(MAXSIZE, 1);
 						std::cerr << (i+1)/(0.01 * PREC) << "." << (i+1)%(ROUND(0.01 * PREC)) << "%   " << '\r';
+						if (v1[0] == 42)
+							x = x + 42;
 					}
 					test.p();
 					std::cout << "vector value constructor" << std::endl;
@@ -73,6 +76,8 @@ int main () {
 						NAMESPACE::vector<int> v1(vec.begin(), vec.end());
 						std::cerr << (i+1)/(0.01 * PREC) << "." << (i+1)%(ROUND(0.01 * PREC)) << "%   " << '\r';
 						std::cout.clear();
+						if (v1[0] == 42)
+							x = x + 42;
 					}
 					test.p();
 					std::cout << "vector iterator constructor" << std::endl;
@@ -89,6 +94,8 @@ int main () {
 
 						std::cerr << (i+1)/(0.01 * PREC) << "." << (i+1)%(ROUND(0.01 * PREC)) << "%   " << '\r';
 						std::cout.clear();
+						if (v1[0] == 42)
+							x = x + 42;
 					}
 					test.p();
 					std::cout << "vector copy constructor" << std::endl;
@@ -107,6 +114,8 @@ int main () {
 						v2 = v1;
 						v1 = v2;
 						std::cerr << (i+1)/(0.01 * PREC) << "." << (i+1)%(ROUND(0.01 * PREC)) << "%   " << '\r';
+						if (v1[0] == 42)
+							x = x + 42;
 					}
 					test.p();
 					std::cout << "vector operator =" << std::endl;
@@ -123,6 +132,8 @@ int main () {
 					for (int i = 0; i < 1 * PREC; i++) {
 						v.assign(MAXSIZE, 42);
 						std::cerr << (i+1)/(0.01 * PREC) << "." << (i+1)%(ROUND(0.01 * PREC)) << "%   " << '\r';
+						if (v[0] == 42)
+							x = x + 42;
 					}
 					test.p();
 					std::cout << "vector assign value" << std::endl;
@@ -136,6 +147,8 @@ int main () {
 					for (int i = 0; i < 1 * PREC; i++) {
 						v2.assign(v.begin(), v.end());
 						std::cerr << (i+1)/(0.01 * PREC) << "." << (i+1)%(ROUND(0.01 * PREC)) << "%   " << '\r';
+						if (v2[0] == 42)
+							x = x + 42;
 					}
 					test.p();
 					std::cout << "vector assign iterator" << std::endl;
@@ -151,6 +164,8 @@ int main () {
 					for (int i = 0; i < 1 * PREC; i++) {
 						v.assign(lst, lst + 1000000);
 						std::cerr << (i+1)/(0.01 * PREC) << "." << (i+1)%(ROUND(0.01 * PREC)) << "%   " << '\r';
+						if (v[0] == 42)
+							x = x + 42;
 					}
 					test.p();
 					std::cout << "vector assign BidirectionalIterator" << std::endl;
@@ -167,6 +182,8 @@ int main () {
 						NAMESPACE::vector<int> v(MAXSIZE, 42);
 						v.reserve(MAXSIZE);
 						std::cerr << (i+1)/(0.01 * PREC) << "." << (i+1)%(ROUND(0.01 * PREC)) << "%   " << '\r';
+						if (v[0] == 42)
+							x = x + 42;
 					}
 					test.p();
 					std::cout << "vector reserve capacity" << std::endl;
@@ -183,6 +200,8 @@ int main () {
 						NAMESPACE::vector<int> v(MAXSIZE, 42);
 						v.clear();
 						std::cerr << (i+1)/(0.01 * PREC) << "." << (i+1)%(ROUND(0.01 * PREC)) << "%   " << '\r';
+						if (v[0] == 42)
+							x = x + 42;
 					}
 					test.p();
 					std::cout << "vector create clear" << std::endl;
@@ -199,6 +218,8 @@ int main () {
 						NAMESPACE::vector<int> v(MAXSIZE, 42);
 						v.insert(v.begin() + MAXSIZE/2, 41);
 						std::cerr << (i+1)/(0.01 * PREC) << "." << (i+1)%(ROUND(0.01 * PREC)) << "%   " << '\r';
+						if (v[0] == 42)
+							x = x + 42;
 					}
 					test.p();
 					std::cout << "vector insert val" << std::endl;
@@ -211,6 +232,8 @@ int main () {
 						NAMESPACE::vector<int> v(1000, 42);
 						v.insert(v.begin(), MAXSIZE/4, 21);
 						std::cerr << (i+1)/(0.01 * PREC) << "." << (i+1)%(ROUND(0.01 * PREC)) << "%   " << '\r';
+						if (v[0] == 42)
+							x = x + 42;
 					}
 					test.p();
 					std::cout << "vector insert count" << std::endl;
@@ -224,6 +247,8 @@ int main () {
 						NAMESPACE::vector<int> v(1000, 42);
 						v.insert(v.begin() + 500, v2.begin(), v2.end());
 						std::cerr << (i+1)/(0.01 * PREC) << "." << (i+1)%(ROUND(0.01 * PREC)) << "%   " << '\r';
+						if (v[0] == 42)
+							x = x + 42;
 					}
 					test.p();
 					std::cout << "vector insert iterator" << std::endl;
@@ -237,6 +262,8 @@ int main () {
 						NAMESPACE::vector<int> v(1000, 42);
 						v.insert(v.begin() + 500, v2.begin(), v2.end());
 						std::cerr << (i+1)/(0.01 * PREC) << "." << (i+1)%(ROUND(0.01 * PREC)) << "%   " << '\r';
+						if (v[0] == 42)
+							x = x + 42;
 					}
 					test.p();
 					std::cout << "vector insert InputIterator" << std::endl;
@@ -255,6 +282,8 @@ int main () {
 							v.erase(v.begin());
 						}
 						std::cerr << (i+1)/(0.01 * PREC) << "." << (i+1)%(ROUND(0.01 * PREC)) << "%   " << '\r';
+						if (v[0] == 42)
+							x = x + 42;
 					}
 					test.p();
 					std::cout << "vector erase value" << std::endl;
@@ -273,6 +302,8 @@ int main () {
 							}
 						}
 						std::cerr << (i+1)/(0.01 * PREC) << "." << (i+1)%(ROUND(0.01 * PREC)) << "%   " << '\r';
+						if (v[0] == 42)
+							x = x + 42;
 					}
 					test.p();
 					std::cout << "vector erase range" << std::endl;
@@ -291,6 +322,8 @@ int main () {
 							v.push_back(42);
 						}
 						std::cerr << (i+1)/(0.01 * PREC) << "." << (i+1)%(ROUND(0.01 * PREC)) << "%   " << '\r';
+						if (v[0] == 42)
+							x = x + 42;
 					}
 					test.p();
 					std::cout << "vector push_back value" << std::endl;
@@ -309,6 +342,8 @@ int main () {
 							v.pop_back();
 						}
 						std::cerr << (i+1)/(0.01 * PREC) << "." << (i+1)%(ROUND(0.01 * PREC)) << "%   " << '\r';
+						if (v[0] == 42)
+							x = x + 42;
 					}
 					test.p();
 					std::cout << "vector pop_back value" << std::endl;
@@ -326,6 +361,8 @@ int main () {
 						v.resize(MAXSIZE);
 						v.resize(MAXSIZE/100);
 						std::cerr << (i+1)/(0.01 * PREC) << "." << (i+1)%(ROUND(0.01 * PREC)) << "%   " << '\r';
+						if (v[0] == 42)
+							x = x + 42;
 					}
 					test.p();
 					std::cout << "vector resize range" << std::endl;
@@ -350,6 +387,8 @@ int main () {
 						NAMESPACE::map<int, int> t(m.begin(), m.end());
 						std::cerr << (i+1)/(0.01 * PREC) << "." << (i+1)%ROUND(0.01 * PREC) << "%   " << '\r';
 						std::cout.clear();
+						if (m[0] == 42)
+							x = x + 42;
 					}
 					test.p();
 					std::cout << "map iterator constructor" << std::endl;
@@ -365,6 +404,8 @@ int main () {
 						NAMESPACE::map<int, int> t(m);
 						std::cerr << (i+1)/(0.01 * PREC) << "." << (i+1)%ROUND(0.01 * PREC) << "%   " << '\r';
 						std::cout.clear();
+						if (m[0] == 42)
+							x = x + 42;
 					}
 					test.p();
 					std::cout << "map copy constructor" << std::endl;
@@ -386,6 +427,8 @@ int main () {
 						m = t;
 						std::cerr << (i+1)/(0.01 * PREC) << "." << (i+1)%ROUND(0.01 * PREC) << "%   " << '\r';
 						std::cout.clear();
+						if (m[0] == 42)
+							x = x + 42;
 					}
 					test.p();
 					std::cout << "map operator =" << std::endl;
@@ -407,6 +450,8 @@ int main () {
 						}
 						std::cerr << (i+1)/(1 * PREC) << "." << (i+1)%(1 * PREC) << "%   " << '\r';
 						std::cout.clear();
+						if (m[0] == 42)
+							x = x + 42;
 					}
 					test.p();
 					std::cout << "map access at" << std::endl;
@@ -421,6 +466,8 @@ int main () {
 						}
 						std::cerr << (i+1)/(1 * PREC) << "." << (i+1)%(1 * PREC) << "%   " << '\r';
 						std::cout.clear();
+						if (m[0] == 42)
+							x = x + 42;
 					}
 					test.p();
 					std::cout << "map access operator[]" << std::endl;
@@ -438,6 +485,8 @@ int main () {
 						}
 						std::cerr << (i+1)/(1 * PREC) << "." << (i+1)%(1 * PREC) << "%   " << '\r';
 						std::cout.clear();
+						if (m[0] == 42)
+							x = x + 42;
 					}
 					test.p();
 					std::cout << "map access find" << std::endl;
@@ -456,6 +505,8 @@ int main () {
 						}
 						std::cerr << (i+1)/(1 * PREC) << "." << (i+1)%(1 * PREC) << "%   " << '\r';
 						std::cout.clear();
+						if (m[0] == 42)
+							x = x + 42;
 					}
 					test.p();
 					std::cout << "map insert val" << std::endl;
@@ -472,6 +523,8 @@ int main () {
 						t.insert(m.begin(), m.end());
 						std::cerr << (i+1)/(1 * PREC) << "." << (i+1)%(1 * PREC) << "%   " << '\r';
 						std::cout.clear();
+						if (m[0] == 42)
+							x = x + 42;
 					}
 					test.p();
 					std::cout << "map insert iterator" << std::endl;
@@ -493,6 +546,8 @@ int main () {
 						}
 						std::cerr << (i+1)/(1 * PREC) << "." << (i+1)%(1 * PREC) << "%   " << '\r';
 						std::cout.clear();
+						if (m[0] == 42)
+							x = x + 42;
 					}
 					test.p();
 					std::cout << "map erase value" << std::endl;
@@ -508,6 +563,8 @@ int main () {
 						m.erase(m.begin(), m.end());
 						std::cerr << (i+1)/(1 * PREC) << "." << (i+1)%(1 * PREC) << "%   " << '\r';
 						std::cout.clear();
+						if (m[0] == 42)
+							x = x + 42;
 					}
 					test.p();
 					std::cout << "map erase range" << std::endl;
@@ -525,6 +582,8 @@ int main () {
 						}
 						std::cerr << (i+1)/(1 * PREC) << "." << (i+1)%(1 * PREC) << "%   " << '\r';
 						std::cout.clear();
+						if (m[0] == 42)
+							x = x + 42;
 					}
 					test.p();
 					std::cout << "map erase iterator" << std::endl;
@@ -540,6 +599,8 @@ int main () {
 						m.clear();
 						std::cerr << (i+1)/(1 * PREC) << "." << (i+1)%(1 * PREC) << "%   " << '\r';
 						std::cout.clear();
+						if (m[0] == 42)
+							x = x + 42;
 					}
 					test.p();
 					std::cout << "map clear all" << std::endl;
