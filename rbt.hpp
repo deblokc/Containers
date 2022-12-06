@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 16:46:15 by tnaton            #+#    #+#             */
-/*   Updated: 2022/12/06 13:40:16 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/12/06 21:11:44 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,7 +150,7 @@ namespace ft {
 				}
 			};
 
-		explicit rbt(const Compare & comp = Compare(), const allocator_type & alloc = allocator_type()) {
+		explicit rbt(const Compare & comp, const allocator_type & alloc = allocator_type()) {
 			_root = NULL;
 			_alloc = alloc;
 			_cmp = comp;
@@ -158,7 +158,7 @@ namespace ft {
 		}
 
 		template <class InputIt>
-		rbt (InputIt first, InputIt last, const Compare & comp = Compare(), const allocator_type & alloc = allocator_type()) {
+		rbt (InputIt first, InputIt last, const Compare & comp, const allocator_type & alloc = allocator_type()) {
 			_root = NULL;
 			_alloc = alloc;
 			_cmp = comp;
@@ -170,8 +170,8 @@ namespace ft {
 			_root = NULL;
 			_alloc = other._alloc;
 			_cmp = other._cmp;
-			_size = 0;
-			insert(other.begin(), other.end());
+			_copy(other._root);
+			_size = other._size;
 		}
 
 		~rbt(void) {
@@ -185,8 +185,8 @@ namespace ft {
 			_root = NULL;
 			_alloc = other._alloc;
 			_cmp = other._cmp;
-			_size = 0;
-			insert(other.begin(), other.end());
+			_copy(other._root);
+			_size = other._size;
 			return (*this);
 		}
 
@@ -227,6 +227,37 @@ namespace ft {
 		}
 
 	private:
+		void _copy(node root) {
+			if (!root) {
+				_root = NULL;
+				return ;
+			}
+			node const_tmp = root;
+			node tmp = _allocnode.allocate(1);
+			_allocnode.construct(tmp, *(const_tmp->val));
+			_root = tmp;
+			while (const_tmp) {
+				if (const_tmp->l && !tmp->l) {
+					const_tmp = const_tmp->l;
+					tmp->l = _allocnode.allocate(1);
+					_allocnode.construct(tmp->l, *(const_tmp->val));
+					tmp->color = const_tmp->color;
+					tmp->l->parent = tmp;
+					tmp = tmp->l;
+				} else if (const_tmp->r && !tmp->r) {
+					const_tmp = const_tmp->r;
+					tmp->r = _allocnode.allocate(1);
+					_allocnode.construct(tmp->r, *(const_tmp->val));
+					tmp->color = const_tmp->color;
+					tmp->r->parent = tmp;
+					tmp = tmp->r;
+				} else {
+					const_tmp = const_tmp->parent;
+					tmp = tmp->parent;
+				}
+			}
+		}
+
 		void rotate(node n, node p) {
 			node g = p->parent;
 
@@ -340,11 +371,19 @@ namespace ft {
 
 	public:
 		iterator insert(const_iterator pos, const value_type & val) {
-			if (pos == begin() || pos == end()) {
+			if (pos == begin()) {
 				ft::pair<iterator, bool> ret = insert(val);
 				return (ret.first);
 			}
-			return (insert_from_pos(pos, val));
+			const_iterator prepos(pos);
+			prepos--;
+			if (_cmp(*(prepos.base()->val), val) && (pos == end() || _cmp(val, *(pos.base()->val)))) {
+				iterator ret = insert_from_pos(prepos, val);
+				checkInsert(ret);
+				return (ret);
+			}
+			ft::pair<iterator, bool> ret = insert(val);
+			return (ret.first);
 		}
 
 		ft::pair<iterator, bool> insert(const value_type & val) {
@@ -356,7 +395,6 @@ namespace ft {
 
 	private:
 		iterator insert_from_pos(const_iterator pos, const value_type & val) {
-			pos--;
 			node tmp = pos.base();
 
 			if (!tmp) {

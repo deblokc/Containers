@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 18:49:18 by tnaton            #+#    #+#             */
-/*   Updated: 2022/12/01 16:53:11 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/12/06 20:52:10 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 #include "map.hpp"
 #include "set.hpp"
 #include "vector.hpp"
-/*
+
 struct Trunk
 {
     Trunk *prev;
@@ -51,10 +51,9 @@ void printnode(ft::rbt<int, int, int>::node & tmp) {
 	std::cout << "Key : " << tmp->val << " | Val : " << tmp->val << "\033[0m" << std::endl;
 }
 
-void printTree(ft::rbt<int, int, int>::node root, Trunk *prev, bool isLeft) {
+void printTree(ft::rbt<int, int, ft::pair<const int, int>, ft::map<int, int>::value_compare >::node root, Trunk *prev, bool isLeft) {
 	if (root == NULL)
 		return ;
-//	std::cout << "root : " << root->val.first << std::endl;
 	std::string prev_str = "         ";
     Trunk *trunk = new Trunk(prev, prev_str);
 
@@ -89,11 +88,11 @@ void printTree(ft::rbt<int, int, int>::node root, Trunk *prev, bool isLeft) {
 	delete trunk;
 }
 
-void pT(ft::rbt<int, int, int>::node root) {
+void pT(ft::rbt<int, int, ft::pair<const int, int>, ft::map<int, int>::value_compare >::node root) {
 	printTree(root, NULL, false);
 	std::cout << "-------------------------------------------------------------------------------------" << std::endl;
 }
-*/
+
 /*
 void printMap(const ft::map<int, int> & m) {
 	std::cout << "PRINT WITH CONST_ITERATOR" << std::endl;
@@ -108,13 +107,27 @@ void printMap(const ft::map<int, int> & m) {
 */
 int main(void) {
 
+	ft::map<int, int> m;
+
+	m[0] = 42;
+	m[1] = 42;
+	m[2] = 42;
+
+	ft::map<int, int> test;
+
+	test = m;
+
+	pT(m.root());
+	std::cout << std::endl;
+	pT(test.root());
+	/*
 	ft::vector<int> v(20, 2);
 	ft::vector<int> data(4, 42);
 	std::cout << std::endl;
 	v.insert(v.begin() + 4, data.begin(), data.begin() + 2);
 	for (ft::vector<int>::iterator it = v.begin(); it != v.end(); it++) {
 		std::cout << *it << std::endl;
-	}
+	}*/
 //	ft::map<int, int>	test;
 //	ft::map<int, int>	map2;
 /*

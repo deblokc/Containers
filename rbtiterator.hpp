@@ -39,6 +39,7 @@ namespace ft {
 			rbtiterator & operator=(const rbtiterator & other) {
 				if (this == &other)
 					return (*this);
+				this->_cmp = other._cmp;
 				this->_ptr = other._ptr;
 				this->_tree = other._tree;
 				return (*this);

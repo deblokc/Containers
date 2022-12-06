@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/21 19:49:48 by tnaton            #+#    #+#             */
-/*   Updated: 2022/11/25 19:33:35 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/12/06 21:24:03 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,10 +24,8 @@ namespace ft {
 			typedef	ft::pair<const Key, T>											value_type;
 
 			class value_compare : public std::binary_function<value_type, value_type, bool> {
-
 				public:
-					value_compare(void): comp() {}
-					value_compare(Compare c): comp(c) {}
+					friend class map;
 					bool operator()(const value_type & lhs, const value_type & rhs) const {
 						return comp(lhs.first, rhs.first);
 					}
@@ -38,6 +36,8 @@ namespace ft {
 						return comp(lhs.first, rhs);
 					}
 
+					value_compare(void): comp() {}
+					value_compare(Compare c): comp(c) {}
 				protected:
 					Compare	comp;
 			};
@@ -57,14 +57,14 @@ namespace ft {
 			typedef	typename ft::reverse_iterator<const_iterator>					const_reverse_iterator;
 
 
-			explicit map(const Compare & comp = Compare(), const allocator_type & alloc = allocator_type()): _tree(comp, alloc) {
+			explicit map(const Compare & comp = Compare(), const allocator_type & alloc = allocator_type()): _comp(comp), _tree(_comp, alloc) {
 			}
 
 			template <class InputIt>
-			map (InputIt first, InputIt last, const Compare & comp = Compare(), const allocator_type & alloc = allocator_type()): _tree(first, last, comp, alloc) {
+			map (InputIt first, InputIt last, const Compare & comp = Compare(), const allocator_type & alloc = allocator_type()): _comp(comp), _tree(first, last, _comp, alloc) {
 			}
 
-			map (const map & other): _tree(other._tree) {
+			map (const map & other): _comp(other._comp), _tree(other._tree) {
 			}
 
 			~map(void) {
@@ -215,6 +215,7 @@ namespace ft {
 			}
 
 		private:
+			value_compare	_comp;
 			rbt	_tree;
 	};
 
