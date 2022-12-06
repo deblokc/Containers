@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 16:46:15 by tnaton            #+#    #+#             */
-/*   Updated: 2022/11/30 15:14:58 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/12/06 13:40:16 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -340,9 +340,11 @@ namespace ft {
 
 	public:
 		iterator insert(const_iterator pos, const value_type & val) {
-			(void)pos;
-			ft::pair<iterator, bool> ret = insert(val);
-			return (ret.first);
+			if (pos == begin() || pos == end()) {
+				ft::pair<iterator, bool> ret = insert(val);
+				return (ret.first);
+			}
+			return (insert_from_pos(pos, val));
 		}
 
 		ft::pair<iterator, bool> insert(const value_type & val) {
@@ -353,6 +355,45 @@ namespace ft {
 		}
 
 	private:
+		iterator insert_from_pos(const_iterator pos, const value_type & val) {
+			pos--;
+			node tmp = pos.base();
+
+			if (!tmp) {
+				tmp = _allocnode.allocate(1);
+				_allocnode.construct(tmp, val);
+				_root = tmp;
+				_size++;
+				return iterator(tmp, this);
+			}
+			while (tmp) {
+				if (_cmp(val, *tmp->val)) {
+					if (tmp->l) {
+						tmp = tmp->l;
+					} else {
+						tmp->l = _allocnode.allocate(1);
+						_allocnode.construct(tmp->l, val);
+						tmp->l->parent = tmp;
+						_size++;
+						return iterator(tmp->l, this);
+					}
+				} else if (_cmp(*tmp->val, val)) {
+					if (tmp->r) {
+						tmp = tmp->r;
+					} else {
+						tmp->r = _allocnode.allocate(1);
+						_allocnode.construct(tmp->r, val);
+						tmp->r->parent = tmp;
+						_size++;
+						return iterator(tmp->r, this);
+					}
+				} else {
+					return iterator(tmp, this);
+				}
+			}
+			return iterator(tmp, this);
+		}
+
 		ft::pair<iterator, bool> _insert(const value_type & val) {
 			node tmp = _root;
 
@@ -612,7 +653,7 @@ namespace ft {
 		}
 
 		size_type max_size(void) const {
-			return std::min(_alloc.max_size(), static_cast<size_type>(std::numeric_limits<difference_type>::max()));
+			return (_allocnode.max_size());
 		}
 
 		size_type size(void) const {
