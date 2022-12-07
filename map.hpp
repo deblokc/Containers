@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/21 19:49:48 by tnaton            #+#    #+#             */
-/*   Updated: 2022/12/06 21:24:03 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/12/07 17:39:08 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,8 @@ namespace ft {
 			typedef	ft::pair<const Key, T>											value_type;
 
 			class value_compare : public std::binary_function<value_type, value_type, bool> {
+				friend class map;
 				public:
-					friend class map;
 					bool operator()(const value_type & lhs, const value_type & rhs) const {
 						return comp(lhs.first, rhs.first);
 					}
@@ -36,9 +36,9 @@ namespace ft {
 						return comp(lhs.first, rhs);
 					}
 
+				protected:
 					value_compare(void): comp() {}
 					value_compare(Compare c): comp(c) {}
-				protected:
 					Compare	comp;
 			};
 
@@ -51,8 +51,8 @@ namespace ft {
 			typedef	value_type*														pointer;
 			typedef	typename Allocator::const_pointer								const_pointer;
 			typedef	typename ft::rbt<Key, T, value_type, value_compare, Allocator>	rbt;
-			typedef	typename ft::rbtiterator<value_type, value_compare, rbt>		iterator;
-			typedef	typename ft::rbtiterator<const value_type, value_compare, rbt>	const_iterator;
+			typedef	typename ft::rbtiterator<value_type, rbt>						iterator;
+			typedef	typename ft::rbtiterator<const value_type, rbt>					const_iterator;
 			typedef	typename ft::reverse_iterator<iterator>							reverse_iterator;
 			typedef	typename ft::reverse_iterator<const_iterator>					const_reverse_iterator;
 
@@ -76,6 +76,8 @@ namespace ft {
 				_tree = other._tree;
 				return (*this);
 			}
+
+			typename rbt::node root(void) {return _tree.root();}
 
 			void clear(void) {
 				_tree.clear();
@@ -216,7 +218,7 @@ namespace ft {
 
 		private:
 			value_compare	_comp;
-			rbt	_tree;
+			rbt				_tree;
 	};
 
 	template<class Key, class T, class Compare, class Alloc>

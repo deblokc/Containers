@@ -15,7 +15,7 @@
 
 namespace ft {
 
-	template <typename T, typename cmp, typename ctnr>
+	template <typename T, typename ctnr>
 	class rbtiterator {
 		public:
 			typedef T													iterator_type;
@@ -31,7 +31,7 @@ namespace ft {
 			explicit rbtiterator(const node & other_ptr, const ctnr * tree): _ptr(other_ptr), _tree(tree) {}
 
 			template <typename Ptr>
-			rbtiterator(const rbtiterator<Ptr, cmp, typename enable_if<is_same<Ptr, typename ctnr::pointer>::val, ctnr>::type> & other) : _ptr(other.base()), _tree(other._tree) {}
+			rbtiterator(const rbtiterator<Ptr, typename enable_if<is_same<Ptr, typename ctnr::pointer>::val, ctnr>::type> & other) : _ptr(other.base()), _tree(other._tree) {}
 
 			~rbtiterator() {
 			}
@@ -39,7 +39,6 @@ namespace ft {
 			rbtiterator & operator=(const rbtiterator & other) {
 				if (this == &other)
 					return (*this);
-				this->_cmp = other._cmp;
 				this->_ptr = other._ptr;
 				this->_tree = other._tree;
 				return (*this);
@@ -58,10 +57,10 @@ namespace ft {
 					}
 					return (*this);
 				} else {
-					value_type tmp = *_ptr->val;
-					while (_ptr && !_cmp(tmp, *_ptr->val)) {
+					while (_ptr->parent && _ptr->parent->r == _ptr) {
 						_ptr = _ptr->parent;
 					}
+					_ptr = _ptr->parent;
 					return (*this);
 				}
 			}
@@ -87,10 +86,10 @@ namespace ft {
 					}
 					return (*this);
 				} else {
-					value_type tmp = *_ptr->val;
-					while (_ptr && !_cmp(*_ptr->val, tmp)) {
+					while (_ptr->parent && _ptr->parent->l == _ptr) {
 						_ptr = _ptr->parent;
 					}
+					_ptr = _ptr->parent;
 					return (*this);
 				}
 			}
@@ -101,33 +100,32 @@ namespace ft {
 				return (tmp);
 			}
 
-			operator rbtiterator<const T, cmp, ctnr>() const {
-				return (rbtiterator<const T, cmp, ctnr>(this->_ptr, this->_tree));
+			operator rbtiterator<const T, ctnr>() const {
+				return (rbtiterator<const T, ctnr>(this->_ptr, this->_tree));
 			}
 
 		protected:
 			node			_ptr;
 			const ctnr *	_tree;
-			cmp				_cmp;
 	};
 
-	template <typename lit, typename rit, typename cmp, typename ctnr>
-	bool operator==(const rbtiterator<lit, cmp, ctnr> & lhs, const rbtiterator<rit, cmp, ctnr> & rhs) {
+	template <typename lit, typename rit, typename ctnr>
+	bool operator==(const rbtiterator<lit, ctnr> & lhs, const rbtiterator<rit, ctnr> & rhs) {
 		return (lhs.base() == rhs.base());
 	}
 
-	template <typename it, typename cmp, typename ctnr>
-	bool operator==(const rbtiterator<it, cmp, ctnr> & lhs, const rbtiterator<it, cmp, ctnr> & rhs) {
+	template <typename it, typename ctnr>
+	bool operator==(const rbtiterator<it, ctnr> & lhs, const rbtiterator<it, ctnr> & rhs) {
 		return (lhs.base() == rhs.base());
 	}
 
-	template <typename lit, typename rit, typename cmp, typename ctnr>
-	bool operator!=(const rbtiterator<lit, cmp, ctnr> & lhs, const rbtiterator<rit, cmp, ctnr> & rhs) {
+	template <typename lit, typename rit, typename ctnr>
+	bool operator!=(const rbtiterator<lit, ctnr> & lhs, const rbtiterator<rit, ctnr> & rhs) {
 		return (lhs.base() != rhs.base());
 	}
 
-	template <typename it, typename cmp, typename ctnr>
-	bool operator!=(const rbtiterator<it, cmp, ctnr> & lhs, const rbtiterator<it, cmp, ctnr> & rhs) {
+	template <typename it, typename ctnr>
+	bool operator!=(const rbtiterator<it, ctnr> & lhs, const rbtiterator<it, ctnr> & rhs) {
 		return (lhs.base() != rhs.base());
 	}
 }

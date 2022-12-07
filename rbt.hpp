@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 16:46:15 by tnaton            #+#    #+#             */
-/*   Updated: 2022/12/06 21:11:44 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/12/07 18:01:48 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,8 +42,8 @@ namespace ft {
 			typedef	typename Allocator::const_reference								const_reference;
 			typedef	value_type*														pointer;
 			typedef	const value_type*												const_pointer;
-			typedef	typename ft::rbtiterator<value_type, key_compare, rbt>			iterator;
-			typedef	typename ft::rbtiterator<const value_type, key_compare, rbt>	const_iterator;
+			typedef	typename ft::rbtiterator<value_type, rbt>						iterator;
+			typedef	typename ft::rbtiterator<const value_type, rbt>					const_iterator;
 			typedef	typename ft::reverse_iterator<iterator>							reverse_iterator;
 			typedef	typename ft::reverse_iterator<const_iterator>					const_reverse_iterator;
 
@@ -53,7 +53,6 @@ namespace ft {
 				node		l;
 				node		r;
 				bool		color;
-				bool		end;
 
 				~node_base(void) {
 					allocator_type	alloc;
@@ -61,13 +60,21 @@ namespace ft {
 					alloc.deallocate(val, 1);
 				}
 
-				node_base(const value_type & value): parent(NULL), l(NULL), r(NULL), color(RED), end(false) {
+				node_base(const value_type & value): parent(NULL), l(NULL), r(NULL), color(RED) {
 					allocator_type	alloc;
 					val = alloc.allocate(1);
 					alloc.construct(val, value);
 				}
 
-				node_base(node_base const & other): parent(other.parent), l(other.l), r(other.r), color(other.color), end(other.end) {
+				node_base(node dad) {
+					val = NULL;
+					l = NULL;
+					r = NULL;
+					parent = dad;
+					color = BLACK;
+				}
+
+				node_base(node_base const & other): parent(other.parent), l(other.l), r(other.r), color(other.color) {
 					allocator_type	alloc;
 					val = alloc.allocate(1);
 					alloc.construct(val, *other.val);
@@ -150,26 +157,15 @@ namespace ft {
 				}
 			};
 
-		explicit rbt(const Compare & comp, const allocator_type & alloc = allocator_type()) {
-			_root = NULL;
-			_alloc = alloc;
-			_cmp = comp;
-			_size = 0;
+		explicit rbt(const Compare & comp, const allocator_type & alloc = allocator_type()): _root(NULL), _alloc(alloc), _cmp(comp), _size(0) {
 		}
 
 		template <class InputIt>
-		rbt (InputIt first, InputIt last, const Compare & comp, const allocator_type & alloc = allocator_type()) {
-			_root = NULL;
-			_alloc = alloc;
-			_cmp = comp;
-			_size = 0;
+		rbt (InputIt first, InputIt last, const Compare & comp, const allocator_type & alloc = allocator_type()): _root(NULL), _alloc(alloc), _cmp(comp), _size(0) {
 			insert(first, last);
 		}
 
-		rbt (const rbt & other) {
-			_root = NULL;
-			_alloc = other._alloc;
-			_cmp = other._cmp;
+		rbt (const rbt & other): _root(NULL), _alloc(other._alloc), _cmp(other._cmp) {
 			_copy(other._root);
 			_size = other._size;
 		}
@@ -849,7 +845,9 @@ namespace ft {
 
 		void swap(rbt & other) {
 			ft::swap(this->_root, other._root);
-			ft::swap(this->_cmp, other._cmp);
+			key_compare test = _cmp;
+			this->_cmp = other._cmp;
+			other._cmp = test;
 			ft::swap(this->_alloc, other._alloc);
 			ft::swap(this->_size, other._size);
 		}

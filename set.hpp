@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/21 19:49:48 by tnaton            #+#    #+#             */
-/*   Updated: 2022/11/25 19:33:22 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/12/07 15:55:07 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,8 @@ namespace ft {
 			typedef	value_type*															pointer;
 			typedef	typename Allocator::const_pointer									const_pointer;
 			typedef	typename ft::rbt<Key, Key, value_type, value_compare, Allocator>	rbt;
-			typedef	typename ft::rbtiterator<const value_type, value_compare, rbt>		iterator;
-			typedef	typename ft::rbtiterator<const value_type, value_compare, rbt>		const_iterator;
+			typedef	typename ft::rbtiterator<const value_type, rbt>						iterator;
+			typedef	typename ft::rbtiterator<const value_type, rbt>						const_iterator;
 			typedef	typename ft::reverse_iterator<iterator>								reverse_iterator;
 			typedef	typename ft::reverse_iterator<const_iterator>						const_reverse_iterator;
 
