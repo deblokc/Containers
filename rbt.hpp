@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 16:46:15 by tnaton            #+#    #+#             */
-/*   Updated: 2022/12/07 18:01:48 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/12/08 19:59:38 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,6 @@ namespace ft {
 					l = other.l;
 					r = other.r;
 					color = other.color;
-					end = other.end;
 				}
 
 				void swap(const node & other) {
@@ -157,15 +156,15 @@ namespace ft {
 				}
 			};
 
-		explicit rbt(const Compare & comp, const allocator_type & alloc = allocator_type()): _root(NULL), _alloc(alloc), _cmp(comp), _size(0) {
+		explicit rbt(const Compare & comp, const allocator_type & alloc = allocator_type()): _root(NULL), _alloc(alloc), _allocnode(), _cmp(comp), _size(0), _NILL(NULL) {
 		}
 
 		template <class InputIt>
-		rbt (InputIt first, InputIt last, const Compare & comp, const allocator_type & alloc = allocator_type()): _root(NULL), _alloc(alloc), _cmp(comp), _size(0) {
+		rbt (InputIt first, InputIt last, const Compare & comp, const allocator_type & alloc = allocator_type()): _root(NULL), _alloc(alloc), _allocnode(), _cmp(comp), _size(0), _NILL(NULL) {
 			insert(first, last);
 		}
 
-		rbt (const rbt & other): _root(NULL), _alloc(other._alloc), _cmp(other._cmp) {
+		rbt (const rbt & other): _root(NULL), _alloc(other._alloc), _allocnode(), _cmp(other._cmp) {
 			_copy(other._root);
 			_size = other._size;
 		}
@@ -862,6 +861,7 @@ namespace ft {
 			std::allocator<node_base>	_allocnode;
 			key_compare					_cmp;
 			size_type					_size;
+			node						_NILL;
 	};
 
 	template<class Key, class T, class value_type, class Compare, class Alloc>

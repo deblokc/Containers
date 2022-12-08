@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/22 16:11:43 by tnaton            #+#    #+#             */
-/*   Updated: 2022/12/05 18:59:48 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/12/08 20:53:27 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,6 +96,10 @@ namespace ft {
 			// definition des fonctions membres
 		public:
 
+			T* data(void) {return _start;}
+
+			const T* data(void) const {return _start;}
+
 			bool empty(void) const {
 				return ((_size == 0) ? true : false);
 			}
@@ -184,7 +188,7 @@ namespace ft {
 				if (new_cap > _alloc.max_size()) {
 					throw (std::length_error("Over max size"));
 				}
-				if (!_capacity)
+				if (!new_cap)
 					return ;
 				if (new_cap > _capacity) {
 					pointer new_start = _alloc.allocate(new_cap);
@@ -199,7 +203,8 @@ namespace ft {
 					size_type exsize = _size;
 					this->clear();
 					_size = exsize;
-					_alloc.deallocate(_start, _capacity);
+					if (_capacity)
+						_alloc.deallocate(_start, _capacity);
 					_capacity = new_cap;
 					_start = new_start;
 					_end = new_end;
