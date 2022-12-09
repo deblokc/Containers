@@ -28,10 +28,10 @@ namespace ft {
 			typedef typename ctnr::node_base							node_base;
 
 			rbtiterator(void): _ptr() {}
-			explicit rbtiterator(const node & other_ptr, const ctnr * tree): _ptr(other_ptr), _tree(tree) {}
+			explicit rbtiterator(const node & other_ptr): _ptr(other_ptr) {}
 
 			template <typename Ptr>
-			rbtiterator(const rbtiterator<Ptr, typename enable_if<is_same<Ptr, typename ctnr::pointer>::val, ctnr>::type> & other) : _ptr(other.base()), _tree(other._tree) {}
+			rbtiterator(const rbtiterator<Ptr, typename enable_if<is_same<Ptr, typename ctnr::pointer>::val, ctnr>::type> & other) : _ptr(other.base()) {}
 
 			~rbtiterator() {
 			}
@@ -40,7 +40,6 @@ namespace ft {
 				if (this == &other)
 					return (*this);
 				this->_ptr = other._ptr;
-				this->_tree = other._tree;
 				return (*this);
 			}
 
@@ -50,6 +49,13 @@ namespace ft {
 			pointer operator->(void) const {return &(*_ptr->val);}
 
 			rbtiterator & operator++(void) {
+				if (!_ptr->val) {
+					_ptr = _ptr->parent;
+					while (_ptr->l) {
+						_ptr = _ptr->l;
+					}
+					return (*this);
+				}
 				if (_ptr->r) {
 					_ptr = _ptr->r;
 					while (_ptr->l) {
@@ -57,7 +63,7 @@ namespace ft {
 					}
 					return (*this);
 				} else {
-					while (_ptr->parent && _ptr->parent->r == _ptr) {
+					while (_ptr->parent->val && _ptr->parent->r == _ptr) {
 						_ptr = _ptr->parent;
 					}
 					_ptr = _ptr->parent;
@@ -72,8 +78,8 @@ namespace ft {
 			}
 
 			rbtiterator & operator--(void) {
-				if (!_ptr) {
-					_ptr = _tree->root();
+				if (!_ptr->val) {
+					_ptr = _ptr->parent;
 					while (_ptr->r) {
 						_ptr = _ptr->r;
 					}
@@ -86,7 +92,7 @@ namespace ft {
 					}
 					return (*this);
 				} else {
-					while (_ptr->parent && _ptr->parent->l == _ptr) {
+					while (_ptr->parent->val && _ptr->parent->l == _ptr) {
 						_ptr = _ptr->parent;
 					}
 					_ptr = _ptr->parent;
@@ -101,12 +107,11 @@ namespace ft {
 			}
 
 			operator rbtiterator<const T, ctnr>() const {
-				return (rbtiterator<const T, ctnr>(this->_ptr, this->_tree));
+				return (rbtiterator<const T, ctnr>(this->_ptr));
 			}
 
 		protected:
 			node			_ptr;
-			const ctnr *	_tree;
 	};
 
 	template <typename lit, typename rit, typename ctnr>

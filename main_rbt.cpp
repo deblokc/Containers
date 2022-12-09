@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 18:49:18 by tnaton            #+#    #+#             */
-/*   Updated: 2022/12/07 17:39:53 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/12/09 20:25:03 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ void showTrunks(Trunk *p)
 	std::cout << p->str;
 }
 
-void printnode(ft::rbt<char, int, ft::pair<const char, int>, ft::map<char, int>::value_compare>::node & tmp) {
+void printnode(ft::rbt<int, int, ft::pair<const int, int>, ft::map<int, int>::value_compare>::node & tmp) {
 	if (!tmp) {
 		std::cout << "Invalide insert" << std::endl;
 		return ;
@@ -51,11 +51,13 @@ void printnode(ft::rbt<char, int, ft::pair<const char, int>, ft::map<char, int>:
 	std::cout << "Key : " << tmp->val << " | Val : " << tmp->val << "\033[0m" << std::endl;
 }
 
-void printTree(ft::rbt<char, int, ft::pair<const char, int>, ft::map<char, int>::value_compare >::node root, Trunk *prev, bool isLeft) {
-	if (root == NULL)
+void printTree(ft::rbt<int, int, ft::pair<const int, int>, ft::map<int, int>::value_compare >::node root, Trunk *prev, bool isLeft) {
+	if (root == NULL || root->val == NULL)
 		return ;
 	std::string prev_str = "         ";
     Trunk *trunk = new Trunk(prev, prev_str);
+
+//	std::cout << root->val->first << std::endl;
 
     printTree(root->r, trunk, true);
 
@@ -77,7 +79,7 @@ void printTree(ft::rbt<char, int, ft::pair<const char, int>, ft::map<char, int>:
 		std::cout << "\033[0;90m"; 
 	else
 		std::cout << "\033[0;91m";
-	std::cout << " " << root->val<< "\033[0m" << std::endl;
+	std::cout << " " << root->val->first << "\033[0m" << std::endl;
 
     if (prev) {
         prev->str = prev_str;
@@ -88,7 +90,7 @@ void printTree(ft::rbt<char, int, ft::pair<const char, int>, ft::map<char, int>:
 	delete trunk;
 }
 
-void pT(ft::rbt<char, int, ft::pair<const char, int>, ft::map<char, int>::value_compare >::node root) {
+void pT(ft::rbt<int, int, ft::pair<const int, int>, ft::map<int, int>::value_compare >::node root) {
 	printTree(root, NULL, false);
 	std::cout << "-------------------------------------------------------------------------------------" << std::endl;
 }
@@ -105,7 +107,123 @@ void printMap(const ft::map<int, int> & m) {
 	}
 }
 */
+
+
+#include "42ft_containers_tester/vector/includes/ConstClass.hpp"
 int main(void) {
+
+
+	for (volatile int i = 0; i < 1; i++)
+	{
+		ft::vector<ConstClass>			test;
+		ft::vector<ConstClass>::iterator	it;
+
+		test.reserve(50);
+		it = test.begin();
+		test.insert(test.end(), 4, ConstClass(420));
+		test.insert((test.begin() + 1), 13, ConstClass(666));
+		for (; it != test.end(); it++)
+		{
+			std::cout << *it << "|" << it.base() << std::endl;
+		}
+		test.insert((test.begin()), 50, ConstClass(888));
+		for (it = test.begin(); it != test.end(); it++)
+		{
+			std::cout << *it << std::endl;
+		}
+	}
+
+/*
+
+	ConstClass	tab[] = {ConstClass(), ConstClass(2), ConstClass(10)};
+	ConstClass	tab2[] = {ConstClass(666), ConstClass(42)};
+	for (volatile int i = 0; i < 1; i++)
+	{
+		ft::vector<ConstClass>	test;
+
+
+		test.reserve(50);
+		test.insert(test.begin(), tab, tab+3);
+		test.insert(test.begin(), tab2, tab2+2);
+		test.insert(test.end(), tab2, tab2+1);
+		std::cout << "*******************************************************************" << std::endl;
+		std::cout << "BEFORE INSERT : " << std::endl;
+		for (ft::vector<ConstClass>::iterator it = test.begin(); it != test.end(); it++)
+		{
+			std::cout << *it << "|" << it.base() << std::endl;
+		}
+		std::cout << "*******************************************************************" << std::endl;
+		std::cout << "TRYING TO INSERT :" << std::endl;
+
+		std::cout << *tab2 << std::endl;
+		std::cout << *(tab2+1) << std::endl;
+
+		std::cout << "*******************************************************************" << std::endl;
+		test.insert((test.begin() + 5), tab2, tab2+2);
+		for (ft::vector<ConstClass>::iterator it = test.begin(); it != test.end(); it++)
+		{
+			std::cout << *it << "|" << it.base() << std::endl;
+		}
+		std::cout << "Capacity: " << test.capacity() << std::endl;
+	}
+*/
+	/*
+	ft::map<int, int> m;
+
+	m[0] = 0;
+//	pT(m.root());
+	m[1] = 0;
+//	pT(m.root());
+	m[2] = 0;
+//	pT(m.root());
+	m[3] = 0;
+//	pT(m.root());
+	m[4] = 0;
+//	pT(m.root());
+	m[5] = 0;
+//	pT(m.root());
+	m[6] = 0;
+//	pT(m.root());
+	m[7] = 0;
+//	pT(m.root());
+	m[8] = 0;
+//	pT(m.root());
+	m[9] = 0;
+//	pT(m.root());*/
+/*
+	std::cout << "=========PRINT IN (END--)========" << std::endl;
+	ft::map<int, int>::iterator it = m.end();
+	it--;
+	std::cout << it->first << std::endl;
+	std::cout << "=========PRINT IN ORDER========" << std::endl;
+	for (ft::map<int, int>::iterator it = m.begin(); it != m.end(); it++) {
+		std::cout << it->first << std::endl;
+	}
+	std::cout << "=========PRINT IN REVERSE ORDER========" << std::endl;
+	for (ft::map<int, int>::reverse_iterator it = m.rbegin(); it != m.rend(); it++) {
+		std::cout << it->first << std::endl;
+	}
+*/
+//	ft::map<int, int> test;
+
+//	test = m;
+/*
+	std::cout << "base tree" << std::endl;
+	pT(m.root());
+	std::cout << "test tree" << std::endl;
+	pT(test.root());
+*//*
+	for (ft::map<int, int>::iterator it = m.begin(); it != m.end(); it++) {
+		std::cout << it->first << std::endl;
+	}
+
+	for (ft::map<int, int>::iterator it = test.begin(); it != test.end(); it++) {
+		std::cout << it->first << std::endl;
+	}
+*/
+
+
+/*
 	using namespace ft;
 
   map<char,int> foo,bar;
@@ -211,7 +329,7 @@ std::cout << tmp2->first << " => " << tmp2->second << '\n';
 		tmp3--;
 	}
 std::cout << tmp3->first << " => " << tmp3->second << '\n';
-
+*/
 /*
 
 	typedef ft::map<int, int>::iterator iterator;

@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 16:46:15 by tnaton            #+#    #+#             */
-/*   Updated: 2022/12/08 19:59:38 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/12/09 18:36:00 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,22 +56,16 @@ namespace ft {
 
 				~node_base(void) {
 					allocator_type	alloc;
-					alloc.destroy(val);
-					alloc.deallocate(val, 1);
+					if (val) {
+						alloc.destroy(val);
+						alloc.deallocate(val, 1);
+					}
 				}
 
 				node_base(const value_type & value): parent(NULL), l(NULL), r(NULL), color(RED) {
 					allocator_type	alloc;
 					val = alloc.allocate(1);
 					alloc.construct(val, value);
-				}
-
-				node_base(node dad) {
-					val = NULL;
-					l = NULL;
-					r = NULL;
-					parent = dad;
-					color = BLACK;
 				}
 
 				node_base(node_base const & other): parent(other.parent), l(other.l), r(other.r), color(other.color) {
@@ -157,27 +151,50 @@ namespace ft {
 			};
 
 		explicit rbt(const Compare & comp, const allocator_type & alloc = allocator_type()): _root(NULL), _alloc(alloc), _allocnode(), _cmp(comp), _size(0), _NILL(NULL) {
+			_NILL = _allocnode.allocate(1);
+			_allocnode.construct(_NILL, value_type());
+			_alloc.destroy(_NILL->val);
+			_alloc.deallocate(_NILL->val, 1);
+			_NILL->val = NULL;
+			_NILL->parent = _NILL;
+			_root = _NILL;
 		}
 
 		template <class InputIt>
 		rbt (InputIt first, InputIt last, const Compare & comp, const allocator_type & alloc = allocator_type()): _root(NULL), _alloc(alloc), _allocnode(), _cmp(comp), _size(0), _NILL(NULL) {
+			_NILL = _allocnode.allocate(1);
+			_allocnode.construct(_NILL, value_type());
+			_alloc.destroy(_NILL->val);
+			_alloc.deallocate(_NILL->val, 1);
+			_NILL->val = NULL;
+			_NILL->parent = _NILL;
+			_root = _NILL;
 			insert(first, last);
 		}
 
 		rbt (const rbt & other): _root(NULL), _alloc(other._alloc), _allocnode(), _cmp(other._cmp) {
+			_NILL = _allocnode.allocate(1);
+			_allocnode.construct(_NILL, value_type());
+			_alloc.destroy(_NILL->val);
+			_alloc.deallocate(_NILL->val, 1);
+			_NILL->val = NULL;
+			_NILL->parent = _NILL;
+			_root = _NILL;
 			_copy(other._root);
 			_size = other._size;
 		}
 
 		~rbt(void) {
 			clear();
+			_allocnode.destroy(_NILL);
+			_allocnode.deallocate(_NILL, 1);
 		}
 
 		rbt & operator=(const rbt & other) {
 			if (this == &other)
 				return (*this);
 			clear();
-			_root = NULL;
+			_root = _NILL;
 			_alloc = other._alloc;
 			_cmp = other._cmp;
 			_copy(other._root);
@@ -193,17 +210,18 @@ namespace ft {
 			node tmp = _root;
 			node todel = NULL;
 
-			while (_root) {
+			while (_root != _NILL) {
 				if (tmp->l) {
 					tmp = tmp->l;
 				} else if (tmp->r) {
 					tmp = tmp->r;
 				} else {
 					todel = tmp;
-					if (!tmp->parent) {
+					if (!tmp->parent->val) {
 						_allocnode.destroy(tmp);
 						_allocnode.deallocate(tmp, 1);
-						_root = NULL;
+						_NILL->parent = _NILL;
+						_root = _NILL;
 						_size = 0;
 						return ;
 					}
@@ -223,27 +241,32 @@ namespace ft {
 
 	private:
 		void _copy(node root) {
-			if (!root) {
-				_root = NULL;
+			if (!root->val) {
+				_NILL->parent = _NILL;
+				_root = _NILL;
 				return ;
 			}
 			node const_tmp = root;
 			node tmp = _allocnode.allocate(1);
 			_allocnode.construct(tmp, *(const_tmp->val));
+			tmp->color = const_tmp->color;
 			_root = tmp;
-			while (const_tmp) {
+			_NILL->parent = _root;
+			_NILL->val = NULL;
+			_root->parent = _NILL;
+			while (const_tmp->val) {
 				if (const_tmp->l && !tmp->l) {
 					const_tmp = const_tmp->l;
 					tmp->l = _allocnode.allocate(1);
 					_allocnode.construct(tmp->l, *(const_tmp->val));
-					tmp->color = const_tmp->color;
+					tmp->l->color = const_tmp->color;
 					tmp->l->parent = tmp;
 					tmp = tmp->l;
 				} else if (const_tmp->r && !tmp->r) {
 					const_tmp = const_tmp->r;
 					tmp->r = _allocnode.allocate(1);
 					_allocnode.construct(tmp->r, *(const_tmp->val));
-					tmp->color = const_tmp->color;
+					tmp->r->color = const_tmp->color;
 					tmp->r->parent = tmp;
 					tmp = tmp->r;
 				} else {
@@ -256,7 +279,7 @@ namespace ft {
 		void rotate(node n, node p) {
 			node g = p->parent;
 
-			if (g) {
+			if (g->val) {
 				if (g->l == p) {
 					if (p->r == n) {
 						g->l = n;
@@ -303,6 +326,8 @@ namespace ft {
 				n->parent = NULL;
 				p->parent = n;
 				_root = n;
+				_NILL->parent = _root;
+				_root->parent = _NILL;
 			}
 		}
 
@@ -311,13 +336,15 @@ namespace ft {
 				rotate(n, p);
 				p = n;
 			}
-			if (g->parent) {
+			if (g->parent->val) {
 				if (g->parent->l == g)
 					g->parent->l = p;
 				else
 					g->parent->r = p;
 			} else {
 				_root = p;
+				_NILL->parent = _root;
+				_root->parent = _NILL;
 			}
 			p->parent = g->parent;
 			g->parent = p;
@@ -340,7 +367,7 @@ namespace ft {
 			node n = pos.base();
 			node p = NULL;
 
-			if (!n->parent) {
+			if (!n->parent->val) {
 				return ;
 			}
 			do {
@@ -349,7 +376,7 @@ namespace ft {
 					return ;
 				}
 				node g = p->parent;
-				if (!g) {
+				if (!g->val) {
 					p->color = BLACK;
 					return ;
 				}
@@ -361,7 +388,7 @@ namespace ft {
 				u->color = BLACK;
 				g->color = RED;
 				n = g;
-			} while ((p = n->parent) != NULL);
+			} while ((p = n->parent) != _NILL);
 		}
 
 	public:
@@ -392,14 +419,17 @@ namespace ft {
 		iterator insert_from_pos(const_iterator pos, const value_type & val) {
 			node tmp = pos.base();
 
-			if (!tmp) {
+			if (tmp == _NILL) {
 				tmp = _allocnode.allocate(1);
 				_allocnode.construct(tmp, val);
 				_root = tmp;
+				_NILL->parent = _root;
+				_NILL->val = NULL;
+				_root->parent = _NILL;
 				_size++;
-				return iterator(tmp, this);
+				return iterator(tmp);
 			}
-			while (tmp) {
+			while (tmp->val) {
 				if (_cmp(val, *tmp->val)) {
 					if (tmp->l) {
 						tmp = tmp->l;
@@ -408,7 +438,7 @@ namespace ft {
 						_allocnode.construct(tmp->l, val);
 						tmp->l->parent = tmp;
 						_size++;
-						return iterator(tmp->l, this);
+						return iterator(tmp->l);
 					}
 				} else if (_cmp(*tmp->val, val)) {
 					if (tmp->r) {
@@ -418,26 +448,29 @@ namespace ft {
 						_allocnode.construct(tmp->r, val);
 						tmp->r->parent = tmp;
 						_size++;
-						return iterator(tmp->r, this);
+						return iterator(tmp->r);
 					}
 				} else {
-					return iterator(tmp, this);
+					return iterator(tmp);
 				}
 			}
-			return iterator(tmp, this);
+			return iterator(tmp);
 		}
 
 		ft::pair<iterator, bool> _insert(const value_type & val) {
 			node tmp = _root;
 
-			if (!tmp) {
+			if (tmp == _NILL) {
 				tmp = _allocnode.allocate(1);
 				_allocnode.construct(tmp, val);
 				_root = tmp;
+				_NILL->parent = _root;
+				_NILL->val = NULL;
+				_root->parent = _NILL;
 				_size++;
-				return ft::make_pair(iterator(tmp, this), true);
+				return ft::make_pair(iterator(tmp), true);
 			}
-			while (tmp) {
+			while (tmp->val) {
 				if (_cmp(val, *tmp->val)) {
 					if (tmp->l) {
 						tmp = tmp->l;
@@ -446,7 +479,7 @@ namespace ft {
 						_allocnode.construct(tmp->l, val);
 						tmp->l->parent = tmp;
 						_size++;
-						return ft::make_pair(iterator(tmp->l, this), true);
+						return ft::make_pair(iterator(tmp->l), true);
 					}
 				} else if (_cmp(*tmp->val, val)) {
 					if (tmp->r) {
@@ -456,13 +489,13 @@ namespace ft {
 						_allocnode.construct(tmp->r, val);
 						tmp->r->parent = tmp;
 						_size++;
-						return ft::make_pair(iterator(tmp->r, this), true);
+						return ft::make_pair(iterator(tmp->r), true);
 					}
 				} else {
-					return ft::make_pair(iterator(tmp, this), false);
+					return ft::make_pair(iterator(tmp), false);
 				}
 			}
-			return ft::make_pair(iterator(tmp, this), true);
+			return ft::make_pair(iterator(tmp), true);
 		}
 
 	public:
@@ -549,7 +582,7 @@ namespace ft {
 				}
 				s->color = RED;
 				n = p;
-			} while ((p = n->parent) != NULL);
+			} while ((p = n->parent) != _NILL);
 		}
 
 		void erase(const_iterator first, const_iterator last) {
@@ -576,8 +609,12 @@ namespace ft {
 			}
 			if (tmp == _root) {
 				_root = new_root;
+				tmp->swap(new_root);
+				_NILL->parent = _root;
+				_root->parent = _NILL;
+			} else {
+				tmp->swap(new_root);
 			}
-			tmp->swap(new_root);
 		}
 
 		void erase(const_iterator pos) {
@@ -588,7 +625,7 @@ namespace ft {
 			}
 			if (tmp->r || tmp->l) {
 				if (tmp->r) {
-					if (tmp->parent) {
+					if (tmp->parent->val) {
 						if (tmp == tmp->parent->l) {
 							tmp->parent->l = tmp->r;
 						} else {
@@ -596,13 +633,16 @@ namespace ft {
 						}
 					}
 					tmp->r->parent = tmp->parent;
-					if (tmp == _root)
+					if (tmp == _root) {
 						_root = tmp->r;
+						_NILL->parent = _root;
+						_root->parent = _NILL;
+					}
 					tmp->r->color = BLACK;
 					_allocnode.destroy(tmp);
 					_allocnode.deallocate(tmp, 1);
 				} else {
-					if (tmp->parent) {
+					if (tmp->parent->val) {
 						if (tmp == tmp->parent->l) {
 							tmp->parent->l = tmp->l;
 						} else {
@@ -610,14 +650,17 @@ namespace ft {
 						}
 					}
 					tmp->l->parent = tmp->parent;
-					if (tmp == _root)
+					if (tmp == _root) {
 						_root = tmp->l;
+						_NILL->parent = _root;
+						_root->parent = _NILL;
+					}
 					tmp->l->color = BLACK;
 					_allocnode.destroy(tmp);
 					_allocnode.deallocate(tmp, 1);
 				}
 			} else {
-				if (tmp->parent) {
+				if (tmp->parent->val) {
 					if (tmp->color == BLACK) {
 						_erase(tmp);
 					} else {
@@ -631,7 +674,8 @@ namespace ft {
 				} else {
 					_allocnode.destroy(tmp);
 					_allocnode.deallocate(tmp, 1);
-					_root = NULL;
+					_NILL->parent = _NILL;
+					_root = _NILL;
 				}
 			}
 			_size--;
@@ -639,30 +683,30 @@ namespace ft {
 
 		iterator begin(void) {
 			node tmp = _root;
-			if (!_root)
-				return iterator(_root, this);
+			if (!_root->val)
+				return iterator(_root);
 			while (tmp->l) {
 				tmp = tmp->l;
 			}
-			return iterator(tmp, this);
+			return iterator(tmp);
 		}
 
 		const_iterator begin(void) const {
 			node tmp = _root;
-			if (!_root)
-				return const_iterator(_root, this);
+			if (!_root->val)
+				return const_iterator(_root);
 			while (tmp->l) {
 				tmp = tmp->l;
 			}
-			return const_iterator(tmp, this);
+			return const_iterator(tmp);
 		}
 
 		iterator end(void) {
-			return iterator(NULL, this);
+			return iterator(_NILL);
 		}
 
 		const_iterator end(void) const {
-			return const_iterator(NULL, this);
+			return const_iterator(_NILL);
 		}
 
 		reverse_iterator rbegin(void) {
@@ -696,7 +740,7 @@ namespace ft {
 		iterator find(const Key & key) {
 			node tmp = _root;
 
-			while (tmp) {
+			while (tmp->val) {
 				if (_cmp(key, *tmp->val)) {
 					if (tmp->l) {
 						tmp = tmp->l;
@@ -710,16 +754,16 @@ namespace ft {
 						break ;
 					}
 				} else {
-					return iterator(tmp, this);
+					return iterator(tmp);
 				}
 			}
-			return iterator(NULL, this);
+			return iterator(_NILL);
 		}
 
 		const_iterator find(const Key & key) const {
 			node tmp = _root;
 
-			while (tmp) {
+			while (tmp->val) {
 				if (_cmp(key, *tmp->val)) {
 					if (tmp->l) {
 						tmp = tmp->l;
@@ -733,10 +777,10 @@ namespace ft {
 						break ;
 					}
 				} else {
-					return iterator(tmp, this);
+					return iterator(tmp);
 				}
 			}
-			return iterator(NULL, this);
+			return iterator(_NILL);
 		}
 
 		T& at(const Key & key) {
@@ -780,52 +824,52 @@ namespace ft {
 
 		iterator upper_bound(const Key & key) {
 			node tmp = _root;
-			node ret = NULL;
+			node ret = _NILL;
 
-			while (tmp) {
+			while (tmp->val) {
 				if (_cmp(key, *tmp->val)) {
 					ret = tmp;
 					if (tmp->l)
 						tmp = tmp->l;
 					else
-						return iterator(tmp, this);
+						return iterator(tmp);
 				} else if (_cmp(*tmp->val, key)) {
 					if (tmp->r)
 						tmp = tmp->r;
 					else
-						return iterator(ret, this);
+						return iterator(ret);
 				} else {
-					iterator it(tmp, this);
+					iterator it(tmp);
 					it++;
 					return (it);
 				}
 			}
-			return iterator(NULL, this);
+			return iterator(_NILL);
 		}
 
 		const_iterator upper_bound(const Key & key) const {
 			node tmp = _root;
-			node ret = NULL;
+			node ret = _NILL;
 
-			while (tmp) {
+			while (tmp->val) {
 				if (_cmp(key, *tmp->val)) {
 					ret = tmp;
 					if (tmp->l)
 						tmp = tmp->l;
 					else
-						return const_iterator(tmp, this);
+						return const_iterator(tmp);
 				} else if (_cmp(*tmp->val, key)) {
 					if (tmp->r)
 						tmp = tmp->r;
 					else
-						return const_iterator(ret, this);
+						return const_iterator(ret);
 				} else {
-					const_iterator it(tmp, this);
+					const_iterator it(tmp);
 					it++;
 					return (it);
 				}
 			}
-			return const_iterator(NULL, this);
+			return const_iterator(_NILL);
 		}
 
 		iterator lower_bound(const Key & key) {
@@ -844,6 +888,7 @@ namespace ft {
 
 		void swap(rbt & other) {
 			ft::swap(this->_root, other._root);
+			ft::swap(this->_NILL, other._NILL);
 			key_compare test = _cmp;
 			this->_cmp = other._cmp;
 			other._cmp = test;

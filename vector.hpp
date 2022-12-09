@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/22 16:11:43 by tnaton            #+#    #+#             */
-/*   Updated: 2022/12/08 20:53:27 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/12/09 20:25:15 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -216,45 +216,40 @@ namespace ft {
 					throw (std::length_error("Over max size"));
 				}
 				if (_size > count) {
-					pointer new_start = NULL;
-					if (count)
-						new_start = _alloc.allocate(count);
-					pointer new_end = new_start;
-					pointer tmp = _start;
-
-					for (size_type i = 0; i < count; i++) {
-						_alloc.construct(new_end, *tmp);
-						tmp++;
-						new_end++;
+					for (size_type i = count; i < _size; i++) {
+						_alloc.destroy(_start + i);
 					}
-					this->clear();
 					_size = count;
-					if (_start)
-						_alloc.deallocate(_start, _capacity);
-					_capacity = count;
-					_start = new_start;
-					_end = new_end;
+					_end = _start + count;
 				} else if (_size < count) {
-					pointer new_start = _alloc.allocate(count);
-					pointer new_end = new_start;
-					pointer tmp = _start;
+					if (_capacity < count) {
+						pointer new_start = _alloc.allocate(count);
+						pointer new_end = new_start;
+						pointer tmp = _start;
 
-					while (tmp != _end) {
-						_alloc.construct(new_end, *tmp);
-						tmp++;
-						new_end++;
+						while (tmp != _end) {
+							_alloc.construct(new_end, *tmp);
+							tmp++;
+							new_end++;
+						}
+						for (size_type i = _size; i < count; i++) {
+							_alloc.construct(new_end, value);
+							new_end++;
+						}
+						this->clear();
+						_size = count;
+						if (_capacity)
+							_alloc.deallocate(_start, _capacity);
+						_capacity = count;
+						_start = new_start;
+						_end = new_end;
+					} else {
+						for (size_type i = _size; i < count; i++) {
+							_alloc.construct(_end, value);
+							_end++;
+						}
+						_size = count;
 					}
-					for (size_type i = _size; i < count; i++) {
-						_alloc.construct(new_end, value);
-						new_end++;
-					}
-					this->clear();
-					_size = count;
-					if (_capacity)
-						_alloc.deallocate(_start, _capacity);
-					_capacity = count;
-					_start = new_start;
-					_end = new_end;
 				}
 			}
 
@@ -416,15 +411,12 @@ namespace ft {
 						pointer tmp_end = _end - 1;
 						pointer new_end = _end + count - 1;
 						for (; tmp_end != pos.base(); --new_end, --tmp_end) {
-							if (new_end >= _end)
-								_alloc.construct(new_end, *tmp_end);
-							else
-								*new_end =  *tmp_end;
+							_alloc.construct(new_end, *tmp_end);
 						}
-						*new_end = *tmp_end;
+						_alloc.construct(new_end, *tmp_end);
 						pointer tmp = pos.base();
 						for (size_type i = 0; i < count ; tmp++, i++) {
-							*tmp = value;
+							_alloc.construct(tmp, value);
 						}
 						_end += count;
 						_size += count;
@@ -523,14 +515,12 @@ namespace ft {
 						pointer tmp_end = _end - 1;
 						pointer new_end = _end + dist - 1;
 						for (; tmp_end != pos.base(); --new_end, --tmp_end) {
-							if (new_end >= _end)
-								_alloc.construct(new_end, *tmp_end);
-							*new_end = *tmp_end;
+							_alloc.construct(new_end, *tmp_end);
 						}
 						_alloc.construct(new_end, *tmp_end);
 						pointer tmp = pos.base();
 						for (; first != last; tmp++, first++) {
-							*tmp = *first;
+							_alloc.construct(tmp, *first);
 						}
 						_end += dist;
 						_size += dist;
