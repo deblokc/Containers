@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 18:49:18 by tnaton            #+#    #+#             */
-/*   Updated: 2022/12/09 20:25:03 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/12/10 17:07:06 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,9 +110,13 @@ void printMap(const ft::map<int, int> & m) {
 
 
 #include "42ft_containers_tester/vector/includes/ConstClass.hpp"
+#include <list>
+#include <fstream>
+#include <sstream>
+#include <vector>
 int main(void) {
 
-
+/*
 	for (volatile int i = 0; i < 1; i++)
 	{
 		ft::vector<ConstClass>			test;
@@ -130,6 +134,37 @@ int main(void) {
 		for (it = test.begin(); it != test.end(); it++)
 		{
 			std::cout << *it << std::endl;
+		}
+	}
+*/
+
+	std::cout << "*******   Testing ConstClass vector   *******" << std::endl;
+	{
+		ConstClass	tab[] = {ConstClass(), ConstClass(2), ConstClass(10)};
+		ConstClass	tab2[] = {ConstClass(52), ConstClass(21), ConstClass(8)};
+		std::list<ConstClass>	filler(tab, tab+3);
+		ft::vector<ConstClass>	test;
+		test.assign(filler.begin(), filler.end());
+		test.assign(tab2, tab2+2);
+		std::cout << "size" << test.size() << std::endl;
+		for (ft::vector<ConstClass>::iterator start = test.begin();  start != test.end(); start++)
+		{
+			std::cout << *start << std::endl;
+		}
+	}
+
+	std::cout << "*******   Testing ConstClass vector   *******" << std::endl;
+	{
+		ConstClass	tab[] = {ConstClass(), ConstClass(2), ConstClass(10)};
+		ConstClass	tab2[] = {ConstClass(52), ConstClass(21), ConstClass(8)};
+		std::list<ConstClass>	filler(tab, tab+3);
+		std::vector<ConstClass>	test;
+		test.assign(filler.begin(), filler.end());
+		test.assign(tab2, tab2+2);
+		std::cout << "size" << test.size() << std::endl;
+		for (std::vector<ConstClass>::iterator start = test.begin();  start != test.end(); start++)
+		{
+			std::cout << *start << std::endl;
 		}
 	}
 

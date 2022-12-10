@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/22 16:11:43 by tnaton            #+#    #+#             */
-/*   Updated: 2022/12/09 20:25:15 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/12/10 18:13:02 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,11 +129,11 @@ namespace ft {
 
 		private:
 			template<class InputIt>
-			void _assign(InputIt first, InputIt last, std::random_access_iterator_tag) {
+			int _assign(InputIt first, InputIt last, std::random_access_iterator_tag) {
 				if (static_cast<size_type>(last - first) > _alloc.max_size())
 					throw (std::length_error("Over max size"));
-				this->clear();
 				if (static_cast<size_type>(last - first) > _capacity) {
+					this->clear();
 					if (_capacity)
 						_alloc.deallocate(_start, _capacity);
 					_capacity = last - first;
@@ -147,40 +147,86 @@ namespace ft {
 					}
 					_size = _capacity;
 				} else {
+					_size = 0;
 					pointer	tmp = _start;
 					for (; first != last; tmp++, first++, _size++) {
-						_alloc.construct(tmp, *first);
+						if (tmp < _end)
+							*tmp = *first;
+						else
+							_alloc.construct(tmp, *first);
 					}
-					_end = tmp;
+					for (; tmp < _end; tmp++) {
+						_alloc.destroy(tmp);
+					}
+					_end = _start + _size;
 				}
+				return (0);
 			}
 
 			template<class InputIt>
 			void _assign(InputIt first, InputIt last, std::input_iterator_tag) {
-				this->clear();
+				pointer tmp = _start;
+				size_type old_size = _size;
+				_size = 0;
 				while (first != last) {
-					this->push_back(*first);
+					if (old_size) {
+						if (_size == _alloc.max_size()) {
+							throw (std::length_error("Over max size"));
+						}
+						*tmp = *first;
+						tmp++;
+						old_size--;
+						_size++;
+					} else
+						this->push_back(*first);
 					first++;
 				}
+				for (size_type i = 0; i < old_size; i++, tmp++) {
+					_alloc.destroy(tmp);
+				}
+				_end = _start + _size;
 			}
 
 		public:
 			void assign(size_type count, const value_type & value) {
 				if (count > _alloc.max_size())
 					throw (std::length_error("Over max size"));
-				this->clear();
 				if (count > _capacity)
 				{
+					this->clear();
 					if (_capacity)
 						_alloc.deallocate(_start, _capacity);
 					_start = _alloc.allocate(count);
 					_capacity = count;
-				}
-				_size = count;
-				_end = _start;
-				while (count--) {
-					_alloc.construct(_end, value);
-					_end++;
+					_size = count;
+					_end = _start;
+					while (count--) {
+						_alloc.construct(_end, value);
+						_end++;
+					}
+				} else if (_size < count) {
+					pointer tmp = _start;
+					for (size_type i = 0; i < count; i++, tmp++) {
+						if (i < _size)
+							*tmp = value;
+						else
+							_alloc.construct(tmp, value);
+					}
+					_size = count;
+					_end = tmp;
+				} else {
+					pointer tmp = _start;
+					for (size_type i = 0; i < count; i++, tmp++) {
+						if (i < _size)
+							*tmp = value;
+						else
+							_alloc.construct(tmp, value);
+					}
+					for (size_type i = count; i < _size; i++, tmp++) {
+						_alloc.destroy(tmp);
+					}
+					_size = count;
+					_end = _start + _size;
 				}
 			}
 
@@ -411,12 +457,21 @@ namespace ft {
 						pointer tmp_end = _end - 1;
 						pointer new_end = _end + count - 1;
 						for (; tmp_end != pos.base(); --new_end, --tmp_end) {
-							_alloc.construct(new_end, *tmp_end);
+							if (new_end < _end)
+								*new_end = *tmp_end;
+							else
+								_alloc.construct(new_end, *tmp_end);
 						}
-						_alloc.construct(new_end, *tmp_end);
+						if (new_end < _end)
+							*new_end = *tmp_end;
+						else
+							_alloc.construct(new_end, *tmp_end);
 						pointer tmp = pos.base();
 						for (size_type i = 0; i < count ; tmp++, i++) {
-							_alloc.construct(tmp, value);
+							if (tmp < _end)
+								*tmp= value;
+							else
+								_alloc.construct(tmp, value);
 						}
 						_end += count;
 						_size += count;
@@ -515,12 +570,21 @@ namespace ft {
 						pointer tmp_end = _end - 1;
 						pointer new_end = _end + dist - 1;
 						for (; tmp_end != pos.base(); --new_end, --tmp_end) {
-							_alloc.construct(new_end, *tmp_end);
+							if (new_end < _end)
+								*new_end = *tmp_end;
+							else
+								_alloc.construct(new_end, *tmp_end);
 						}
-						_alloc.construct(new_end, *tmp_end);
+						if (new_end < _end)
+							*new_end = *tmp_end;
+						else
+							_alloc.construct(new_end, *tmp_end);
 						pointer tmp = pos.base();
 						for (; first != last; tmp++, first++) {
-							_alloc.construct(tmp, *first);
+							if (tmp < _end)
+								*tmp = *first;
+							else
+								_alloc.construct(tmp, *first);
 						}
 						_end += dist;
 						_size += dist;
