@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/21 19:49:48 by tnaton            #+#    #+#             */
-/*   Updated: 2022/12/07 17:39:08 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/12/11 15:24:51 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,9 @@ namespace ft {
 			typedef	typename Allocator::const_reference								const_reference;
 			typedef	value_type*														pointer;
 			typedef	typename Allocator::const_pointer								const_pointer;
+		private:
 			typedef	typename ft::rbt<Key, T, value_type, value_compare, Allocator>	rbt;
+		public:
 			typedef	typename ft::rbtiterator<value_type, rbt>						iterator;
 			typedef	typename ft::rbtiterator<const value_type, rbt>					const_iterator;
 			typedef	typename ft::reverse_iterator<iterator>							reverse_iterator;
@@ -76,8 +78,6 @@ namespace ft {
 				_tree = other._tree;
 				return (*this);
 			}
-
-			typename rbt::node root(void) {return _tree.root();}
 
 			void clear(void) {
 				_tree.clear();
