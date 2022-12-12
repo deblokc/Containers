@@ -6,18 +6,18 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/22 16:11:43 by tnaton            #+#    #+#             */
-/*   Updated: 2022/12/10 18:13:02 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/12/12 18:13:50 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef VECTOR_HPP
 # define VECTOR_HPP
-# include "viterator.hpp"
-# include "reverse_iterator.hpp"
+# include "inc/viterator.hpp"
+# include "inc/reverse_iterator.hpp"
 # include <memory>
 # include <iostream>
 # include <limits>
-# include "utils.hpp"
+# include "inc/utils.hpp"
 
 namespace ft {
 
