@@ -6,7 +6,7 @@
 /*   By: tnaton <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/22 16:11:39 by tnaton            #+#    #+#             */
-/*   Updated: 2022/11/10 15:19:53 by tnaton           ###   ########.fr       */
+/*   Updated: 2022/12/13 15:54:36 by tnaton           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 # include "vector.hpp"
 
 namespace ft {
-	template <class T, class Container = std::vector<T> > class stack {
+	template <class T, class Container = ft::vector<T> > class stack {
 		public:
 			typedef Container							container_type;
 			typedef typename Container::value_type		value_type;
